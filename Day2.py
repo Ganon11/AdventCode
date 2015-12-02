@@ -21,7 +21,6 @@ def main():
 
     # Ribbon is equal to total volume, plus the shortest distance around the sides.
     ribLength = int(2 * (l + w + h - max(l, w, h)))
-    print 'present ' + present + ', riblength ' + str(ribLength)
     ribbon = ribbon + (l * w * h) + ribLength
 
   print str(paper) + ' ft^2 of wrapping paper, ' + str(ribbon) + ' ft of ribbon'
