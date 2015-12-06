@@ -1,5 +1,4 @@
 import os
-import re
 
 def gib_present(x, y):
   gib_present.total = gib_present.total + 1
