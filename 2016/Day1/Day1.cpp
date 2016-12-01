@@ -48,15 +48,20 @@ int wmain(int argc, wchar_t *argv[]) {
    Player p;
 
    for (const auto& instruction : instructions) {
-      //std::wcout << L"Instruction: Rotate " << instruction.getRotation() << L", walk " << instruction.getBlocks() << std::endl;
       p.FollowInstruction(instruction);
    }
 
    Position finalPosition{ p.getPosition() };
-   int distance{ finalPosition.getX() + finalPosition.getY() };
 
-   std::wcout << "Final position: (" << finalPosition.getX() << L", " << finalPosition.getY() << L")" << std::endl;
-   std::wcout << "Final distance: " << distance << std::endl;
+   std::wcout << L"Final position: (" << finalPosition.getX() << L", " << finalPosition.getY() << L"), distance " << finalPosition.distanceFromOrigin() << std::endl;
+
+   if (p.foundIntersection()) {
+      Position intersection{ p.getIntersection() };
+      std::wcout << L"Found intersection at (" << intersection.getX() << L", " << intersection.getY() << L"), distance " << intersection.distanceFromOrigin() << std::endl;
+   }
+   else {
+      std::wcout << L"Did not find intersection" << std::endl;
+   }
 
    return 0;
 }
