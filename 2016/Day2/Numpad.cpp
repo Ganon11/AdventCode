@@ -37,7 +37,7 @@ wchar_t NumpadPosition::GetCurrentKey() {
    return m_numpad[m_x][m_y];
 }
 
-void NumpadPosition::Move(const std::vector<Direction>& directions) {
+void NumpadPosition::Move(const DirectionList& directions) {
    for (const Direction d : directions) {
       Move(d);
    }
