@@ -10,9 +10,6 @@ enum NumpadType {
    NUMPAD_COMPLEX = 2,
 };
 
-extern const NumPad SIMPLE_NUMPAD;
-extern const NumPad COMPLEX_NUMPAD;
-
 class NumpadPosition {
 public:
    NumpadPosition(const NumpadType type);
