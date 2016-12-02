@@ -24,7 +24,7 @@ private:
    void Move(const Direction d);
 
    NumPad m_numpad;
-   size_t m_x;
-   size_t m_y;
+   size_t m_row;
+   size_t m_col;
    std::vector<wchar_t> m_code;
 };
