@@ -19,13 +19,13 @@ NumpadPosition::NumpadPosition(const NumpadType type) {
    switch (type) {
    case NUMPAD_SIMPLE:
       m_numpad = SIMPLE_NUMPAD;
-      m_x = 1;
-      m_y = 1;
+      m_row = 1;
+      m_col = 1;
       break;
    case NUMPAD_COMPLEX:
       m_numpad = COMPLEX_NUMPAD;
-      m_x = 0;
-      m_y = 2;
+      m_row = 2;
+      m_col = 0;
       break;
    }
 }
@@ -34,7 +34,7 @@ NumpadPosition::~NumpadPosition() {
 }
 
 wchar_t NumpadPosition::GetCurrentKey() {
-   return m_numpad[m_x][m_y];
+   return m_numpad[m_row][m_col];
 }
 
 void NumpadPosition::Move(const DirectionList& directions) {
@@ -56,16 +56,36 @@ std::wstring NumpadPosition::ToString() {
 void NumpadPosition::Move(const Direction d) {
    switch (d) {
    case DIRECTION_UP:
-      if (m_x > 0 && m_numpad[m_x - 1][m_y] != L'\0') --m_x;
+      if (m_row > 0) {
+         wchar_t c = m_numpad[m_row - 1][m_col];
+         if (c != L'\0') {
+            --m_row;
+         }
+      }
       break;
    case DIRECTION_DOWN:
-      if (m_x < m_numpad.size() - 1 && m_numpad[m_x + 1][m_y] != L'\0') ++m_x;
+      if (m_row < m_numpad.size() - 1) {
+         wchar_t c = m_numpad[m_row + 1][m_col];
+         if (c != L'\0') {
+            ++m_row;
+         }
+      } 
       break;
    case DIRECTION_LEFT:
-      if (m_y > 0 && m_numpad[m_x][m_y - 1] != L'\0') --m_y;
+      if (m_col > 0) {
+         wchar_t c = m_numpad[m_row][m_col - 1];
+         if (c != L'\0') {
+            --m_col;
+         }
+      }
       break;
    case DIRECTION_RIGHT:
-      if (m_y < m_numpad[0].size() - 1 && m_numpad[m_x][m_y + 1] != L'\0') ++m_y;
+      if (m_col < m_numpad[0].size() - 1) {
+         wchar_t c = m_numpad[m_row][m_col + 1];
+         if (c != L'\0') {
+            ++m_col;
+         }
+      }
       break;
    }
 }
