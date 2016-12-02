@@ -19,7 +19,7 @@ public:
    ~NumpadPosition();
 
    wchar_t GetCurrentKey();
-   void Move(const std::vector<Direction>& directions);
+   void Move(const DirectionList& directions);
    std::vector<wchar_t> GetCode();
    std::wstring ToString();
 
