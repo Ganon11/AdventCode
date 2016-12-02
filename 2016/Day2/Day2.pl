@@ -3,391 +3,190 @@ use warnings;
 
 use feature "switch";
 
-sub move_one {
+sub MoveOne {
   my ($num, $direction) = @_;
 
   given ($num) {
     when (1) {
       given ($direction) {
-        when ('U') {
-          return 1;
-        }
-        when ('R') {
-          return 2;
-        }
-        when ('L') {
-          return 1;
-        }
-        when ('D') {
-          return 4;
-        }
+        return 1 when ['U', 'L'];
+        return 2 when ['R'];
+        return 4 when ['D'];
       }
     }
     when (2) {
       given ($direction) {
-        when ('U') {
-          return 2;
-        }
-        when ('R') {
-          return 3;
-        }
-        when ('L') {
-          return 1;
-        }
-        when ('D') {
-          return 5;
-        }
+        return 2 when ['U'];
+        return 3 when ['R'];
+        return 1 when ['L'];
+        return 5 when ['D'];
       }
     }
     when (3) {
       given ($direction) {
-        when ('U') {
-          return 3;
-        }
-        when ('R') {
-          return 3;
-        }
-        when ('L') {
-          return 2;
-        }
-        when ('D') {
-          return 6;
-        }
+        return 3 when ['U', 'R'];
+        return 2 when ['L'];
+        return 6 when ['D'];
       }
     }
     when (4) {
       given ($direction) {
-        when ('U') {
-          return 1;
-        }
-        when ('R') {
-          return 5;
-        }
-        when ('L') {
-          return 4;
-        }
-        when ('D') {
-          return 7;
-        }
+        return 1 when ['U'];
+        return 5 when ['R'];
+        return 4 when ['L'];
+        return 7 when ['D'];
       }
     }
     when (5) {
       given ($direction) {
-        when ('U') {
-          return 2;
-        }
-        when ('R') {
-          return 6;
-        }
-        when ('L') {
-          return 4;
-        }
-        when ('D') {
-          return 8;
-        }
+        return 2 when ['U'];
+        return 6 when ['R'];
+        return 4 when ['L'];
+        return 8 when ['D'];
       }
     }
     when (6) {
       given ($direction) {
-        when ('U') {
-          return 3;
-        }
-        when ('R') {
-          return 6;
-        }
-        when ('L') {
-          return 5;
-        }
-        when ('D') {
-          return 9;
-        }
+        return 3 when ['U'];
+        return 6 when ['R'];
+        return 5 when ['L'];
+        return 9 when ['D'];
       }
     }
     when (7) {
       given ($direction) {
-        when ('U') {
-          return 4;
-        }
-        when ('R') {
-          return 8;
-        }
-        when ('L') {
-          return 7;
-        }
-        when ('D') {
-          return 7;
-        }
+        return 7 when ['L', 'D'];
+        return 4 when ['U'];
+        return 8 when ['R'];
       }
     }
     when (8) {
       given ($direction) {
-        when ('U') {
-          return 5;
-        }
-        when ('R') {
-          return 9;
-        }
-        when ('L') {
-          return 7;
-        }
-        when ('D') {
-          return 8;
-        }
+        return 5 when ['U'];
+        return 9 when ['R'];
+        return 7 when ['L'];
+        return 8 when ['D'];
       }
     }
     when (9) {
       given ($direction) {
-        when ('U') {
-          return 6;
-        }
-        when ('R') {
-          return 9;
-        }
-        when ('L') {
-          return 8;
-        }
-        when ('D') {
-          return 9;
-        }
+        return 9 when ['R', 'D'];
+        return 6 when ['U'];
+        return 8 when ['L'];
       }
     }
   }
   return $num;
 }
 
-sub move {
-  my ($num, $directions) = @_;
-
-  my @chars = split(//, $directions);
-  foreach my $direction (@chars) {
-    $num = move_one($num, $direction);
-  }
-  return $num;
-}
-
-sub move_one_letter {
+sub MoveOneLetter {
   my ($num, $direction) = @_;
 
   given ($num) {
     when ('1') {
       given ($direction) {
-        when ('U') {
-          return '1';
-        }
-        when ('R') {
-          return '1';
-        }
-        when ('L') {
-          return '1';
-        }
-        when ('D') {
-          return '3';
-        }
+        return '1' when ['U', 'R', 'L'];
+        return '3' when ['D'];
       }
     }
     when ('2') {
       given ($direction) {
-        when ('U') {
-          return '2';
-        }
-        when ('R') {
-          return '3';
-        }
-        when ('L') {
-          return '2';
-        }
-        when ('D') {
-          return '6';
-        }
+        return '2' when ['U', 'L'];
+        return '3' when ['R'];
+        return '6' when ['D'];
       }
     }
     when ('3') {
       given ($direction) {
-        when ('U') {
-          return '1';
-        }
-        when ('R') {
-          return '4';
-        }
-        when ('L') {
-          return '2';
-        }
-        when ('D') {
-          return '7';
-        }
+        return '1' when ['U'];
+        return '4' when ['R'];
+        return '2' when ['L'];
+        return '7' when ['D'];
       }
     }
     when ('4') {
       given ($direction) {
-        when ('U') {
-          return '4';
-        }
-        when ('R') {
-          return '4';
-        }
-        when ('L') {
-          return '3';
-        }
-        when ('D') {
-          return '8';
-        }
+        return '4' when ['U', 'R'];
+        return '3' when ['L'];
+        return '8' when ['D'];
       }
     }
     when ('5') {
       given ($direction) {
-        when ('U') {
-          return '5';
-        }
-        when ('R') {
-          return '6';
-        }
-        when ('L') {
-          return '5';
-        }
-        when ('D') {
-          return '5';
-        }
+        return '5' when ['U', 'L', 'D'];
+        return '6' when ['R'];
       }
     }
     when ('6') {
       given ($direction) {
-        when ('U') {
-          return '2';
-        }
-        when ('R') {
-          return '7';
-        }
-        when ('L') {
-          return '5';
-        }
-        when ('D') {
-          return 'A';
-        }
+        return '2' when ['U'];
+        return '7' when ['R'];
+        return '5' when ['L'];
+        return 'A' when ['D'];
       }
     }
     when ('7') {
       given ($direction) {
-        when ('U') {
-          return '3';
-        }
-        when ('R') {
-          return '8';
-        }
-        when ('L') {
-          return '6';
-        }
-        when ('D') {
-          return 'B';
-        }
+        return '3' when ['U'];
+        return '8' when ['R'];
+        return '6' when ['L'];
+        return 'B' when ['D'];
       }
     }
     when ('8') {
       given ($direction) {
-        when ('U') {
-          return '4';
-        }
-        when ('R') {
-          return '9';
-        }
-        when ('L') {
-          return '7';
-        }
-        when ('D') {
-          return 'C';
-        }
+        return '4' when ['U'];
+        return '9' when ['R'];
+        return '7' when ['L'];
+        return 'C' when ['D'];
       }
     }
     when ('9') {
       given ($direction) {
-        when ('U') {
-          return '9';
-        }
-        when ('R') {
-          return '9';
-        }
-        when ('L') {
-          return '8';
-        }
-        when ('D') {
-          return '9';
-        }
+        return '9' when ['U', 'R', 'D'];
+        return '8' when ['L'];
       }
     }
     when ('A') {
       given ($direction) {
-        when ('U') {
-          return '6';
-        }
-        when ('R') {
-          return 'B';
-        }
-        when ('L') {
-          return 'A';
-        }
-        when ('D') {
-          return 'A';
-        }
+        return 'A' when ['L', 'D'];
+        return '6' when ['U'];
+        return 'B' when ['R'];
       }
     }
     when ('B') {
       given ($direction) {
-        when ('U') {
-          return '7';
-        }
-        when ('R') {
-          return 'C';
-        }
-        when ('L') {
-          return 'A';
-        }
-        when ('D') {
-          return 'D';
-        }
+        return '7' when ['U'];
+        return 'C' when ['R'];
+        return 'A' when ['L'];
+        return 'D' when ['D'];
       }
     }
     when ('C') {
       given ($direction) {
-        when ('U') {
-          return '8';
-        }
-        when ('R') {
-          return 'C';
-        }
-        when ('L') {
-          return 'B';
-        }
-        when ('D') {
-          return 'C';
-        }
+        return 'C' when ['R', 'D'];
+        return '8' when ['U'];
+        return 'B' when ['L'];
       }
     }
     when ('D') {
       given ($direction) {
-        when ('U') {
-          return 'B';
-        }
-        when ('R') {
-          return 'D';
-        }
-        when ('L') {
-          return 'D';
-        }
-        when ('D') {
-          return 'D';
-        }
+        return 'D' when ['R', 'L', 'D'];
+        return 'B' when ['U'];
       }
     }
   }
   return $num;
 }
 
-sub move_letter {
-  my ($num, $directions) = @_;
+sub Move {
+  my ($num, $directions, $subref) = @_;
 
   my @chars = split(//, $directions);
   foreach my $direction (@chars) {
-    $num = move_one_letter($num, $direction);
+    $num = &$subref($num, $direction);
   }
+
   return $num;
 }
 
@@ -402,15 +201,20 @@ close($fh);
 
 my $num = 5;
 
+print "\nFirst code: ";
+
 foreach my $line (@lines) {
-  $num = move($num, $line);
+  my $ref = \&MoveOne;
+  $num = Move($num, $line, $ref);
   print "$num";
 }
 
 print "\nNew code: ";
 
 foreach my $line (@lines) {
-  $num = move_letter($num, $line);
+  my $ref = \&MoveOneLetter;
+  $num = Move($num, $line, $ref);
   print "$num";
 }
+
 print "\n";
