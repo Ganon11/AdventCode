@@ -150,9 +150,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Direction.h" />
     <ClInclude Include="Numpad.h" />
     <ClInclude Include="stdafx.h" />
