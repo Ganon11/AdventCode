@@ -28,6 +28,12 @@ sub IsGoodTriangle {
   return 1;
 }
 
+sub DoLine {
+  my $line = shift;
+  my @sides = ParseLengths($line);
+  return IsGoodTriangle(@sides);
+}
+
 my $inputfile = shift;
 
 if (!defined($inputfile)) {
@@ -38,21 +44,18 @@ open(my $fh, '<', $inputfile) or die "Couldn't open $inputfile: $!";
 chomp(my @lines = <$fh>);
 close($fh);
 
+my @results = map { DoLine($_) } @lines;
+my $sum = eval join('+', @results);
+print "Part 1: $sum good triangles\n";
+
 my @verticalTriangles = ();
 
-my $goodTriangles = 0;
 foreach my $line (@lines) {
   my @sides = ParseLengths($line);
   push (@verticalTriangles, \@sides);
-
-  if (1 == IsGoodTriangle(@sides)) {
-    $goodTriangles = $goodTriangles + 1;
-  }
 }
 
-print "There are $goodTriangles good triangles.\n";
-
-$goodTriangles = 0;
+my $goodTriangles = 0;
 my $len = @verticalTriangles / 3;
 
 for (my $i = 0; $i < $len; ++$i) {
@@ -66,4 +69,4 @@ for (my $i = 0; $i < $len; ++$i) {
   }
 }
 
-print "No, wait; there are $goodTriangles good triangles.\n";
+print "Part 2: $goodTriangles good triangles.\n";
