@@ -1,8 +1,6 @@
 use strict;
 use warnings;
 
-use Data::Dumper;
-
 sub Trim {
   my $s = shift;
   $s =~ s/^\s+|\s+$//g;
