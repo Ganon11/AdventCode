@@ -111,7 +111,8 @@ $RECYCLE.BIN/
 *.user
 *.userosscache
 *.sln.docstates
-*.vcxproj.filters
+# Actually having the .filters file is real nice.
+# *.vcxproj.filters
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
