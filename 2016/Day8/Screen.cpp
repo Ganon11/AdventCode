@@ -10,6 +10,7 @@ Screen::Screen(const size_t rows, const size_t cols) : m_rows{ rows }, m_cols{ c
 }
 
 void Screen::Print() const {
+   system("cls");
    for (size_t x = 0; x < m_rows; ++x) {
       for (size_t y = 0; y < m_cols; ++y) {
          if (m_screen[x][y]) {
@@ -35,22 +36,22 @@ size_t Screen::PixelCount() const {
 
 void Screen::FollowInstruction(const std::shared_ptr<Instruction> instruction) {
    switch (instruction->GetType()) {
-   case InstructionType::RECT: {
+   case InstructionType::INSTRUCTION_DRAWRECTANGLE: {
       std::shared_ptr<DrawRectangleInstruction> rectangleInstruction{ std::static_pointer_cast<DrawRectangleInstruction>(instruction) };
       DrawRectangle(rectangleInstruction->GetWidth(), rectangleInstruction->GetHeight());
       break;
    }
-   case InstructionType::ROW: {
+   case InstructionType::INSTRUCTION_ROTATEROW: {
       std::shared_ptr<RotateRowInstruction> rowInstruction{ std::static_pointer_cast<RotateRowInstruction>(instruction) };
       RotateRow(rowInstruction->GetRow(), rowInstruction->GetShift());
       break;
    }
-   case InstructionType::COLUMN: {
+   case InstructionType::INSTRUCTION_ROTATECOLUMN: {
       std::shared_ptr<RotateColInstruction> colInstruction{ std::static_pointer_cast<RotateColInstruction>(instruction) };
       RotateColumn(colInstruction->GetCol(), colInstruction->GetShift());
       break;
    }
-   case InstructionType::NONE:
+   case InstructionType::INSTRUCTION_NONE:
    default:
       std::wcerr << L"Unknown instruction." << std::endl;
    }
@@ -59,6 +60,8 @@ void Screen::FollowInstruction(const std::shared_ptr<Instruction> instruction) {
 void Screen::FollowInstructionList(const InstructionList& list) {
    for (const auto& instruction : list) {
       FollowInstruction(instruction);
+      Print();
+      Sleep(50);
    }
 }
 
