@@ -5,10 +5,10 @@
 #include <vector>
 
 enum InstructionType {
-   NONE = 0,
-   RECT = 1,
-   ROW = 2,
-   COLUMN = 3
+   INSTRUCTION_NONE = 0,
+   INSTRUCTION_DRAWRECTANGLE = 1,
+   INSTRUCTION_ROTATEROW = 2,
+   INSTRUCTION_ROTATECOLUMN = 3
 };
 
 class Instruction abstract {

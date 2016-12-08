@@ -13,7 +13,7 @@ InstructionType Instruction::GetType() const {
 }
 
 DrawRectangleInstruction::DrawRectangleInstruction(const int width, const int height)
-   : Instruction{ InstructionType::RECT },
+   : Instruction{ InstructionType::INSTRUCTION_DRAWRECTANGLE },
    m_width{ width }, m_height{ height }
 { }
 
@@ -28,7 +28,7 @@ int DrawRectangleInstruction::GetHeight() const {
 }
 
 RotateRowInstruction::RotateRowInstruction(const int row, const int shift)
-   : Instruction{ InstructionType::ROW },
+   : Instruction{ InstructionType::INSTRUCTION_ROTATEROW },
    m_row{ row }, m_shift{ shift }
 { }
 
@@ -43,7 +43,7 @@ int RotateRowInstruction::GetShift() const {
 }
 
 RotateColInstruction::RotateColInstruction(const int col, const int shift)
-   : Instruction{ InstructionType::COLUMN },
+   : Instruction{ InstructionType::INSTRUCTION_ROTATECOLUMN },
    m_col{ col }, m_shift{ shift }
 { }
 
