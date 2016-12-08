@@ -6,6 +6,7 @@ use Time::HiRes qw(usleep);
 
 my $ROWS = 6;
 my $COLUMNS = 50;
+my $SLEEP = 1000;
 
 sub Rectangle {
   my ($screenref, $a, $b) = @_;
@@ -22,17 +23,13 @@ sub Rectangle {
 sub RotateRow {
   my ($screenref, $y, $a) = @_;
 
-  my @values = ();
-  for (my $x = 0; $x < $COLUMNS; ++$x) {
-    push(@values, @{@$screenref[$x]}[$y]);
-  }
 
   for (my $i = 0; $i < $a; ++$i) {
-    unshift(@values, pop(@values));
-  }
-
-  for (my $x = 0; $x < $COLUMNS; ++$x) {
-    @{@$screenref[$x]}[$y] = $values[$x];
+    my $tmp = @{@$screenref[-1]}[$y];
+    for (my $x = $COLUMNS - 1; $x > 0; --$x) {
+      @{@$screenref[$x]}[$y] = @{@$screenref[$x - 1]}[$y];
+    }
+    @{@$screenref[0]}[$y] = $tmp;
   }
 
   PrintScreen($screenref);
@@ -41,17 +38,12 @@ sub RotateRow {
 sub RotateColumn {
   my ($screenref, $x, $a) = @_;
 
-  my @values = ();
-  for (my $y = 0; $y < $ROWS; ++$y) {
-    push(@values, @{@$screenref[$x]}[$y]);
-  }
-
   for (my $i = 0; $i < $a; ++$i) {
-    unshift(@values, pop(@values));
-  }
-
-  for (my $y = 0; $y < $ROWS; ++$y) {
-    @{@$screenref[$x]}[$y] = $values[$y];
+    my $tmp = @{@$screenref[$x]}[-1];
+    for (my $y = $ROWS - 1; $y > 0; --$y) {
+      @{@$screenref[$x]}[$y] = @{@$screenref[$x]}[$y - 1];
+    }
+    @{@$screenref[$x]}[0] = $tmp;
   }
 
   PrintScreen($screenref);
@@ -78,8 +70,7 @@ sub PrintScreen {
     }
   }
   $scr->at($ROWS, 0);
-
-  usleep(50000);
+  usleep($SLEEP);
 
   return $total;
 }
