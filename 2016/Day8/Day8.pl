@@ -1,7 +1,8 @@
 use strict;
 use warnings;
 
-use Data::Dumper;
+use Term::Screen::Uni;
+use Time::HiRes qw(usleep);
 
 my $ROWS = 6;
 my $COLUMNS = 50;
@@ -14,6 +15,8 @@ sub Rectangle {
       @{@$screenref[$x]}[$y] = 1;
     }
   }
+
+  PrintScreen($screenref);
 }
 
 sub RotateRow {
@@ -31,6 +34,8 @@ sub RotateRow {
   for (my $x = 0; $x < $COLUMNS; ++$x) {
     @{@$screenref[$x]}[$y] = $values[$x];
   }
+
+  PrintScreen($screenref);
 }
 
 sub RotateColumn {
@@ -48,35 +53,33 @@ sub RotateColumn {
   for (my $y = 0; $y < $ROWS; ++$y) {
     @{@$screenref[$x]}[$y] = $values[$y];
   }
+
+  PrintScreen($screenref);
 }
 
 sub PrintScreen {
   my $screenref = shift;
-  for (my $y = 0; $y < $ROWS; ++$y) {
-    for (my $x = 0; $x < $COLUMNS; ++$x) {
-      my $val = @{@$screenref[$x]}[$y];
-      if ($val == 1) {
-        print '#';
-      } else {
-        print '.';
-      }
-    }
-    print "\n";
-  }
-}
-
-sub PixelCount {
-  my $screenref = shift;
   my $total = 0;
 
+  my $scr = Term::Screen::Uni->new();
+  die "Something is wrong :(\n" unless ($scr);
+
+  $scr->clrscr();
+  $scr->rows($ROWS);
+  $scr->cols($COLUMNS);
   for (my $y = 0; $y < $ROWS; ++$y) {
     for (my $x = 0; $x < $COLUMNS; ++$x) {
       my $val = @{@$screenref[$x]}[$y];
       if ($val == 1) {
+        $scr->at($y, $x);
+        $scr->puts('#');
         $total = $total + 1;
       }
     }
   }
+  $scr->at($ROWS, 0);
+
+  usleep(50000);
 
   return $total;
 }
@@ -113,7 +116,5 @@ foreach my $command (@lines) {
   }
 }
 
-print "Final screen reads as follows:\n";
-PrintScreen(\@screen);
-my $total = PixelCount(\@screen);
+my $total = PrintScreen(\@screen);
 print "Total lit pixels: $total\n";
