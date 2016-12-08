@@ -23,7 +23,6 @@ sub Rectangle {
 sub RotateRow {
   my ($screenref, $y, $a) = @_;
 
-
   for (my $i = 0; $i < $a; ++$i) {
     my $tmp = @{@$screenref[-1]}[$y];
     for (my $x = $COLUMNS - 1; $x > 0; --$x) {
