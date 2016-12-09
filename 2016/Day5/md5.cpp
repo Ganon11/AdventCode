@@ -355,11 +355,13 @@ std::string MD5::hexdigest() const
 #endif
 
 //////////////////////////////
-
+#pragma warning(push)
+#pragma warning(disable: 4717)
 std::ostream& operator<<(std::ostream& out, MD5 md5)
 {
    return out << md5.hexdigest();
 }
+#pragma warning(pop)
 
 //////////////////////////////
 
