@@ -10,10 +10,8 @@ sub DecompressV1 {
   } elsif ($compressedtext =~ m/(\((\d+)x(\d+)\))/) {
     my ($bracket, $size, $repeat) = ($1, $2, $3);
     my $i = $pos + length($bracket);
-    my $leadingStrLen = length(substr($compressedtext, 0, $pos));
-    my $textToRepeat = substr($compressedtext, $i, $size);
     my $remainingText = substr($compressedtext, $i + $size);
-    return $leadingStrLen + (length($textToRepeat) * $repeat) + DecompressV1($remainingText);
+    return $pos + ($size * $repeat) + DecompressV1($remainingText);
   } else {
     return 0;
   }
@@ -28,10 +26,9 @@ sub DecompressV2 {
   } elsif ($compressedtext =~ m/(\((\d+)x(\d+)\))/) {
     my ($bracket, $size, $repeat) = ($1, $2, $3);
     my $i = $pos + length($bracket);
-    my $leadingStrLen = length(substr($compressedtext, 0, $pos));
     my $textToRepeat = substr($compressedtext, $i, $size);
     my $remainingText = substr($compressedtext, $i + $size);
-    return $leadingStrLen + (DecompressV2($textToRepeat) * $repeat) + DecompressV2($remainingText);
+    return $pos + (DecompressV2($textToRepeat) * $repeat) + DecompressV2($remainingText);
   } else {
     return 0;
   }
