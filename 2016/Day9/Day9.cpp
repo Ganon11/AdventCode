@@ -62,8 +62,7 @@ template <> size_t Decompress<2>(const std::wstring& input) {
       std::wstring bracket{ m[0] };
       size_t size{ static_cast<size_t>(_wtoi(m[1].str().c_str())) }, repeat{ static_cast<size_t>(_wtoi(m[2].str().c_str())) };
       size_t index{ pos + bracket.length() };
-      std::wstring textToRepeat{ input.substr(index, size) };
-      return pos + (Decompress<2>(textToRepeat) * repeat) + Decompress<2>(input.substr(index + size));
+      return pos + (Decompress<2>(input.substr(index, size)) * repeat) + Decompress<2>(input.substr(index + size));
    }
 }
 
