@@ -66,15 +66,15 @@ void Screen::FollowInstructionList(const InstructionList& list) {
 }
 
 void Screen::DrawRectangle(const int width, const int height) {
-   for (size_t x = 0; x < height; ++x) {
-      for (size_t y = 0; y < width; ++y) {
+   for (size_t x = 0; x < static_cast<size_t>(height); ++x) {
+      for (size_t y = 0; y < static_cast<size_t>(width); ++y) {
          m_screen[x][y] = true;
       }
    }
 }
 
 void Screen::RotateRow(const int row, const int shift) {
-   for (size_t a = 0; a < shift; ++a) {
+   for (size_t a = 0; a < static_cast<size_t>(shift); ++a) {
       auto& r = m_screen[row];
       bool tmp = *(r.rbegin());
       for (size_t y = m_cols - 1; y > 0; --y) {
@@ -85,7 +85,7 @@ void Screen::RotateRow(const int row, const int shift) {
 }
 
 void Screen::RotateColumn(const int column, const int shift) {
-   for (size_t a = 0; a < shift; ++a) {
+   for (size_t a = 0; a < static_cast<size_t>(shift); ++a) {
       bool tmp = (*m_screen.rbegin())[column];
       for (size_t x = m_rows - 1; x > 0; --x) {
          m_screen[x][column] = m_screen[x - 1][column];
