@@ -52,7 +52,7 @@ int wmain(int argc, wchar_t *argv[]) {
 
       unsigned int moveCount{ state.GetMoveCount() };
       if (state.IsFinalState()) {
-         std::wcout << "Found it in " << moveCount << L" moves.";
+         std::wcout << "Found it in " << moveCount << L" moves." << std::endl;
          break;
       }
 

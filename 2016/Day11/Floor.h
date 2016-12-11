@@ -42,7 +42,8 @@ namespace std {
          for (const Object& o : objects) {
             str << o.GetType() << o.GetMaterial() << L" ";
          }
-         return std::hash<std::wstring>()(str.str());
+         std::wstring floorString{ str.str() };
+         return std::hash<std::wstring>()(floorString);
       }
    };
 
