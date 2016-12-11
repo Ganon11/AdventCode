@@ -17,12 +17,6 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Chip.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Generator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
