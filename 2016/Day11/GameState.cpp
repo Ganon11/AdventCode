@@ -87,10 +87,11 @@ std::vector<GameState> GameState::GetMoves() const {
    objectCombinations.insert(std::end(objectCombinations), std::begin(twoObjectCombinations), std::end(twoObjectCombinations));
 
    for (const std::vector<Object>& objectsToRemove : objectCombinations) {
-      if (std::end(objectsToRemove) == std::find_if(std::begin(objectsToRemove), std::end(objectsToRemove), [](const Object& o) { return o.GetType() == OBJECT_CHIP; })) {
+      // CAN travel without a chip.
+      /*if (std::end(objectsToRemove) == std::find_if(std::begin(objectsToRemove), std::end(objectsToRemove), [](const Object& o) { return o.GetType() == OBJECT_CHIP; })) {
          // Can't travel without a chip.
          continue;
-      }
+      }*/
 
       Floor newCurrentFloor{ m_floorState[m_currentFloor].RemoveObjects(objectsToRemove) };
       if (!newCurrentFloor.IsValid()) {
