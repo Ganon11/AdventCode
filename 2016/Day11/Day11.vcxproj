@@ -143,6 +143,7 @@
     <ClInclude Include="Floor.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="ObjectPair.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -151,6 +152,7 @@
     <ClCompile Include="Floor.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="ObjectPair.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
