@@ -10,7 +10,7 @@
 #include <unordered_set>
 #include <vector>
 
-std::vector<Floor> ConstructFloors(const std::wstring& inputFile) {
+FloorState ConstructFloors(const std::wstring& inputFile) {
    std::vector<Floor> floors;
 
    std::wifstream input{ inputFile };
@@ -35,7 +35,44 @@ int wmain(int argc, wchar_t *argv[]) {
       inputFile = L"Sample.txt";
    }
 
-   std::vector<Floor> initialFloors = ConstructFloors(inputFile);
+   //GameState test1{}
+   FloorState floor1 = {
+      Floor{ 0, {
+         Object{ OBJECT_GENERATOR, L"H" }
+      } },
+      Floor{ 1,{
+         Object{ OBJECT_CHIP, L"H" }
+      } },
+      Floor{ 2,{
+         Object{ OBJECT_CHIP, L"L" },
+         Object{ OBJECT_GENERATOR, L"L"}
+      } },
+      Floor{ 3, {} },
+   };
+
+   FloorState floor2 = {
+      Floor{ 0,{
+         Object{ OBJECT_GENERATOR, L"L" }
+      } },
+      Floor{ 1,{
+         Object{ OBJECT_CHIP, L"L" }
+      } },
+      Floor{ 2,{
+         Object{ OBJECT_CHIP, L"H" },
+         Object{ OBJECT_GENERATOR, L"H" }
+      } },
+      Floor{ 3,{} },
+   };
+
+   GameState state1{ 0, floor1, 10 }, state2{ 0, floor2, 10 };
+   if (state1 == state2) {
+      std::wcout << L"Eq." << std::endl;
+   }
+   else {
+      std::wcout << L"Neq." << std::endl;
+   }
+
+   FloorState initialFloors = ConstructFloors(inputFile);
    std::unordered_set<GameState> seenStates;
 
    GameState beginningState{ 0, initialFloors, 0 };
