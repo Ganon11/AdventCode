@@ -17,7 +17,7 @@ my %outputs = (); # Hash of output bin number => list of outputted values
 foreach my $line (@lines) {
   $line =~ s/\R//g; # Trim newlines
   if ($line =~ m/^value (\d+) goes to bot (\d+)$/) {
-    my ($val, $bot) = ($1, $2);
+    my ($val, $bot) = (int($1), int($2));
     if (!defined($bots{$bot})) {
       $bots{$bot} = [$val];
     } else {
@@ -29,7 +29,7 @@ foreach my $line (@lines) {
       }
     }
   } elsif ($line =~ m/^bot (\d+) gives low to (\w+) (\d+) and high to (\w+) (\d+)$/) {
-    my ($source, $lowDestType, $lowDestNum, $highDestType, $highDestNum) = ($1, $2, $3, $4, $5);
+    my ($source, $lowDestType, $lowDestNum, $highDestType, $highDestNum) = (int($1), $2, int($3), $4, int($5));
     if (!defined($commands{$source})) {
       $commands{$source} = [$lowDestType, $lowDestNum, $highDestType, $highDestNum];
     } else {
@@ -45,7 +45,7 @@ while ($pendingCommandsLen > 0) {
   delete($bots{$source});
   my ($low, $high) = (min(@vals), max(@vals));
 
-  if ($low eq '17' && $high eq '61') {
+  if ($low == 17 && $high == 61) {
     print "We found it: bot $source\n";
     #last;
   }
@@ -94,7 +94,7 @@ while ($pendingCommandsLen > 0) {
 print "Outputs: ";
 print Dumper \%outputs;
 
-if (defined($outputs{'0'}) && defined($outputs{'1'}) && defined($outputs{'2'})) {
-  my $result = int($outputs{'0'}) * int($outputs{'1'}) * int($outputs{'2'});
+if (defined($outputs{0}) && defined($outputs{1}) && defined($outputs{2})) {
+  my $result = int($outputs{0}) * int($outputs{1}) * int($outputs{2});
   print "Result: $result\n";
 }
