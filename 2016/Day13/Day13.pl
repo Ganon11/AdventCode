@@ -1,6 +1,9 @@
 use strict;
 use warnings;
 
+use Term::Screen::Uni;
+use Time::HiRes qw(usleep);
+
 # Lovingly stolen from http://docstore.mik.ua/orelly/perl/cookbook/ch02_05.htm
 sub dec2bin {
     my $str = unpack("B32", pack("N", shift));
@@ -34,8 +37,8 @@ sub SeenPosition {
 }
 
 my $favoriteNumber = 1362; # Puzzle Input
+my ($destX, $destY) = (31, 39); # Puzzle
 my ($startingX, $startingY) = (1, 1);
-my ($destX, $destY) = (31, 39);
 
 my $part = shift;
 if (!defined($part)) {
@@ -45,21 +48,41 @@ if (!defined($part)) {
 my @queue = ([$startingX, $startingY, 0]); # State is (x, y) and steps taken
 my @seenPositions;
 
+my $scr = Term::Screen::Uni->new();
+die "Something is wrong :(" unless ($scr);
+$scr->clrscr();
+$scr->at($destY, $destX);
+$scr->puts('X'); # X marks the spot!
+
+my $maxY = $destY;
+
 while (0 < scalar(@queue)) {
   my $state = shift(@queue);
   my ($x, $y, $steps) = @$state;
 
+  usleep(10000);
+
+  if ($y > $maxY) {
+    $maxY = $y;
+  }
+
   # Don't enter the void
-  next if ($x < 0 || $y < 0);
+  #next if ($x < 0 || $y < 0);
 
   # If we're at the destination, we're done!
   if ($part eq '1' && $x == $destX && $y == $destY) {
+    $scr->at($maxY + 2, 0);
     print "Found it in $steps steps\n";
     last;
   }
 
   # More than 50 steps away
-  last if ($part eq '2' && $steps > 50);
+  if ($part eq '2' && $steps > 50) {
+    $scr->at($maxY + 2, 0);
+    my $unique = scalar(@seenPositions);
+    print "Visited $unique locations\n";
+    last;
+  }
 
   # Don't revisit places
   next if (1 == SeenPosition($x, $y, \@seenPositions));
@@ -67,26 +90,38 @@ while (0 < scalar(@queue)) {
   # Add current position to the cache
   push(@seenPositions, [$x, $y]);
 
-  # Move up
-  if (CoordinateIsOpen($x, $y - 1, $favoriteNumber)) {
-    push(@queue, [$x, $y - 1, $steps + 1]);
-  }
+  $scr->at($y, $x);
+  $scr->puts('.');
 
   # Move down
   if (CoordinateIsOpen($x, $y + 1, $favoriteNumber)) {
     push(@queue, [$x, $y + 1, $steps + 1]);
-  }
-
-  # Move left
-  if (CoordinateIsOpen($x - 1, $y, $favoriteNumber)) {
-    push(@queue, [$x - 1, $y, $steps + 1]);
+  } else {
+    $scr->at($y + 1, $x);
+    $scr->puts('#');
   }
 
   # Move right
   if (CoordinateIsOpen($x + 1, $y, $favoriteNumber)) {
     push(@queue, [$x + 1, $y, $steps + 1]);
+  } else {
+    $scr->at($y, $x + 1);
+    $scr->puts('#');
+  }
+
+  # Move up
+  if ($y > 0 && CoordinateIsOpen($x, $y - 1, $favoriteNumber)) {
+    push(@queue, [$x, $y - 1, $steps + 1]);
+  } else {
+    $scr->at($y - 1, $x);
+    $scr->puts('#');
+  }
+
+  # Move left
+  if ($x > 0 && CoordinateIsOpen($x - 1, $y, $favoriteNumber)) {
+    push(@queue, [$x - 1, $y, $steps + 1]);
+  } else {
+    $scr->at($y, $x - 1);
+    $scr->puts('#');
   }
 }
-
-my $unique = scalar(@seenPositions);
-print "Visited $unique locations\n";
