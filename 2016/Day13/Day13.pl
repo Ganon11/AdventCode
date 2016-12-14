@@ -47,6 +47,7 @@ if (!defined($part)) {
 
 my @queue = ([$startingX, $startingY, 0]); # State is (x, y) and steps taken
 my @seenPositions;
+my $finalSteps;
 
 my $scr = Term::Screen::Uni->new();
 die "Something is wrong :(" unless ($scr);
@@ -54,13 +55,17 @@ $scr->clrscr();
 $scr->at($destY, $destX);
 $scr->puts('X'); # X marks the spot!
 
-my $maxY = $destY;
+my ($maxX, $maxY) = ($destX, $destY);
 
 while (0 < scalar(@queue)) {
   my $state = shift(@queue);
   my ($x, $y, $steps) = @$state;
 
   usleep(10000);
+
+  if ($x > $maxX) {
+    $maxX = $x;
+  }
 
   if ($y > $maxY) {
     $maxY = $y;
@@ -71,16 +76,12 @@ while (0 < scalar(@queue)) {
 
   # If we're at the destination, we're done!
   if ($part eq '1' && $x == $destX && $y == $destY) {
-    $scr->at($maxY + 2, 0);
-    print "Found it in $steps steps\n";
+    $finalSteps = $steps;
     last;
   }
 
   # More than 50 steps away
   if ($part eq '2' && $steps > 50) {
-    $scr->at($maxY + 2, 0);
-    my $unique = scalar(@seenPositions);
-    print "Visited $unique locations\n";
     last;
   }
 
@@ -124,4 +125,26 @@ while (0 < scalar(@queue)) {
     $scr->at($y, $x - 1);
     $scr->puts('#');
   }
+}
+
+for (my $x = 0; $x <= $maxX + 1; ++$x) {
+  for (my $y = 0; $y <= $maxY + 1; ++$y) {
+    $scr->at($y, $x);
+    if ($x == $destX && $y == $destY) {
+      $scr->puts('X');
+    } elsif ($x > 0 && $y > 0 && CoordinateIsOpen($x, $y, $favoriteNumber)) {
+      $scr->puts('.');
+    } else {
+      $scr->puts('#');
+    }
+  }
+}
+
+$scr->at($maxY + 5, 0);
+if ($part eq '1') {
+  print "Reached it in $finalSteps steps\n";
+}
+else {
+  my $unique = scalar(@seenPositions);
+  print "Visited $unique locations\n";
 }
