@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -17,4 +18,5 @@ private:
    std::vector<bool> m_quintuples;
 };
 
-typedef std::vector<HashCacheNode> HashCache;
+typedef std::shared_ptr<HashCacheNode> NodePtr;
+typedef std::vector<NodePtr> HashCache;
