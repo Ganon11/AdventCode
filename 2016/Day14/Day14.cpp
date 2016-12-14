@@ -13,14 +13,14 @@ int main() {
    size_t index = 0;
    unsigned int totalKeys = 0;
    HashCache cache;
-   cache.push_back(HashCacheNode{ salt, index });
+   cache.push_back(std::make_shared<HashCacheNode>(salt, index));
 
    while (totalKeys < 64) {
       ++index;
       size_t cacheSize{ cache.size() };
-      HashCacheNode node;
+      NodePtr node;
       if (cacheSize == 0) {
-         node = HashCacheNode(salt, index);
+         node = std::make_shared<HashCacheNode>(salt, index);
       }
       else {
          node = cache[0];
@@ -28,15 +28,15 @@ int main() {
          --cacheSize;
       }
 
-      if (node.HasTriple()) {
-         char triple{ node.GetTriple() };
+      if (node->HasTriple()) {
+         char triple{ node->GetTriple() };
          for (size_t j = 0; j < 1000; ++j) {
             if (j >= cacheSize) {
-               cache.push_back(HashCacheNode(salt, index + j + 1));
+               cache.push_back(std::make_shared<HashCacheNode>(salt, index + j + 1));
             }
-            HashCacheNode quintupleNode{ cache[j] };
 
-            if (quintupleNode.HasQuintuple(triple)) {
+            NodePtr quintupleNode{ cache[j] };
+            if (quintupleNode->HasQuintuple(triple)) {
                ++totalKeys;
                break;
             }
