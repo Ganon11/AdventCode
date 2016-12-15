@@ -34,20 +34,45 @@ foreach my $line (<$fh>) {
 }
 close($fh);
 
+my $numDiscs = scalar(@discs);
 my $t = 0;
 while (1) {
-  last if (1 == CapsuleWillFall($t, \@discs));
-  ++$t;
+  my $increment = 1;
+  my $works = 1;
+  for (my $i = 0; $i < $numDiscs; ++$i) {
+    if ((($discs[$i][1] + $t + $i + 1) % $discs[$i][0]) != 0) {
+      $works = 0;
+    }
+    else {
+      $increment = $increment * $discs[$i][0];
+    }
+  }
+
+  last if (1 == $works);
+
+  $t = $t + $increment;
 }
 
 print "First capsule falls with t = $t\n";
 
 push(@discs, [11, 0]);
-
+$numDiscs = scalar(@discs);
 $t = 0;
 while (1) {
-  last if (1 == CapsuleWillFall($t, \@discs));
-  ++$t;
+  my $increment = 1;
+  my $works = 1;
+  for (my $i = 0; $i < $numDiscs; ++$i) {
+    if ((($discs[$i][1] + $t + $i + 1) % $discs[$i][0]) != 0) {
+      $works = 0;
+    }
+    else {
+      $increment = $increment * $discs[$i][0];
+    }
+  }
+
+  last if (1 == $works);
+
+  $t = $t + $increment;
 }
 
 print "Second capsule falls with t = $t\n";
