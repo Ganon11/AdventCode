@@ -3,7 +3,7 @@
 #include "md5.h"
 #include <sstream>
 
-//#define PART2
+#define PART2
 
 namespace {
    size_t ConvertCharToIndex(const char c) {

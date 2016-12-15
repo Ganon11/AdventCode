@@ -1,5 +1,6 @@
 #pragma once
 
+#include <deque>
 #include <memory>
 #include <string>
 #include <vector>
@@ -19,4 +20,5 @@ private:
 };
 
 typedef std::shared_ptr<HashCacheNode> NodePtr;
-typedef std::vector<NodePtr> HashCache;
+//typedef std::vector<NodePtr> HashCache;
+typedef std::deque<NodePtr> HashCache;
