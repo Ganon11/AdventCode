@@ -2,44 +2,23 @@ use strict;
 use warnings;
 
 sub ExpandString {
-  my $a = shift;
-  my $desiredLength = shift;
-  my $currentLength = length($a);
+  my ($data, $fillLength) = @_;
 
-  if ($currentLength >= $desiredLength) {
-    return substr($a, 0, $desiredLength);
+  while (length($data) < $fillLength) {
+    $data = $data . '0' . reverse($data =~ tr/01/10/r) 
   }
 
-  print "current: $currentLength\n";
-  my $b = join('', reverse(split(//, $a)));
-  $b =~ tr/01/10/;
-
-  return ExpandString($a . '0' . $b, $desiredLength);
+  return substr($data, 0, $fillLength);
 }
 
 sub CalculateChecksum {
-  my $data = shift;
-
-  my @pairs = ($data =~ m/([01]{2})/g);
-  my $checksum = '';
-
-  foreach my $pair (@pairs) {
-    my ($c1, $c2) = split(//, $pair);
-    if ($c1 eq $c2) {
-      $checksum = $checksum . '1';
-    }
-    else {
-      $checksum = $checksum . '0';
-    }
-  }
-
-  my $len = length($checksum);
-  if (1 == $len % 2) {
-    return $checksum;
-  }
-  else {
-    return CalculateChecksum($checksum);
-  }
+  my ($data, $fill_length) = @_;
+  my $bin = sprintf('%b', $fill_length);
+  $bin =~ /(10+)$/;
+  my $chunk_size = oct("0b$1");
+  my $checksum;
+  $checksum .= tr/1// & 1 ^ 1 while ($_ = substr($data, 0, $chunk_size, ''));
+  return $checksum;
 }
 
 my $inputfile = shift;
@@ -56,7 +35,7 @@ $fillLength =~ s/\R//g;
 $data =~ s/\R//g;
 
 my $dragonData = ExpandString($data, $fillLength);
-my $checksum = CalculateChecksum($dragonData);
+my $checksum = CalculateChecksum($dragonData, $fillLength);
 
 # print "Data: '$dragonData', checksum '$checksum'\n";
 print "Checksum: '$checksum'\n";
