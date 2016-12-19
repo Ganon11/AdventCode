@@ -1,31 +1,34 @@
 use strict;
 use warnings;
 
-sub GetElvesInPlay {
-  my $aref = shift;
-  return grep { $_ > 0 } @$aref;
+sub WinnerPart1 {
+  my $n = shift;
+
+  # Find biggest power of 2 that fits into n
+  my $t = 1;
+  while (2 * $t <= $n) {
+    $t *= 2;
+  }
+
+  return 1 if $n == $t; # For a power of 2, answer is 1
+  return (2 * ($n - $t) + 1);
 }
 
-sub DoRoundOfPlay {
-  my $aref = shift;
-  my $len = scalar(@$aref);
-  for (my $i = 0; $i < $len; ++$i) {
-    # Skip elves with no presents.
-    next if ($aref->[$i] == 0);
+sub WinnerPart2 {
+  my $n = shift;
 
-    # Find the next elf with presents
-    for (my $j = 1; $j < $len; ++$j) {
-      my $index = ($i + $j) % $len;
-
-      # Skip elves with no presents
-      next if ($aref->[$index] == 0);
-
-      # Take all presents from elf at index
-      $aref->[$i] = $aref->[$i] + $aref->[$index];
-      $aref->[$index] = 0;
-      last;
-    }
+  # Find biggest power of 3 that fits into n
+  my $t = 1;
+  while (3 * $t <= $n) {
+    $t *= 3;
   }
+
+  return $n if $n == $t; # For a power of 3, answer is n
+
+  # Need to compare n to t and 3t
+  my $midpoint = ((2 * $t) / 2) + $t;
+  return $n - $t if $n < $midpoint;
+  return (2 * $n) - (3 * $t);
 }
 
 my $numberOfElves = shift;
@@ -33,19 +36,5 @@ if (!defined($numberOfElves)) {
   $numberOfElves = 5;
 }
 
-my @presents;
-for (my $i = 0; $i < $numberOfElves; ++$i) {
-  push(@presents, 1);
-}
-
-my $count = GetElvesInPlay(\@presents);
-while ($count > 1) {
-  DoRoundOfPlay(\@presents);
-  $count = GetElvesInPlay(\@presents);
-}
-
-for (my $i = 0; $i < $numberOfElves; ++$i) {
-  next if $presents[$i] == 0;
-  print "Elf " . ($i + 1) . " is the winner!\n";
-  last;
-}
+print "Part 1: Elf " . WinnerPart1($numberOfElves) . " is the winner!\n";
+print "Part 2: Elf " . WinnerPart2($numberOfElves) . " is the winner!\n";
