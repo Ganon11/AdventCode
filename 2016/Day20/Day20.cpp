@@ -30,6 +30,15 @@ std::vector<bool> GetIPs(const std::wstring& inputFile) {
    return ips;
 }
 
+std::wstring FormatIP(const size_t ip) {
+   unsigned int p1{ (ip & 0xFF000000) >> 24 }, p2{ (ip & 0x00FF0000) >> 16 }, p3{ (ip & 0x0000FF00) >> 8 }, p4{ ip & 0x000000FF };
+   wchar_t buffer[BUFSIZ];
+
+   swprintf(buffer, BUFSIZ, L"%03d.%03d.%03d.%03d", p1, p2, p3, p4);
+
+   return std::wstring{ buffer };
+}
+
 int wmain(int argc, wchar_t *argv[]) {
    std::wstring inputFile;
    if (argc == 2) {
@@ -43,12 +52,12 @@ int wmain(int argc, wchar_t *argv[]) {
 
    auto count{ std::count_if(std::begin(ips), std::end(ips), [](const bool b) { return b; }) };
 
-   std::wcout << count << std::endl;
+   std::wcout << L"Unblocked IP count: " << count << std::endl;
 
    for (size_t i = 0; i < ips.size(); ++i) {
       if (ips[i]) {
-         std::wcout << i << std::endl;
-         break;
+         std::wcout << L"Unblocked IP: " << FormatIP(i) << std::endl;
+         //break;
       }
    }
 
