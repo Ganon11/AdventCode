@@ -1,6 +1,42 @@
 use strict;
 use warnings;
 
+sub SwapPosition {
+  my ($str, $from, $to) = @_;
+
+  my $tmp = substr($str, $to, 1);
+  substr($str, $to, 1) = substr($str, $from, 1);
+  substr($str, $from, 1) = $tmp;
+
+  return $str;
+}
+
+sub SwapLetter {
+  my ($str, $char1, $char2) = @_;
+
+  $str =~ s/$char1/./g;
+  $str =~ s/$char2/$char1/g;
+  $str =~ s/\./$char2/g;
+
+  return $str;
+}
+
+sub Rotate {
+  my ($str, $direction, $steps) = @_;
+
+  my $len = length($str);
+  for (my $i = 0; $i < $steps; ++$i) {
+    if ($direction eq 'left') {
+      $str = substr($str, 1) . substr($str, 0, 1);
+    }
+    else {
+      $str = substr($str, $len - 1, 1) . substr($str, 0, $len - 1);
+    }
+  }
+
+  return $str;
+}
+
 sub RotateOnLetter {
   my ($str, $letter) = @_;
 
@@ -14,6 +50,25 @@ sub RotateOnLetter {
   for (my $i = 0; $i < $steps; ++$i) {
     $str = substr($str, $len - 1, 1) . substr($str, 0, $len - 1);
   }
+
+  return $str;
+}
+
+sub ReverseSection {
+  my ($str, $from, $to) = @_;
+
+  my $sublen = ($to - $from) + 1;
+  substr($str, $from, $sublen) = reverse(substr($str, $from, $sublen));
+
+  return $str;
+}
+
+sub Move {
+  my ($str, $from, $to) = @_;
+
+  my $fromChar = substr($str, $from, 1);
+  substr($str, $from, 1) = '';
+  substr($str, $to, 0) = $fromChar;
 
   return $str;
 }
@@ -66,42 +121,22 @@ close($fh);
 foreach my $instructionRef (@instructions) {
   my $instruction = $instructionRef->[0];
   if ($instruction eq 'swapp') {
-    my ($from, $to) = ($instructionRef->[1], $instructionRef->[2]);
-    my $tmp = substr($scrambled, $to, 1);
-    substr($scrambled, $to, 1) = substr($scrambled, $from, 1);
-    substr($scrambled, $from, 1) = $tmp;
+    $scrambled = SwapPosition($scrambled, $instructionRef->[1], $instructionRef->[2]);
   }
   elsif ($instruction eq 'swapl') {
-    my ($letter1, $letter2) = ($instructionRef->[1], $instructionRef->[2]);
-    $scrambled =~ s/$letter1/./g;
-    $scrambled =~ s/$letter2/$letter1/g;
-    $scrambled =~ s/\./$letter2/g;
+    $scrambled = SwapLetter($scrambled, $instructionRef->[1], $instructionRef->[2]);
   }
   elsif ($instruction eq 'rotate') {
-    my ($direction, $steps) = ($instructionRef->[1], $instructionRef->[2]);
-
-    for (my $i = 0; $i < $steps; ++$i) {
-      if ($direction eq 'left') {
-        $scrambled = substr($scrambled, 1) . substr($scrambled, 0, 1);
-      }
-      else {
-        $scrambled = substr($scrambled, $len - 1, 1) . substr($scrambled, 0, $len - 1);
-      }
-    }
+    $scrambled = Rotate($scrambled, $instructionRef->[1], $instructionRef->[2]);
   }
   elsif ($instruction eq 'rotatep') {
     $scrambled = RotateOnLetter($scrambled, $instructionRef->[1]);
   }
   elsif ($instruction eq 'reverse') {
-    my ($from, $to) = ($instructionRef->[1], $instructionRef->[2]);
-    my $sublen = ($to - $from) + 1;
-    substr($scrambled, $from, $sublen) = reverse(substr($scrambled, $from, $sublen));    
+    $scrambled = ReverseSection($scrambled, $instructionRef->[1], $instructionRef->[2]);
   }
   elsif ($instruction eq 'move') {
-    my ($from, $to) = ($instructionRef->[1], $instructionRef->[2]);
-    my $fromChar = substr($scrambled, $from, 1);
-    substr($scrambled, $from, 1) = '';
-    substr($scrambled, $to, 0) = $fromChar;
+    $scrambled = Move($scrambled, $instructionRef->[1], $instructionRef->[2]);
   }
 }
 
@@ -114,30 +149,18 @@ foreach my $instructionRef (reverse(@instructions)) {
   my $instruction = $instructionRef->[0];
   if ($instruction eq 'swapp') {
     # equivalent
-    my ($from, $to) = ($instructionRef->[1], $instructionRef->[2]);
-    my $tmp = substr($scrambled, $to, 1);
-    substr($scrambled, $to, 1) = substr($scrambled, $from, 1);
-    substr($scrambled, $from, 1) = $tmp;
+    $scrambled = SwapPosition($scrambled, $instructionRef->[1], $instructionRef->[2]);
   }
   elsif ($instruction eq 'swapl') {
     # equivalent
-    my ($letter1, $letter2) = ($instructionRef->[1], $instructionRef->[2]);
-    $scrambled =~ s/$letter1/./g;
-    $scrambled =~ s/$letter2/$letter1/g;
-    $scrambled =~ s/\./$letter2/g;
+    $scrambled = SwapLetter($scrambled, $instructionRef->[1], $instructionRef->[2]);
   }
   elsif ($instruction eq 'rotate') {
-    my ($direction, $steps) = ($instructionRef->[1], $instructionRef->[2]);
-
-    for (my $i = 0; $i < $steps; ++$i) {
-      if ($direction eq 'left') {
-        # actually rotate right
-        $scrambled = substr($scrambled, $len - 1, 1) . substr($scrambled, 0, $len - 1);
-      }
-      else {
-        # actually rotate left
-        $scrambled = substr($scrambled, 1) . substr($scrambled, 0, 1);
-      }
+    if ($instructionRef->[1] eq 'left') {
+      $scrambled = Rotate($scrambled, 'right', $instructionRef->[2]);
+    }
+    else {
+      $scrambled = Rotate($scrambled, 'left', $instructionRef->[2]);
     }
   }
   elsif ($instruction eq 'rotatep') {
@@ -154,16 +177,11 @@ foreach my $instructionRef (reverse(@instructions)) {
   }
   elsif ($instruction eq 'reverse') {
     # equivalent
-    my ($from, $to) = ($instructionRef->[1], $instructionRef->[2]);
-    my $sublen = ($to - $from) + 1;
-    substr($scrambled, $from, $sublen) = reverse(substr($scrambled, $from, $sublen));    
+    $scrambled = ReverseSection($scrambled, $instructionRef->[1], $instructionRef->[2]);
   }
   elsif ($instruction eq 'move') {
     # reversing to and from should be sufficient
-    my ($to, $from) = ($instructionRef->[1], $instructionRef->[2]);
-    my $fromChar = substr($scrambled, $from, 1);
-    substr($scrambled, $from, 1) = '';
-    substr($scrambled, $to, 0) = $fromChar;
+    $scrambled = Move($scrambled, $instructionRef->[2], $instructionRef->[1]);
   }
 }
 
