@@ -86,8 +86,6 @@ if (!defined($inputfile)) {
 print "Original: $password\n";
 
 my @instructions = ();
-my $scrambled = $password;
-my $len = length($scrambled);
 open(my $fh, '<', $inputfile);
 foreach (<$fh>) {
   $_ =~ s/\R//g;
@@ -121,68 +119,68 @@ close($fh);
 foreach my $instructionRef (@instructions) {
   my $instruction = $instructionRef->[0];
   if ($instruction eq 'swapp') {
-    $scrambled = SwapPosition($scrambled, $instructionRef->[1], $instructionRef->[2]);
+    $password = SwapPosition($password, $instructionRef->[1], $instructionRef->[2]);
   }
   elsif ($instruction eq 'swapl') {
-    $scrambled = SwapLetter($scrambled, $instructionRef->[1], $instructionRef->[2]);
+    $password = SwapLetter($password, $instructionRef->[1], $instructionRef->[2]);
   }
   elsif ($instruction eq 'rotate') {
-    $scrambled = Rotate($scrambled, $instructionRef->[1], $instructionRef->[2]);
+    $password = Rotate($password, $instructionRef->[1], $instructionRef->[2]);
   }
   elsif ($instruction eq 'rotatep') {
-    $scrambled = RotateOnLetter($scrambled, $instructionRef->[1]);
+    $password = RotateOnLetter($password, $instructionRef->[1]);
   }
   elsif ($instruction eq 'reverse') {
-    $scrambled = ReverseSection($scrambled, $instructionRef->[1], $instructionRef->[2]);
+    $password = ReverseSection($password, $instructionRef->[1], $instructionRef->[2]);
   }
   elsif ($instruction eq 'move') {
-    $scrambled = Move($scrambled, $instructionRef->[1], $instructionRef->[2]);
+    $password = Move($password, $instructionRef->[1], $instructionRef->[2]);
   }
 }
 
-print "Scrambled: $scrambled\n";
+print "Scrambled: $password\n";
 
-$scrambled = 'fbgdceah';
-print "New scrambled: $scrambled\n";
+$password = 'fbgdceah';
+print "New scrambled: $password\n";
 
 foreach my $instructionRef (reverse(@instructions)) {
   my $instruction = $instructionRef->[0];
   if ($instruction eq 'swapp') {
     # equivalent
-    $scrambled = SwapPosition($scrambled, $instructionRef->[1], $instructionRef->[2]);
+    $password = SwapPosition($password, $instructionRef->[1], $instructionRef->[2]);
   }
   elsif ($instruction eq 'swapl') {
     # equivalent
-    $scrambled = SwapLetter($scrambled, $instructionRef->[1], $instructionRef->[2]);
+    $password = SwapLetter($password, $instructionRef->[1], $instructionRef->[2]);
   }
   elsif ($instruction eq 'rotate') {
     if ($instructionRef->[1] eq 'left') {
-      $scrambled = Rotate($scrambled, 'right', $instructionRef->[2]);
+      $password = Rotate($password, 'right', $instructionRef->[2]);
     }
     else {
-      $scrambled = Rotate($scrambled, 'left', $instructionRef->[2]);
+      $password = Rotate($password, 'left', $instructionRef->[2]);
     }
   }
   elsif ($instruction eq 'rotatep') {
     my $letter = $instructionRef->[1];
-    my $oldStr = $scrambled;
+    my $oldStr = $password;
     # Rotate left until a rotatep would result in this string
-    for (my $i = 0; $i < $len; ++$i) {
+    for (my $i = 0; $i < length($password); ++$i) {
       $oldStr = substr($oldStr, 1) . substr($oldStr, 0, 1);
-      if ($scrambled eq RotateOnLetter($oldStr, $letter)) {
-        $scrambled = $oldStr;
+      if ($password eq RotateOnLetter($oldStr, $letter)) {
+        $password = $oldStr;
         last;
       }
     }
   }
   elsif ($instruction eq 'reverse') {
     # equivalent
-    $scrambled = ReverseSection($scrambled, $instructionRef->[1], $instructionRef->[2]);
+    $password = ReverseSection($password, $instructionRef->[1], $instructionRef->[2]);
   }
   elsif ($instruction eq 'move') {
     # reversing to and from should be sufficient
-    $scrambled = Move($scrambled, $instructionRef->[2], $instructionRef->[1]);
+    $password = Move($password, $instructionRef->[2], $instructionRef->[1]);
   }
 }
 
-print "Original: $scrambled\n";
+print "Original: $password\n";
