@@ -1,0 +1,24 @@
+{
+  "folders":
+  [
+    {
+      "path": ".",
+      "name": "Everything"
+    }
+  ],
+  "build_systems":
+  [
+    {
+      "name": "Run with input",
+      "cmd": ["perl", "$file", "Input.txt"]
+    },
+    {
+      "name": "Run with sample 1",
+      "cmd": ["perl", "$file", "Sample.txt"]
+    },
+    {
+      "name": "Run with sample 2",
+      "cmd": ["perl", "$file", "Sample2.txt"]
+    }
+  ]
+}
