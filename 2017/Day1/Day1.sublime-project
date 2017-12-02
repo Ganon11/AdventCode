@@ -1,0 +1,56 @@
+{
+  "folders":
+  [
+    {
+      "path": "src",
+      "name": "Source"
+    },
+    {
+      "path": "input",
+      "name": "Input files"
+    }
+  ],
+  "build_systems":
+  [
+    {
+      "name": "Run with input",
+      "cmd": ["perl", "$file", "../input/Input.txt"]
+    },
+    {
+      "name": "Run with sample 1",
+      "cmd": ["perl", "$file", "../input/Sample1.txt"]
+    },
+    {
+      "name": "Run with sample 2",
+      "cmd": ["perl", "$file", "../input/Sample2.txt"]
+    },
+    {
+      "name": "Run with sample 3",
+      "cmd": ["perl", "$file", "../input/Sample3.txt"]
+    },
+    {
+      "name": "Run with sample 4",
+      "cmd": ["perl", "$file", "../input/Sample4.txt"]
+    },
+    {
+      "name": "Run with sample 5",
+      "cmd": ["perl", "$file", "../input/Sample5.txt"]
+    },
+    {
+      "name": "Run with sample 6",
+      "cmd": ["perl", "$file", "../input/Sample6.txt"]
+    },
+    {
+      "name": "Run with sample 7",
+      "cmd": ["perl", "$file", "../input/Sample7.txt"]
+    },
+    {
+      "name": "Run with sample 8",
+      "cmd": ["perl", "$file", "../input/Sample8.txt"]
+    },
+    {
+      "name": "Run with sample 9",
+      "cmd": ["perl", "$file", "../input/Sample9.txt"]
+    }
+  ]
+}

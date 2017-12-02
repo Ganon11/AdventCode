@@ -2,23 +2,27 @@
   "folders":
   [
     {
-      "path": ".",
-      "name": "Everything"
+      "path": "src",
+      "name": "Source"
+    },
+    {
+      "path": "input",
+      "name": "Input files"
     }
   ],
   "build_systems":
   [
     {
       "name": "Run with input",
-      "cmd": ["perl", "$file", "Input.txt"]
+      "cmd": ["perl", "$file", "../input/Input.txt"]
     },
     {
       "name": "Run with sample 1",
-      "cmd": ["perl", "$file", "Sample.txt"]
+      "cmd": ["perl", "$file", "../input/Sample.txt"]
     },
     {
       "name": "Run with sample 2",
-      "cmd": ["perl", "$file", "Sample2.txt"]
+      "cmd": ["perl", "$file", "../input/Sample2.txt"]
     }
   ]
 }

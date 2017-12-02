@@ -14,7 +14,6 @@ close($fh);
 chomp($captcha);
 
 my @digits = map { int($_) } split(//, $captcha);
-print "Input: @digits\n";
 
 my $sum1 = 0;
 my $sum2 = 0;
