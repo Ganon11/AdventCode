@@ -1,6 +1,8 @@
 use strict;
 use warnings;
 
+use Program;
+
 my $inputFile;
 if (scalar(@ARGV) > 0) {
   $inputFile = shift @ARGV;
@@ -13,3 +15,4 @@ while (<$fh>) {
   my $line = $_;
   chomp($line);
 }
+close($fh);
