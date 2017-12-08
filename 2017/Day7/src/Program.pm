@@ -1,8 +1,8 @@
 package Program;
 
-use Class::Tiny qw(name), {
+use Class::Tiny qw(name parent totalweight), {
   weight => 0,
-  children => ()
+  children => (),
 };
 
 1;
