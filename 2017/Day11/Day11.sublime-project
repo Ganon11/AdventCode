@@ -27,6 +27,10 @@
     {
       "name": "Run with sample 3",
       "cmd": ["perl", "$file", "../input/Sample3.txt"]
+    },
+    {
+      "name": "Run with sample 4",
+      "cmd": ["perl", "$file", "../input/Sample4.txt"]
     }
   ]
 }
