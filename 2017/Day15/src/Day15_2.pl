@@ -1,21 +1,11 @@
 use strict;
 use warnings;
-#use integer;
 
 my $GEN_A_FACTOR = 16807;
 my $GEN_B_FACTOR = 48271;
 my $GEN_A_MULTIPLE = 4;
 my $GEN_B_MULTIPLE = 8;
 my $DIVISOR = 2147483647;
-
-sub NextValue {
-  my ($previousValue, $factor, $multiple) = @_;
-  my $newValue = (($previousValue * $factor) % $DIVISOR);
-  while (($newValue % $multiple) != 0) {
-    $newValue = (($newValue * $factor) % $DIVISOR);
-  }
-  return $newValue;
-}
 
 my $inputFile;
 if (scalar(@ARGV) > 0) {
@@ -44,11 +34,15 @@ my $ITERATIONS = 5000000;
 
 my $judge = 0;
 foreach my $i (1..$ITERATIONS) {
-  $genAValue = NextValue($genAValue, $GEN_A_FACTOR, $GEN_A_MULTIPLE);
-  $genBValue = NextValue($genBValue, $GEN_B_FACTOR, $GEN_B_MULTIPLE);
-  my $genAString = substr(sprintf("%032b", $genAValue), -16);
-  my $genBString = substr(sprintf("%032b", $genBValue), -16);
-  if ($genAString eq $genBString) {
+  do {
+    $genAValue = (($genAValue * $GEN_A_FACTOR) % $DIVISOR);
+  } while (($genAValue % $GEN_A_MULTIPLE) != 0);
+
+  do {
+    $genBValue = (($genBValue * $GEN_B_FACTOR) % $DIVISOR);
+  } while (($genBValue % $GEN_B_MULTIPLE) != 0);
+
+  if (($genAValue & 0xFFFF) == ($genBValue & 0xFFFF)) {
     ++$judge;
   }
 }
