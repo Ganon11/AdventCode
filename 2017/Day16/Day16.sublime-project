@@ -17,16 +17,8 @@
       "cmd": ["perl", "$file", "../input/Input.txt"]
     },
     {
-      "name": "Run with sample 1",
-      "cmd": ["perl", "$file", "../input/Sample1.txt"]
-    },
-    {
-      "name": "Run with sample 2",
-      "cmd": ["perl", "$file", "../input/Sample2.txt"]
-    },
-    {
-      "name": "Run with sample 3",
-      "cmd": ["perl", "$file", "../input/Sample3.txt"]
+      "name": "Run with sample",
+      "cmd": ["perl", "$file", "../input/Sample.txt"]
     }
   ]
 }
