@@ -68,24 +68,17 @@ chomp($line);
 close($fh);
 
 my %states = ();
-$states{ join('', @programs) } = 1;
-
-my $cyclesToPerform;
-
+my $previousState = join('', @programs);
 my @directions = split(/,/, $line);
 foreach my $iteration (1..1000000000) {
-  my $newState = Dance(\@programs, \@directions);
-  if (exists($states{$newState})) {
-    print "Cycle after $iteration iterations\n";
-    $cyclesToPerform = 1000000000 % $iteration;
-    last;
+  if (exists($states{$previousState})) {
+    $previousState = $states{$previousState};
+    next;
   }
 
-  $states{$newState} = 1;
+  my $newState = Dance(\@programs, \@directions);
+  $states{$previousState} = $newState;
+  $previousState = $newState;
 }
 
-foreach my $iteration2 (1..$cyclesToPerform) {
-  Dance(\@programs, \@directions);
-}
-
-print join('', @programs), "\n";
+print "Final state: $previousState\n";
