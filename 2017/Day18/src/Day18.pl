@@ -76,7 +76,15 @@ sub Duet {
       }
       case 'jgz' {
         my ($x, $y) = ($instruction[1], $instruction[2]);
-        if (0 < GetRegisterValue(\%registers, $x)) {
+
+        my $checkValue;
+        if (looks_like_number($x)) {
+          $checkValue = int($x);
+        } else {
+          $checkValue = GetRegisterValue(\%registers, $x);
+        }
+
+        if (0 < $checkValue) {
           if (looks_like_number($y)) {
             $nextInstruction = $eip + int($y);
           } else {
