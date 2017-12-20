@@ -21,8 +21,8 @@ if (scalar(@ARGV) > 0) {
 }
 
 my @particles;
-my $closestParticle;
-my $initialMinDistance;
+my $smallestAcceleration;
+my @guesses;
 open(my $fh, "<", $inputFile) or die "Couldn't open $inputFile: $!";
 while (<$fh>) {
   my $line = $_;
@@ -38,10 +38,14 @@ while (<$fh>) {
     int($7), int($8), int($9)
   );
 
-  my $distance = Compute3DManhattanDistanceFromValues($positionX, $positionY, $positionZ);
-  if (!defined($initialMinDistance) or $distance < $initialMinDistance) {
-    $initialMinDistance = $distance;
-    $closestParticle = scalar(@particles); # Will equal the position of this particle.
+  my $acceleration = Compute3DManhattanDistanceFromValues($accelX, $accelY, $accelZ);
+  if (!defined($smallestAcceleration) or $acceleration < $smallestAcceleration) {
+    # New smallest acceleration - reset guesses.
+    $smallestAcceleration = $acceleration;
+    @guesses = ( scalar(@particles) );
+  } elsif ($acceleration == $smallestAcceleration) {
+    # Same acceleration as smallest - add a guess.
+    push(@guesses, scalar(@particles));
   }
 
   push(@particles, {
@@ -64,14 +68,42 @@ while (<$fh>) {
 }
 close($fh);
 
+my $guessCount = scalar(@guesses);
+if ($guessCount == 1) {
+  print "I GUESS @guesses\n";
+} else {
+  print "There are $guessCount particles with the smallest acceleration\n";
+
+  my @newGuesses;
+  my $smallestVelocity;
+  foreach my $index (@guesses) {
+    my $v = Compute3DManhattanDistance($particles[$index]);
+    if (!defined($smallestVelocity) or $v < $smallestVelocity) {
+      # New smallest velocity
+      $smallestVelocity = $v;
+      @newGuesses = ( $index );
+    } elsif ($v == $smallestVelocity) {
+      # Same velocity - add a guess
+      push(@newGuesses, $index);
+    }
+  }
+
+  $guessCount = scalar(@newGuesses);
+
+  if ($guessCount == 1) {
+    print "I GUESS @newGuesses\n";
+  } else {
+    print "There are $guessCount particles with the smallest velocity\n";
+  }
+}
+
 my $timestamp = 0;
+my $particleCount = scalar(@particles);
 my $matchingCount = 0;
 
 do {
-  my $minDistance;
-  my $currentClosestParticle;
-
-  foreach my $index (0..scalar(@particles)-1) {
+  my %collisions;
+  for (my $index = 0; $index < $particleCount; ++$index) {
     $particles[$index]->{'velocity'}{'X'} += $particles[$index]->{'acceleration'}{'X'};
     $particles[$index]->{'velocity'}{'Y'} += $particles[$index]->{'acceleration'}{'Y'};
     $particles[$index]->{'velocity'}{'Z'} += $particles[$index]->{'acceleration'}{'Z'};
@@ -80,20 +112,38 @@ do {
     $particles[$index]->{'position'}{'Y'} += $particles[$index]->{'velocity'}{'Y'};
     $particles[$index]->{'position'}{'Z'} += $particles[$index]->{'velocity'}{'Z'};
 
-    my $particleDistance = Compute3DManhattanDistance($particles[$index]);
-    if (!defined($minDistance) or $particleDistance < $minDistance) {
-      $minDistance = $particleDistance;
-      $currentClosestParticle = $index;
+    my $positionString = "$particles[$index]->{'position'}{'X'},$particles[$index]->{'position'}{'Y'},$particles[$index]->{'position'}{'Z'}";
+    if (!exists($collisions{$positionString})) {
+      $collisions{$positionString} = [ $index ];
+    } else {
+      push(@{ $collisions{$positionString} }, $index);
     }
   }
 
-  if ($closestParticle == $currentClosestParticle) {
+  my @indicesToRemove = ();
+  foreach my $position (keys %collisions) {
+    my @colliding = @{ $collisions{$position} };
+    if (scalar(@colliding) > 1) {
+      push(@indicesToRemove, @colliding);
+    }
+  }
+
+  if (scalar(@indicesToRemove)) {
+    @indicesToRemove = sort { $b <=> $a } @indicesToRemove;
+    foreach my $i (@indicesToRemove) {
+      splice(@particles, $i, 1);
+    }
+  }
+
+  my $newParticleCount = scalar(@particles);
+  if ($newParticleCount == $particleCount) {
     ++$matchingCount;
   } else {
-    $closestParticle = $currentClosestParticle;
+    $particleCount = $newParticleCount;
     $matchingCount = 0;
   }
+
   ++$timestamp;
 } while ($matchingCount < 10000);
 
-print "After $timestamp steps, particle $closestParticle is closest\n";
+print "After $timestamp steps, $particleCount particles remain\n";
