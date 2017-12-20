@@ -144,6 +144,6 @@ do {
   }
 
   ++$timestamp;
-} while ($matchingCount < 10000);
+} while ($timestamp < 39);
 
 print "After $timestamp steps, $particleCount particles remain\n";
