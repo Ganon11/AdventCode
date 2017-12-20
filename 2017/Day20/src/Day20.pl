@@ -1,7 +1,6 @@
 use strict;
 use warnings;
-
-use Data::Dumper;
+use List::MoreUtils qw(uniq);
 
 sub Compute3DManhattanDistanceFromValues {
   my ($x, $y, $z) = @_;
@@ -98,11 +97,12 @@ if ($guessCount == 1) {
 }
 
 my $timestamp = 0;
-my $particleCount = scalar(@particles);
-my $matchingCount = 0;
+my $particleCount;
 
 do {
   my %collisions;
+  $particleCount = scalar(@particles);
+  my @indicesToRemove = ();
   for (my $index = 0; $index < $particleCount; ++$index) {
     $particles[$index]->{'velocity'}{'X'} += $particles[$index]->{'acceleration'}{'X'};
     $particles[$index]->{'velocity'}{'Y'} += $particles[$index]->{'acceleration'}{'Y'};
@@ -114,36 +114,18 @@ do {
 
     my $positionString = "$particles[$index]->{'position'}{'X'},$particles[$index]->{'position'}{'Y'},$particles[$index]->{'position'}{'Z'}";
     if (!exists($collisions{$positionString})) {
-      $collisions{$positionString} = [ $index ];
+      $collisions{$positionString} = $index;
     } else {
-      push(@{ $collisions{$positionString} }, $index);
+      push(@indicesToRemove, $collisions{$positionString}, $index);
     }
   }
 
-  my @indicesToRemove = ();
-  foreach my $position (keys %collisions) {
-    my @colliding = @{ $collisions{$position} };
-    if (scalar(@colliding) > 1) {
-      push(@indicesToRemove, @colliding);
-    }
-  }
-
-  if (scalar(@indicesToRemove)) {
-    @indicesToRemove = sort { $b <=> $a } @indicesToRemove;
-    foreach my $i (@indicesToRemove) {
-      splice(@particles, $i, 1);
-    }
-  }
-
-  my $newParticleCount = scalar(@particles);
-  if ($newParticleCount == $particleCount) {
-    ++$matchingCount;
-  } else {
-    $particleCount = $newParticleCount;
-    $matchingCount = 0;
+  @indicesToRemove = uniq(sort { $b <=> $a } @indicesToRemove);
+  foreach my $i (@indicesToRemove) {
+    splice(@particles, $i, 1);
   }
 
   ++$timestamp;
-} while ($timestamp < 39);
+} while ($timestamp < 1000);
 
 print "After $timestamp steps, $particleCount particles remain\n";
