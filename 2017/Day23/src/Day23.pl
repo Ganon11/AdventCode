@@ -2,6 +2,7 @@ use strict;
 use warnings;
 use Scalar::Util qw(looks_like_number);
 use Switch;
+use Math::Prime::Util qw(is_prime);
 
 sub GetRegisterValue {
   my $registerRef = shift;
@@ -79,18 +80,6 @@ sub Debug {
   return $mulCount;
 }
 
-sub NumberIsPrime {
-  my $num = shift;
-  return 1 if $num == 2;
-  my $squareRoot = sqrt($num);
-  my $divisor = 2;
-  while (1) {
-    return 0 if ($num % $divisor) == 0;
-    return 1 if $divisor > $squareRoot;
-    ++$divisor;
-  }
-}
-
 my $inputFile;
 if (scalar(@ARGV) > 0) {
   $inputFile = shift @ARGV;
@@ -125,7 +114,7 @@ my $b = 109300;
 my $c = 126301;
 my $h = 0;
 while ($b < $c) {
-  ++$h if (0 == NumberIsPrime($b));
+  ++$h if !is_prime($b);
   $b += 17;
 }
 
