@@ -43,7 +43,7 @@ sub MaxWeightLength {
     my $newPort = $$components[$i][0];
     $newPort = $$components[$i][1] if $port == $newPort;
     $$components[$i][2] = 1;
-    my ($tempWeight, $tempLength) = MaxWeight($components, $newPort);
+    my ($tempWeight, $tempLength) = MaxWeightLength($components, $newPort);
     $tempWeight += $$components[$i][0] + $$components[$i][1];
     ++$tempLength;
     $$components[$i][2] = 0;
@@ -78,5 +78,6 @@ while (<$fh>) {
 close($fh);
 
 my $maxWeight = MaxWeight(\@components, 0);
+print "Part 1: $maxWeight\n";
 my ($longWeight, $maxLength) = MaxWeightLength(\@components, 0);
-print "Part 1: $maxWeight, part 2: ($longWeight, $maxLength)\n";
+print "Part 2: ($longWeight, $maxLength)\n";
