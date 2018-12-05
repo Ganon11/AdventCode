@@ -14,7 +14,7 @@ size_t get_reduced_length(const std::wstring& polymer);
 
 int main()
 {
-   wifstream input{ L"Sample.txt" };
+   wifstream input{ L"Input.txt" };
    if (!input.good())
    {
       return false;
@@ -29,8 +29,7 @@ int main()
    for (wchar_t ch = L'a'; ch <= L'z'; ++ch)
    {
       wstring copy{ line };
-      copy.erase(remove(copy.begin(), copy.end(), ch), copy.end());
-      copy.erase(remove(copy.begin(), copy.end(), towupper(ch)), copy.end());
+      copy.erase(remove_if(copy.begin(), copy.end(), [ch](const wchar_t c){ return ch == c || towupper(ch) == c; }), copy.end());
       size_t reduced_length = get_reduced_length(copy);
 
       if (reduced_length < minimum_length)
