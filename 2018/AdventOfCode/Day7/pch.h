@@ -10,6 +10,5 @@
 #define PCH_H
 
 // TODO: add headers that you want to pre-compile here
-#define USE_SAMPLE 0
 
 #endif //PCH_H

@@ -7,6 +7,8 @@
 #include <iostream>
 #include <string>
 
+#include "../AoCHelpers/InputHandler.h"
+
 using namespace std;
 
 size_t process_unit_reactions(std::wstring& polymer);
@@ -14,14 +16,8 @@ size_t get_reduced_length(const std::wstring& polymer);
 
 int main()
 {
-   wifstream input{ L"Input.txt" };
-   if (!input.good())
-   {
-      return false;
-   }
-
-   wstring line;
-   getline(input, line);
+   AdventOfCode::InputHandler input{ 5 };
+   wstring line{ input.read_single_line() };
 
    wcout << L"Part 1: " << get_reduced_length(line) << endl;
 

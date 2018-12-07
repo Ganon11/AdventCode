@@ -12,23 +12,18 @@
 #include <string>
 #include <vector>
 
+#include "../AoCHelpers/InputHandler.h"
+
 using namespace std;
 
 int main()
 {
-   wifstream input{ L"Input.txt" };
-   if (!input.good())
-   {
-      return -1;
-   }
-
-   wstring line;
+   AdventOfCode::InputHandler input{ 3 };
    vector<Claim> claims;
-   do
+   for (const auto& line : input.read_all_lines())
    {
-      getline(input, line);
-      claims.push_back(Claim(line));
-   } while (input.good());
+      claims.push_back(Claim{ line });
+   }
 
    map<Claim::Coordinate, unsigned int> fabric;
 

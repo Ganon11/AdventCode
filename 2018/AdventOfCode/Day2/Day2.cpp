@@ -8,23 +8,18 @@
 #include <string>
 #include <vector>
 
+#include "../AoCHelpers/InputHandler.h"
+
 #include "Box.h"
 
 int main()
 {
-   wifstream input{ L"Input.txt" };
-   if (!input.good())
-   {
-      return -1;
-   }
-
-   wstring boxName;
+   AdventOfCode::InputHandler input{ 2 };
    vector<Box> boxes;
-   do
+   for (const auto& box_name : input.read_all_lines())
    {
-      getline(input, boxName);
-      boxes.push_back(Box(boxName));
-   } while (input.good());
+      boxes.push_back(Box{ box_name });
+   }
 
    unsigned int count_two = count_if(boxes.begin(), boxes.end(), [](const Box& b) { return b.has_exactly_two_of_a_character(); });
    unsigned int count_three = count_if(boxes.begin(), boxes.end(), [](const Box& b) { return b.has_exactly_three_of_a_character(); });

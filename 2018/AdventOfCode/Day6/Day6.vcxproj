@@ -168,6 +168,11 @@
     <Text Include="Input.txt" />
     <Text Include="Sample.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AoCHelpers\AoCHelpers.vcxproj">
+      <Project>{e531ca0c-ad9d-4a96-857f-72d1af2f65dc}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

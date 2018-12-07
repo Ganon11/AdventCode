@@ -15,6 +15,9 @@ using namespace std;
 #include "Task.h"
 #include "Worker.h"
 
+#include "../AoCHelpers/InputHandler.h"
+#include "../AoCHelpers/Sample.h"
+
 bool get_tasks(vector<Task>& tasks);
 Task find_next_task(const vector<Task>& tasks, const set<wchar_t> completed_tasks);
 vector<Task> sort_tasks(const vector<Task>& tasks);
@@ -41,20 +44,12 @@ int main()
 
 bool get_tasks(vector<Task>& tasks)
 {
-   const wchar_t* FILENAME{ (USE_SAMPLE == 1) ? L"Sample.txt" : L"Input.txt" };
-   wifstream input{ FILENAME };
-   if (!input.good())
-   {
-      return false;
-   }
+   AdventOfCode::InputHandler input{ 7 };
 
    wregex task_regex{ L"Step (\\w) must be finished before step (\\w) can begin." };
    wsmatch matches;
-   wstring line;
-   do
+   for (const wstring& line : input.read_all_lines())
    {
-      getline(input, line);
-
       std::regex_search(line, matches, task_regex);
       if (matches.size() != 3) // Whole match, dependency and task
       {
@@ -85,7 +80,7 @@ bool get_tasks(vector<Task>& tasks)
          Task t{ dependency };
          tasks.push_back(t);
       }
-   } while (input.good());
+   }
 
    sort(tasks.begin(), tasks.end());
 
@@ -137,7 +132,7 @@ void print_tasks_in_order(const vector<Task>& tasks)
 
 unsigned int perform_tasks(const vector<Task>& tasks_in_order)
 {
-   const size_t NUM_WORKERS{ (USE_SAMPLE == 1) ? 2 : 5 };
+   const size_t NUM_WORKERS{ AdventOfCode::Sample::USE_SAMPLE ? 2 : 5 };
 
    vector<Worker> workers;
    workers.reserve(NUM_WORKERS);

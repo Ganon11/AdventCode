@@ -14,6 +14,8 @@
 #include "Command.h"
 #include "Guard.h"
 
+#include "../AoCHelpers/InputHandler.h"
+
 using namespace std;
 
 bool get_commands(std::vector<std::shared_ptr<Command>>& commands);
@@ -45,18 +47,11 @@ int main()
 
 bool get_commands(std::vector<std::shared_ptr<Command>>& commands)
 {
-   wifstream input{ L"Input.txt" };
-   if (!input.good())
+   AdventOfCode::InputHandler input{ 4 };
+   for (const wstring& line : input.read_all_lines())
    {
-      return false;
-   }
-
-   wstring line;
-   do
-   {
-      getline(input, line);
       commands.push_back(Command::make_shared(line));
-   } while (input.good());
+   }
 
    std::sort(commands.begin(), commands.end(), Command::sort);
    return true;
