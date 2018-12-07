@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Task.h"
 
+#include "../AoCHelpers/Sample.h"
+
 Task::Task(const wchar_t name) : m_task_name{ name }
 { }
 
@@ -32,7 +34,7 @@ bool Task::operator<(const Task& other) const
 unsigned int Task::task_length() const
 {
    unsigned int length{ static_cast<unsigned int>(m_task_name - L'A' + 1) };
-   if (1 != USE_SAMPLE)
+   if (!AdventOfCode::Sample::USE_SAMPLE)
    {
       length += 60;
    }

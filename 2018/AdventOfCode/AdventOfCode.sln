@@ -4,18 +4,41 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.28307.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Day1", "Day1\Day1.vcxproj", "{F64F4497-ACE4-48AE-AE8C-CA194DA5D748}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E531CA0C-AD9D-4A96-857F-72D1AF2F65DC} = {E531CA0C-AD9D-4A96-857F-72D1AF2F65DC}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Day2", "Day2\Day2.vcxproj", "{B80B7CDD-C19D-4139-9DA5-A45ED05B8184}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E531CA0C-AD9D-4A96-857F-72D1AF2F65DC} = {E531CA0C-AD9D-4A96-857F-72D1AF2F65DC}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Day3", "Day3\Day3.vcxproj", "{CD434380-F96F-4A2A-9B3E-0B172031A62C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E531CA0C-AD9D-4A96-857F-72D1AF2F65DC} = {E531CA0C-AD9D-4A96-857F-72D1AF2F65DC}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Day4", "Day4\Day4.vcxproj", "{09AD8F9B-5E10-4772-9733-CE935A98C888}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E531CA0C-AD9D-4A96-857F-72D1AF2F65DC} = {E531CA0C-AD9D-4A96-857F-72D1AF2F65DC}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Day5", "Day5\Day5.vcxproj", "{3423752D-5A09-4F2A-86C2-5AEE9A2F4FB0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E531CA0C-AD9D-4A96-857F-72D1AF2F65DC} = {E531CA0C-AD9D-4A96-857F-72D1AF2F65DC}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Day6", "Day6\Day6.vcxproj", "{4DB5FEB5-EF69-4D74-A771-359DCE8655D2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E531CA0C-AD9D-4A96-857F-72D1AF2F65DC} = {E531CA0C-AD9D-4A96-857F-72D1AF2F65DC}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Day7", "Day7\Day7.vcxproj", "{57B80935-3E56-4774-8943-3E413773500C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E531CA0C-AD9D-4A96-857F-72D1AF2F65DC} = {E531CA0C-AD9D-4A96-857F-72D1AF2F65DC}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AoCHelpers", "AoCHelpers\AoCHelpers.vcxproj", "{E531CA0C-AD9D-4A96-857F-72D1AF2F65DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,6 +104,14 @@ Global
 		{57B80935-3E56-4774-8943-3E413773500C}.Release|x64.Build.0 = Release|x64
 		{57B80935-3E56-4774-8943-3E413773500C}.Release|x86.ActiveCfg = Release|Win32
 		{57B80935-3E56-4774-8943-3E413773500C}.Release|x86.Build.0 = Release|Win32
+		{E531CA0C-AD9D-4A96-857F-72D1AF2F65DC}.Debug|x64.ActiveCfg = Debug|x64
+		{E531CA0C-AD9D-4A96-857F-72D1AF2F65DC}.Debug|x64.Build.0 = Debug|x64
+		{E531CA0C-AD9D-4A96-857F-72D1AF2F65DC}.Debug|x86.ActiveCfg = Debug|Win32
+		{E531CA0C-AD9D-4A96-857F-72D1AF2F65DC}.Debug|x86.Build.0 = Debug|Win32
+		{E531CA0C-AD9D-4A96-857F-72D1AF2F65DC}.Release|x64.ActiveCfg = Release|x64
+		{E531CA0C-AD9D-4A96-857F-72D1AF2F65DC}.Release|x64.Build.0 = Release|x64
+		{E531CA0C-AD9D-4A96-857F-72D1AF2F65DC}.Release|x86.ActiveCfg = Release|Win32
+		{E531CA0C-AD9D-4A96-857F-72D1AF2F65DC}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

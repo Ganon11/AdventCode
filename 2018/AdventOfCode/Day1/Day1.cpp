@@ -8,32 +8,31 @@
 #include <string>
 #include <vector>
 
+#include "../AoCHelpers/InputHandler.h"
+
 using namespace std;
 
 bool add_and_check_frequency(int frequency, int& total, set<int> &seenFrequencies);
 
 int main()
 {
-   wifstream input{ L"Input.txt" };
-   if (!input.good())
-   {
-      return -1;
-   }
-
+   AdventOfCode::InputHandler input{ 1 };
    int total{ 0 };
    vector<int> frequencies;
    set<int> seenFrequencies;
    seenFrequencies.insert(total);
-   wstring line;
    bool found{ false };
-   do
+   for (const auto& line : input.read_all_lines())
    {
-      getline(input, line);
       int frequency{ _wtoi(line.c_str()) };
       frequencies.push_back(frequency);
 
-      found = add_and_check_frequency(frequency, total, seenFrequencies);
-   } while (!found && input.good());
+      if (add_and_check_frequency(frequency, total, seenFrequencies))
+      {
+         found = true;
+         break;
+      }
+   }
 
    wcout << L"First Total " << total << endl;
 

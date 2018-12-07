@@ -13,6 +13,8 @@
 
 #include "Point.h"
 
+#include "../AoCHelpers/InputHandler.h"
+
 using namespace std;
 
 typedef vector<vector<int>> two_dimensional_map;
@@ -55,18 +57,12 @@ int main()
 
 bool get_points(vector<Point>& points)
 {
-   wifstream input{ L"Input.txt" };
-   if (!input.good())
-   {
-      return false;
-   }
+   AdventOfCode::InputHandler input{ 6 };
 
-   wstring line;
-   do
+   for (const wstring& line : input.read_all_lines())
    {
-      getline(input, line);
       points.push_back(line);
-   } while (input.good());
+   }
 
    return true;
 }
