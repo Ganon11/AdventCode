@@ -5,13 +5,13 @@
 #include <algorithm>
 #include <fstream>
 #include <iostream>
+#include <stack>
 #include <string>
 
 #include "../AoCHelpers/InputHandler.h"
 
 using namespace std;
 
-size_t process_unit_reactions(std::wstring& polymer);
 size_t get_reduced_length(const std::wstring& polymer);
 
 int main()
@@ -31,67 +31,36 @@ int main()
       if (reduced_length < minimum_length)
       {
          minimum_length = reduced_length;
-         wcout << L"Removing " << ch << L" results in shorter string" << endl;
       }
    }
 
    wcout << L"Part 2: " << minimum_length << endl;
 }
 
-size_t process_unit_reactions(std::wstring& polymer)
-{
-   wstring shrunken_polymer;
-   bool found_reaction = false;
-   size_t original_length{ polymer.length() };
-   for (size_t i = 0; i < (original_length - 2); ++i)
-   {
-      wchar_t ch1{ polymer[i] };
-      wchar_t ch2{ polymer[i + 1] };
-
-      // If ch1 and ch2 are the same letter, but not the same case, then their towlower versions will be equal, but
-      // they themselves will be inequal
-      if (towlower(ch1) == towlower(ch2) && ch1 != ch2)
-      {
-         found_reaction = true;
-         shrunken_polymer = polymer.substr(0, i) + polymer.substr(i + 2);
-         break;
-      }
-   }
-
-   if (!found_reaction)
-   {
-      // Still need to check last pair
-      wchar_t ch1{ polymer[original_length - 2] };
-      wchar_t ch2{ polymer[original_length - 1] };
-
-      // If ch1 and ch2 are the same letter, but not the same case, then their towlower versions will be equal, but
-      // they themselves will be inequal
-      if (towlower(ch1) == towlower(ch2) && ch1 != ch2)
-      {
-         found_reaction = true;
-         shrunken_polymer = polymer.substr(0, original_length - 2);
-      }
-   }
-
-   if (found_reaction)
-   {
-      polymer = shrunken_polymer;
-   }
-   return polymer.length();
-}
-
 size_t get_reduced_length(const wstring& polymer)
 {
-   wstring polymer_copy{ polymer };
-   int iterations{ 0 };
-   size_t old_size{ polymer_copy.length() };
-   size_t new_size{ process_unit_reactions(polymer_copy) };
-   while (old_size != new_size)
+   stack<wchar_t> shrunken_polymer;
+   for (const wchar_t ch : polymer)
    {
-      ++iterations;
-      old_size = new_size;
-      new_size = process_unit_reactions(polymer_copy);
+      if (0 == shrunken_polymer.size())
+      {
+         shrunken_polymer.push(ch);
+         continue;
+      }
+
+      wchar_t other{ shrunken_polymer.top() };
+
+      // If ch1 and ch2 are the same letter, but not the same case, then their towlower versions will be equal, but
+      // they themselves will be inequal
+      if (ch != other && towlower(ch) == towlower(other))
+      {
+         shrunken_polymer.pop();
+      }
+      else
+      {
+         shrunken_polymer.push(ch);
+      }
    }
 
-   return new_size;
+   return shrunken_polymer.size();
 }
