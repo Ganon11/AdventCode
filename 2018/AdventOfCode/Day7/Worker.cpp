@@ -7,21 +7,6 @@ Worker::Worker() :
    m_start_time{ 0 }
 { }
 
-bool Worker::is_busy(const unsigned int timer) const
-{
-   if (UNASSIGNED_TASK == m_current_task)
-   {
-      return false;
-   }
-
-   if (timer > m_start_time + m_current_task_time)
-   {
-      return false;
-   }
-
-   return true;
-}
-
 void Worker::assign_task(const Task& t, const unsigned int timer)
 {
    m_current_task = t.get_name();

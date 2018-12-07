@@ -8,7 +8,6 @@ class Worker
 public:
    Worker();
 
-   bool is_busy(const unsigned int timer) const;
    void assign_task(const Task& t, const unsigned int timer);
    bool has_completed_task(const unsigned int timer) const;
    void deassign_task();
