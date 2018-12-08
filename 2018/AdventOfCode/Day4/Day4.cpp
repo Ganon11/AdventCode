@@ -47,7 +47,7 @@ int main()
 
 bool get_commands(std::vector<std::shared_ptr<Command>>& commands)
 {
-   AdventOfCode::InputHandler input{ 4 };
+   AdventOfCode::InputHandler input;
    for (const wstring& line : input.read_all_lines())
    {
       commands.push_back(Command::make_shared(line));

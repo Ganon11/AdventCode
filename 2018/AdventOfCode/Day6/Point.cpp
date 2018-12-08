@@ -14,12 +14,15 @@ Point::Point(const std::wstring& line)
    }
 }
 
-Point::Point(int x, int y) : m_x{ x }, m_y{ y }
-{
+Point::Point(unsigned int x, unsigned int y) : m_x{ x }, m_y{ y }
+{ }
 
-}
+#ifdef _WIN64
+Point::Point(size_t x, size_t y) : m_x{ static_cast<unsigned int>(x) }, m_y{ static_cast<unsigned int>(y) }
+{ }
+#endif
 
 int Point::DistanceTo(const Point& other) const
 {
-   return (abs(m_x - other.m_x) + abs(m_y - other.m_y));
+   return (abs(static_cast<int>(m_x) - static_cast<int>(other.m_x)) + abs(static_cast<int>(m_y) - static_cast<int>(other.m_y)));
 }

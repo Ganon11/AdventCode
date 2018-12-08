@@ -44,7 +44,7 @@ int main()
 
 bool get_tasks(vector<Task>& tasks)
 {
-   AdventOfCode::InputHandler input{ 7 };
+   AdventOfCode::InputHandler input;
 
    wregex task_regex{ L"Step (\\w) must be finished before step (\\w) can begin." };
    wsmatch matches;
@@ -132,7 +132,7 @@ void print_tasks_in_order(const vector<Task>& tasks)
 
 unsigned int perform_tasks(const vector<Task>& tasks_in_order)
 {
-   const size_t NUM_WORKERS{ AdventOfCode::Sample::USE_SAMPLE ? 2 : 5 };
+   const size_t NUM_WORKERS{ AdventOfCode::Sample::should_use_sample() ? 2u : 5u };
 
    vector<Worker> workers;
    workers.reserve(NUM_WORKERS);

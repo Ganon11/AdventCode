@@ -5,12 +5,8 @@
 #include "Filenames.h"
 #include "InputHandler.h"
 
-AdventOfCode::InputHandler::InputHandler(const unsigned int day)
-{
-   std::wstringstream sstr;
-   sstr << L"..\\Day" << day << L"\\" << Filenames::get_filename();
-   m_filename = sstr.str();
-}
+AdventOfCode::InputHandler::InputHandler() : InputHandler(Filenames::get_filename())
+{ }
 
 AdventOfCode::InputHandler::InputHandler(const wchar_t* filename) : m_filename(filename)
 { }
