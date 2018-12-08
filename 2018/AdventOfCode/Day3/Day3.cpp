@@ -18,7 +18,7 @@ using namespace std;
 
 int main()
 {
-   AdventOfCode::InputHandler input{ 3 };
+   AdventOfCode::InputHandler input;
    vector<Claim> claims;
    for (const auto& line : input.read_all_lines())
    {

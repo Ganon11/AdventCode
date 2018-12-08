@@ -14,7 +14,7 @@
 
 int main()
 {
-   AdventOfCode::InputHandler input{ 2 };
+   AdventOfCode::InputHandler input;
    vector<Box> boxes;
    for (const auto& box_name : input.read_all_lines())
    {

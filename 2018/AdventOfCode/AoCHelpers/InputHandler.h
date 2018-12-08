@@ -8,7 +8,7 @@ namespace AdventOfCode
    class InputHandler
    {
    public:
-      InputHandler(const unsigned int day);
+      InputHandler();
       InputHandler(const wchar_t* filename);
 
       std::wstring read_single_line() const;

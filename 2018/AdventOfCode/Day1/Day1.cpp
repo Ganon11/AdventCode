@@ -7,6 +7,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <Windows.h>
 
 #include "../AoCHelpers/InputHandler.h"
 
@@ -16,7 +17,7 @@ bool add_and_check_frequency(int frequency, int& total, set<int> &seenFrequencie
 
 int main()
 {
-   AdventOfCode::InputHandler input{ 1 };
+   AdventOfCode::InputHandler input;
    int total{ 0 };
    vector<int> frequencies;
    set<int> seenFrequencies;

@@ -4,6 +4,6 @@ namespace AdventOfCode
 {
    namespace Sample
    {
-      constexpr bool USE_SAMPLE{ false };
+      bool should_use_sample();
    }
 }

@@ -17,17 +17,16 @@
 
 using namespace std;
 
-typedef vector<vector<int>> two_dimensional_map;
+typedef vector<vector<size_t>> two_dimensional_map;
 
 bool get_points(vector<Point>& points);
-int closest_point(const Point& p, const vector<Point>& all_points);
+size_t closest_point(const Point& p, const vector<Point>& all_points);
 
-vector<vector<int>> create_map(const vector<Point>& points);
-int find_size_of_area(const two_dimensional_map& map, const int index);
-int find_index_of_largest_area(const two_dimensional_map& map, const size_t num_points, int& largest_area);
+two_dimensional_map create_map(const vector<Point>& points);
+unsigned int find_size_of_area(const two_dimensional_map& map, const size_t index);
+size_t find_index_of_largest_area(const two_dimensional_map& map, const size_t num_points, size_t& largest_area);
 
-int find_size_of_safe_area(const vector<Point>& points);
-//bool write_map(const two_dimensional_map& map);
+size_t find_size_of_safe_area(const vector<Point>& points);
 
 int main()
 {
@@ -42,14 +41,14 @@ int main()
    // Part 1
    /////////////////////////////////////////////////////////////////////////////
    const two_dimensional_map map{ create_map(points) };
-   int largest_area;
-   const int index_with_largest_area{ find_index_of_largest_area(map, points.size(), largest_area) };
+   size_t largest_area;
+   const size_t index_with_largest_area{ find_index_of_largest_area(map, points.size(), largest_area) };
    wcout << L"Largest Area - " << largest_area << endl;
 
    /////////////////////////////////////////////////////////////////////////////
    // Part 2
    /////////////////////////////////////////////////////////////////////////////
-   const int safe_area = find_size_of_safe_area(points);
+   const size_t safe_area = find_size_of_safe_area(points);
    wcout << L"Safe Area - " << safe_area << endl;
 
    return 0;
@@ -57,7 +56,7 @@ int main()
 
 bool get_points(vector<Point>& points)
 {
-   AdventOfCode::InputHandler input{ 6 };
+   AdventOfCode::InputHandler input;
 
    for (const wstring& line : input.read_all_lines())
    {
@@ -67,10 +66,10 @@ bool get_points(vector<Point>& points)
    return true;
 }
 
-int closest_point(const Point& p, const vector<Point>& all_points)
+size_t closest_point(const Point& p, const vector<Point>& all_points)
 {
    int min_distance{ numeric_limits<int>::max() };
-   int min_distance_index;
+   size_t min_distance_index;
    bool is_tied{ false };
 
    for (size_t index = 0; index < all_points.size(); ++index)
@@ -98,22 +97,21 @@ int closest_point(const Point& p, const vector<Point>& all_points)
    }
 }
 
-vector<vector<int>> create_map(const vector<Point>& points)
+two_dimensional_map create_map(const vector<Point>& points)
 {
-   int largest_x{ max_element(points.begin(), points.end(), [](const Point& p1, const Point& p2) { return p1.m_x < p2.m_x; })->m_x };
-   int largest_y{ max_element(points.begin(), points.end(), [](const Point& p1, const Point& p2) { return p1.m_y < p2.m_y; })->m_y };
-   vector<vector<int>> map;
+   unsigned int largest_x{ max_element(points.begin(), points.end(), [](const Point& p1, const Point& p2) { return p1.m_x < p2.m_x; })->m_x };
+   unsigned int largest_y{ max_element(points.begin(), points.end(), [](const Point& p1, const Point& p2) { return p1.m_y < p2.m_y; })->m_y };
+   two_dimensional_map map;
    map.reserve(largest_y + 1);
 
-   for (int row = 0; row <= largest_y; ++row)
+   for (size_t row = 0; row <= largest_y; ++row)
    {
-      vector<int> current_row;
+      vector<size_t> current_row;
       current_row.reserve(largest_x + 1);
-      //map[row] = vector<int>{ static_cast<unsigned int>(largest_y + 1) };
-      for (int col = 0; col <= largest_x; ++col)
+      for (size_t col = 0; col <= largest_x; ++col)
       {
          Point p{ col, row };
-         int closest{ closest_point(p, points) };
+         size_t closest{ closest_point(p, points) };
          current_row.push_back(closest);
       }
 
@@ -123,20 +121,20 @@ vector<vector<int>> create_map(const vector<Point>& points)
    return map;
 }
 
-int find_size_of_area(const two_dimensional_map& map, const int index)
+unsigned int find_size_of_area(const two_dimensional_map& map, const size_t index)
 {
-   int sum = 0;
+   unsigned int sum = 0;
    for (size_t row = 0; row < map.size(); ++row)
    {
-      sum += count(map[row].begin(), map[row].end(), index);
+      sum += static_cast<int>(count(map[row].begin(), map[row].end(), index));
    }
 
    return sum;
 }
 
-int find_index_of_largest_area(const two_dimensional_map& map, const size_t num_points, int& largest_area)
+size_t find_index_of_largest_area(const two_dimensional_map& map, const size_t num_points, size_t& largest_area)
 {
-   set<int> infinite_areas;
+   set<size_t> infinite_areas;
    // Check top row (row = 0) and bottom row (row = map.size() - 1)
    for (size_t col = 0; col < map[0].size(); ++col)
    {
@@ -151,8 +149,8 @@ int find_index_of_largest_area(const two_dimensional_map& map, const size_t num_
       infinite_areas.insert(map[row][map[row].size() - 1]);
    }
 
-   int max_area { numeric_limits<int>::min() };
-   int largest_index;
+   unsigned int max_area { numeric_limits<unsigned int>::min() };
+   size_t largest_index;
 
    for (size_t index = 0; index < num_points; ++index)
    {
@@ -162,7 +160,7 @@ int find_index_of_largest_area(const two_dimensional_map& map, const size_t num_
          continue;
       }
 
-      int area{ find_size_of_area(map, index) };
+      unsigned int area{ find_size_of_area(map, index) };
       if (area > max_area)
       {
          max_area = area;
@@ -179,15 +177,15 @@ namespace
    const int MAX_ALLOWED_DISTANCE{ 10000 };
 }
 
-int find_size_of_safe_area(const vector<Point>& points)
+size_t find_size_of_safe_area(const vector<Point>& points)
 {
-   int largest_x{ max_element(points.begin(), points.end(), [](const Point& p1, const Point& p2) { return p1.m_x < p2.m_x; })->m_x };
-   int largest_y{ max_element(points.begin(), points.end(), [](const Point& p1, const Point& p2) { return p1.m_y < p2.m_y; })->m_y };
+   unsigned int largest_x{ max_element(points.begin(), points.end(), [](const Point& p1, const Point& p2) { return p1.m_x < p2.m_x; })->m_x };
+   unsigned int largest_y{ max_element(points.begin(), points.end(), [](const Point& p1, const Point& p2) { return p1.m_y < p2.m_y; })->m_y };
 
    int points_in_safe_area = 0;
-   for (int row = 0; row <= largest_y; ++row)
+   for (size_t row = 0; row <= largest_y; ++row)
    {
-      for (int col = 0; col <= largest_x; ++col)
+      for (size_t col = 0; col <= largest_x; ++col)
       {
          Point p{ col, row };
          int sum_distance{ 0 };
@@ -205,32 +203,3 @@ int find_size_of_safe_area(const vector<Point>& points)
 
    return points_in_safe_area;
 }
-
-//bool write_map(const two_dimensional_map& map)
-//{
-//   wofstream outfile{ "Output.txt" };
-//
-//   if (!outfile.good())
-//   {
-//      return false;
-//   }
-//
-//   for (size_t row = 0; row < map.size(); ++row)
-//   {
-//      for (size_t col = 0; col < map[row].size(); ++col)
-//      {
-//         if (map[row][col] == -1)
-//         {
-//            outfile << L"  .  ";
-//         }
-//         else
-//         {
-//            outfile << setw(3) << map[row][col] << L"  ";
-//         }
-//      }
-//
-//      outfile << endl;
-//   }
-//
-//   return true;
-//}

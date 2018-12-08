@@ -4,5 +4,5 @@
 
 const wchar_t* AdventOfCode::Filenames::get_filename()
 {
-   return AdventOfCode::Sample::USE_SAMPLE ? SAMPLE_FILENAME : INPUT_FILENAME;
+   return AdventOfCode::Sample::should_use_sample() ? SAMPLE_FILENAME : INPUT_FILENAME;
 }
