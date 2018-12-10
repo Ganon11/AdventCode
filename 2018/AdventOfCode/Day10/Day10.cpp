@@ -43,7 +43,7 @@ int main()
       ++time;
    }
 
-   std::wcout << L"Message found (?) after " << time << L" seconds." << std::endl;
+   std::wcout << L"Message found after " << time << L" seconds." << std::endl;
    return 0;
 }
 
@@ -83,13 +83,13 @@ bool write_stars(const std::vector<Star>& stars)
    {
       for (int x = min_x; x <= max_x; ++x)
       {
-         if (stars.end() == std::find_if(stars.begin(), stars.end(), [x,y](const Star& s) { auto position{ s.get_position() }; return position.first == x && position.second == y; }))
+         if (std::any_of(stars.begin(), stars.end(), [x, y](const Star& s) { auto position{ s.get_position() }; return position.first == x && position.second == y; }))
          {
-            output << L'.';
+            output << L'#';
          }
          else
          {
-            output << L'#';
+            output << L' ';
          }
       }
 
