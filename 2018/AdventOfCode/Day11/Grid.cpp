@@ -9,36 +9,40 @@ Coordinate::Coordinate(const unsigned int x, const unsigned int y, const unsigne
 
 Grid::Grid(const unsigned int grid_serial_number) {
    m_power_grid = std::vector<std::vector<int>>(GRID_SIZE);
+   m_partial_sums = std::vector<std::vector<int>>(GRID_SIZE);
    for (size_t index = 0; index < m_power_grid.size(); ++index) {
-      m_power_grid[index] = std::vector<int>(GRID_SIZE, std::numeric_limits<int>::min());
+      m_power_grid[index] = std::vector<int>(GRID_SIZE);
+      m_partial_sums[index] = std::vector<int>(GRID_SIZE);
    }
 
    for (unsigned int y = 0; y < m_power_grid.size(); ++y) {
       for (unsigned int x = 0; x < m_power_grid[y].size(); ++x) {
          Coordinate c{ x, y };
-         m_power_grid[y][x] = calculate_power(c, grid_serial_number);
+         int power_level{ calculate_power(c, grid_serial_number) };
+
+         m_power_grid[y][x] = power_level;
+         int partial_sum = power_level;
+         if (y > 0) {
+            partial_sum += m_partial_sums[x][y - 1];
+         }
+
+         if (x > 0) {
+            partial_sum += m_partial_sums[x - 1][y];
+         }
+
+         if (x > 0 && y > 0) {
+            partial_sum -= m_partial_sums[x - 1][y - 1];
+         }
+
+         m_partial_sums[x][y] = partial_sum;
       }
    }
 }
 
 Coordinate Grid::get_max_three_by_three() const {
-   Coordinate max_coordinate{ 0, 0 };
-   int max_power_level{ std::numeric_limits<int>::min() };
-
-   for (unsigned int y = 0; y < m_power_grid.size() - 2; ++y) {
-      for (unsigned int x = 0; x < m_power_grid[y].size() - 2; ++x) {
-         Coordinate c{ x, y };
-         int power_level{ calculate_sum(c) };
-
-         if (power_level > max_power_level)
-         {
-            max_coordinate = c;
-            max_power_level = power_level;
-         }
-      }
-   }
-
-   return max_coordinate;
+   Coordinate c{ 0, 0, 3 };
+   get_max_square(c);
+   return c;
 }
 
 Coordinate Grid::get_max_square() const {
@@ -46,17 +50,11 @@ Coordinate Grid::get_max_square() const {
    int max_power_level{ std::numeric_limits<int>::min() };
 
    for (unsigned int square_size = 1; square_size <= 300; ++square_size) {
-      for (unsigned int y = 0; y < (m_power_grid.size() - square_size + 1); ++y) {
-         for (unsigned int x = 0; x < (m_power_grid[y].size() - square_size + 1); ++x) {
-            Coordinate c{ x, y, square_size };
-            int power_level{ calculate_sum(c) };
-
-            if (power_level > max_power_level)
-            {
-               max_coordinate = c;
-               max_power_level = power_level;
-            }
-         }
+      Coordinate c{ 0, 0, square_size };
+      int power_level{ get_max_square(c) };
+      if (power_level > max_power_level) {
+         max_coordinate = c;
+         max_power_level = power_level;
       }
    }
 
@@ -77,32 +75,34 @@ int Grid::calculate_power(const Coordinate& c, const unsigned int grid_serial_nu
    power_level *= rack_id;
 
    // Keep only the hundreds digit of the power level (so 12345 becomes 3; numbers with no hundreds digit become 0).
-   if (power_level > 100 || power_level < -100) {
-      std::wstringstream ss;
-      ss << power_level;
-      const std::wstring power_level_string{ ss.str() };
-      const std::wstring hundreds_digit{ power_level_string[power_level_string.length() - 3] };
-      power_level = _wtoi(hundreds_digit.c_str());
-   } else {
-      power_level = 0;
-   }
+   power_level = (power_level / 100) % 10;
    
+   // Subtract 5 from the power level.
    power_level -= 5;
 
    return power_level;
 }
 
-int Grid::calculate_sum(const Coordinate& c) const {
-   if ((c.m_x + c.m_square_size - 1) >= GRID_SIZE || (c.m_y + c.m_square_size - 1) >= GRID_SIZE) {
-      return std::numeric_limits<int>::min();
-   }
+int Grid::get_max_square(Coordinate& max_coordinate) const {
+   unsigned int square_size{ max_coordinate.m_square_size };
+   int max_power_level{ std::numeric_limits<int>::min() };
+   const unsigned int num_squares = (GRID_SIZE - square_size + 1);
 
-   int sum{ 0 };
-   for (unsigned int y = c.m_y; y < (c.m_y + c.m_square_size); ++y) {
-      for (unsigned int x = c.m_x; x < (c.m_x + c.m_square_size); ++x) {
-         sum += m_power_grid[y][x];
+   for (unsigned int y = square_size; y < GRID_SIZE; ++y) {
+      for (unsigned int x = square_size; x < GRID_SIZE; ++x) {
+         int partial_sum_a{ m_partial_sums[x][y] };
+         int partial_sum_b{ m_partial_sums[x - square_size][y] };
+         int partial_sum_c{ m_partial_sums[x][y - square_size] };
+         int partial_sum_d{ m_partial_sums[x - square_size][y - square_size] };
+
+         int power_level{ partial_sum_d + partial_sum_a - partial_sum_b - partial_sum_c };
+         if (power_level > max_power_level)
+         {
+            max_coordinate = Coordinate{ x - square_size + 1, y - square_size + 1, square_size };
+            max_power_level = power_level;
+         }
       }
    }
 
-   return sum;
+   return max_power_level;
 }

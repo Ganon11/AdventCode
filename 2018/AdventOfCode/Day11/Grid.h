@@ -23,8 +23,9 @@ public:
 
 private:
    std::vector<std::vector<int>> m_power_grid;
+   std::vector<std::vector<int>> m_partial_sums;
 
    static constexpr unsigned int GRID_SIZE{ 300 };
    static int calculate_power(const Coordinate& c, const unsigned int grid_serial_number);
-   int calculate_sum(const Coordinate& c) const;
+   int get_max_square(Coordinate& max_coordinate) const;
 };
