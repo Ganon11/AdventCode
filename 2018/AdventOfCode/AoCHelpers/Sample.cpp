@@ -3,5 +3,5 @@
 
 bool AdventOfCode::Sample::should_use_sample()
 {
-   return false;
+  return false;
 }

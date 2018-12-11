@@ -2,8 +2,8 @@
 
 namespace AdventOfCode
 {
-   namespace Sample
-   {
-      bool should_use_sample();
-   }
+namespace Sample
+{
+bool should_use_sample();
+}
 }
