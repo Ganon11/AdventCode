@@ -10,22 +10,20 @@
 
 #include "../AoCHelpers/InputHandler.h"
 
-using namespace std;
-
 size_t get_reduced_length(const std::wstring& polymer);
 
 int wmain(int argc, wchar_t* argv[]) {
   AdventOfCode::InputHandler input{ argc, argv };
-  wstring line{ input.read_single_line() };
+  std::wstring line{ input.read_single_line() };
 
-  wcout << L"Part 1: " << get_reduced_length(line) << endl;
+  std::wcout << L"Part 1: " << get_reduced_length(line) << std::endl;
 
   size_t minimum_length{ std::numeric_limits<size_t>::max() };
   for (wchar_t ch = L'a'; ch <= L'z'; ++ch) {
     auto wchar_case_insensitive_comparator{ [ch](const wchar_t c)
         { return ch == c || towupper(ch) == c; } };
-    wstring copy{ line };
-    copy.erase(remove_if(copy.begin(), copy.end(), wchar_case_insensitive_comparator), copy.end());
+    std::wstring copy{ line };
+    copy.erase(std::remove_if(copy.begin(), copy.end(), wchar_case_insensitive_comparator), copy.end());
     size_t reduced_length = get_reduced_length(copy);
 
     if (reduced_length < minimum_length) {
@@ -33,11 +31,11 @@ int wmain(int argc, wchar_t* argv[]) {
     }
   }
 
-  wcout << L"Part 2: " << minimum_length << endl;
+  std::wcout << L"Part 2: " << minimum_length << std::endl;
 }
 
-size_t get_reduced_length(const wstring& polymer) {
-  stack<wchar_t> shrunken_polymer;
+size_t get_reduced_length(const std::wstring& polymer) {
+  std::stack<wchar_t> shrunken_polymer;
   for (const wchar_t ch : polymer) {
     if (0 == shrunken_polymer.size()) {
       shrunken_polymer.push(ch);

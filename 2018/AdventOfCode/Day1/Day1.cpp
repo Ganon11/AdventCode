@@ -11,15 +11,13 @@
 
 #include "../AoCHelpers/InputHandler.h"
 
-using namespace std;
-
-bool add_and_check_frequency(int frequency, int& total, set<int> &seenFrequencies);
+bool add_and_check_frequency(int frequency, int& total, std::set<int> &seenFrequencies);
 
 int wmain(int argc, wchar_t* argv[]) {
   AdventOfCode::InputHandler input{ argc, argv };
   int total{ 0 };
-  vector<int> frequencies;
-  set<int> seenFrequencies;
+  std::vector<int> frequencies;
+  std::set<int> seenFrequencies;
   seenFrequencies.insert(total);
   bool found{ false };
   for (const auto& line : input.read_all_lines()) {
@@ -32,7 +30,7 @@ int wmain(int argc, wchar_t* argv[]) {
     }
   }
 
-  wcout << L"First Total " << total << endl;
+  std::wcout << L"First Total " << total << std::endl;
 
   if (!found) {
     while (true) {
@@ -52,10 +50,10 @@ int wmain(int argc, wchar_t* argv[]) {
   return 0;
 }
 
-bool add_and_check_frequency(int frequency, int& total, set<int> &seenFrequencies) {
+bool add_and_check_frequency(int frequency, int& total, std::set<int> &seenFrequencies) {
   total += frequency;
   if (seenFrequencies.end() != seenFrequencies.find(total)) {
-    wcout << "Repeat frequency found: " << total << endl;
+    std::wcout << "Repeat frequency found: " << total << std::endl;
     return true;
   }
 
