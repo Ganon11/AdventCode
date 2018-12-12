@@ -19,7 +19,7 @@ using namespace std;
 
 typedef vector<vector<size_t>> TwoDimensionalMap;
 
-bool get_points(vector<Point>& points, const int argc, wchar_t** argv);
+bool get_points(vector<Point>& points, const AdventOfCode::InputHandler& input);
 size_t closest_point(const Point& p, const vector<Point>& all_points);
 
 TwoDimensionalMap create_map(const vector<Point>& points);
@@ -30,8 +30,9 @@ size_t find_index_of_largest_area(const TwoDimensionalMap& map, const size_t num
 size_t find_size_of_safe_area(const vector<Point>& points);
 
 int wmain(int argc, wchar_t* argv[]) {
+  AdventOfCode::InputHandler input{ argc, argv };
   vector<Point> points;
-  if (!get_points(points, argc, argv)) {
+  if (!get_points(points, input)) {
     wcout << L"Couldn't parse input." << endl;
     return -1;
   }
@@ -54,9 +55,7 @@ int wmain(int argc, wchar_t* argv[]) {
   return 0;
 }
 
-bool get_points(vector<Point>& points, const int argc, wchar_t** argv) {
-  AdventOfCode::InputHandler input{ argc, argv };
-
+bool get_points(vector<Point>& points, const AdventOfCode::InputHandler& input) {
   for (const wstring& line : input.read_all_lines()) {
     points.push_back(line);
   }

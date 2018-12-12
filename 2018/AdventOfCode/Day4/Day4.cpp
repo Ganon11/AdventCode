@@ -19,14 +19,15 @@
 typedef std::vector<std::shared_ptr<Command>> CommandVector;
 typedef std::map<unsigned int, Guard> GuardMap;
 
-bool get_commands(CommandVector& commands, const int argc, wchar_t** argv);
+bool get_commands(CommandVector& commands, const AdventOfCode::InputHandler& input);
 bool process_commands(const CommandVector& commands, GuardMap& guards);
 unsigned int part_1_answer(const GuardMap& guards);
 unsigned int part_2_answer(const GuardMap& guards);
 
 int wmain(int argc, wchar_t* argv[]) {
+  AdventOfCode::InputHandler input{ argc, argv };
   CommandVector commands;
-  if (!get_commands(commands, argc, argv)) {
+  if (!get_commands(commands, input)) {
     std::wcerr << L"Failed to parse commands." << std::endl;
     return -1;
   }
@@ -43,8 +44,7 @@ int wmain(int argc, wchar_t* argv[]) {
   return 0;
 }
 
-bool get_commands(CommandVector& commands, const int argc, wchar_t** argv) {
-  AdventOfCode::InputHandler input{ argc, argv };
+bool get_commands(CommandVector& commands, const AdventOfCode::InputHandler& input) {
   for (const std::wstring& line : input.read_all_lines()) {
     commands.push_back(Command::make_shared(line));
   }
