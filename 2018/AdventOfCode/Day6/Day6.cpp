@@ -15,25 +15,23 @@
 
 #include "../AoCHelpers/InputHandler.h"
 
-using namespace std;
+typedef std::vector<std::vector<size_t>> TwoDimensionalMap;
 
-typedef vector<vector<size_t>> TwoDimensionalMap;
+bool get_points(std::vector<Point>& points, const AdventOfCode::InputHandler& input);
+size_t closest_point(const Point& p, const std::vector<Point>& all_points);
 
-bool get_points(vector<Point>& points, const AdventOfCode::InputHandler& input);
-size_t closest_point(const Point& p, const vector<Point>& all_points);
-
-TwoDimensionalMap create_map(const vector<Point>& points);
+TwoDimensionalMap create_map(const std::vector<Point>& points);
 unsigned int find_size_of_area(const TwoDimensionalMap& map, const size_t index);
 size_t find_index_of_largest_area(const TwoDimensionalMap& map, const size_t num_points,
     size_t& largest_area);
 
-size_t find_size_of_safe_area(const vector<Point>& points);
+size_t find_size_of_safe_area(const std::vector<Point>& points);
 
 int wmain(int argc, wchar_t* argv[]) {
   AdventOfCode::InputHandler input{ argc, argv };
-  vector<Point> points;
+  std::vector<Point> points;
   if (!get_points(points, input)) {
-    wcout << L"Couldn't parse input." << endl;
+    std::wcout << L"Couldn't parse input." << std::endl;
     return -1;
   }
 
@@ -44,27 +42,27 @@ int wmain(int argc, wchar_t* argv[]) {
   size_t largest_area;
   const size_t index_with_largest_area{ find_index_of_largest_area(map, points.size(),
       largest_area) };
-  wcout << L"Largest Area - " << largest_area << endl;
+  std::wcout << L"Largest Area - " << largest_area << std::endl;
 
   /////////////////////////////////////////////////////////////////////////////
   // Part 2
   /////////////////////////////////////////////////////////////////////////////
   const size_t safe_area = find_size_of_safe_area(points);
-  wcout << L"Safe Area - " << safe_area << endl;
+  std::wcout << L"Safe Area - " << safe_area << std::endl;
 
   return 0;
 }
 
-bool get_points(vector<Point>& points, const AdventOfCode::InputHandler& input) {
-  for (const wstring& line : input.read_all_lines()) {
+bool get_points(std::vector<Point>& points, const AdventOfCode::InputHandler& input) {
+  for (const std::wstring& line : input.read_all_lines()) {
     points.push_back(line);
   }
 
   return true;
 }
 
-size_t closest_point(const Point& p, const vector<Point>& all_points) {
-  int min_distance{ numeric_limits<int>::max() };
+size_t closest_point(const Point& p, const std::vector<Point>& all_points) {
+  int min_distance{ std::numeric_limits<int>::max() };
   size_t min_distance_index;
   bool is_tied{ false };
 
@@ -86,16 +84,16 @@ size_t closest_point(const Point& p, const vector<Point>& all_points) {
   }
 }
 
-TwoDimensionalMap create_map(const vector<Point>& points) {
+TwoDimensionalMap create_map(const std::vector<Point>& points) {
   auto x_comparator{ [](const Point& p1, const Point& p2) { return p1.m_x < p2.m_x; } };
   auto y_comparator{ [](const Point& p1, const Point& p2) { return p1.m_y < p2.m_y; } };
-  unsigned int largest_x{ max_element(points.begin(), points.end(), x_comparator)->m_x };
-  unsigned int largest_y{ max_element(points.begin(), points.end(), y_comparator)->m_y };
+  unsigned int largest_x{ std::max_element(points.begin(), points.end(), x_comparator)->m_x };
+  unsigned int largest_y{ std::max_element(points.begin(), points.end(), y_comparator)->m_y };
   TwoDimensionalMap map;
   map.reserve(largest_y + 1);
 
   for (size_t row = 0; row <= largest_y; ++row) {
-    vector<size_t> current_row;
+    std::vector<size_t> current_row;
     current_row.reserve(largest_x + 1);
     for (size_t col = 0; col <= largest_x; ++col) {
       Point p{ col, row };
@@ -120,7 +118,7 @@ unsigned int find_size_of_area(const TwoDimensionalMap& map, const size_t index)
 
 size_t find_index_of_largest_area(const TwoDimensionalMap& map, const size_t num_points,
     size_t& largest_area) {
-  set<size_t> infinite_areas;
+  std::set<size_t> infinite_areas;
   // Check top row (row = 0) and bottom row (row = map.size() - 1)
   for (size_t col = 0; col < map[0].size(); ++col) {
     infinite_areas.insert(map[0][col]);
@@ -133,7 +131,7 @@ size_t find_index_of_largest_area(const TwoDimensionalMap& map, const size_t num
     infinite_areas.insert(map[row][map[row].size() - 1]);
   }
 
-  unsigned int max_area{ numeric_limits<unsigned int>::min() };
+  unsigned int max_area{ std::numeric_limits<unsigned int>::min() };
   size_t largest_index;
 
   for (size_t index = 0; index < num_points; ++index) {
@@ -157,11 +155,11 @@ namespace {
   const int MAX_ALLOWED_DISTANCE{ 10000 };
 }
 
-size_t find_size_of_safe_area(const vector<Point>& points) {
+size_t find_size_of_safe_area(const std::vector<Point>& points) {
   auto x_comparator{ [](const Point& p1, const Point& p2) { return p1.m_x < p2.m_x; } };
   auto y_comparator{ [](const Point& p1, const Point& p2) { return p1.m_y < p2.m_y; } };
-  unsigned int largest_x{ max_element(points.begin(), points.end(), x_comparator)->m_x };
-  unsigned int largest_y{ max_element(points.begin(), points.end(), y_comparator)->m_y };
+  unsigned int largest_x{ std::max_element(points.begin(), points.end(), x_comparator)->m_x };
+  unsigned int largest_y{ std::max_element(points.begin(), points.end(), y_comparator)->m_y };
 
   int points_in_safe_area = 0;
   for (size_t row = 0; row <= largest_y; ++row) {

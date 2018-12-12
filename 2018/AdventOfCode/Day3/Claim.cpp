@@ -2,10 +2,10 @@
 #include "Claim.h"
 #include <regex>
 
-Claim::Claim(const wstring& line) {
-  wregex line_parsing_regex{ L"#(\\d+) @ (\\d+),(\\d+): (\\d+)x(\\d+)" };
-  wsmatch matches;
-  regex_search(line, matches, line_parsing_regex);
+Claim::Claim(const std::wstring& line) {
+  std::wregex line_parsing_regex{ L"#(\\d+) @ (\\d+),(\\d+): (\\d+)x(\\d+)" };
+  std::wsmatch matches;
+  std::regex_search(line, matches, line_parsing_regex);
   if (matches.size() == 6) // Whole match, then 5 capture groups
   {
     m_id = _wtoi(matches[1].str().c_str());
@@ -36,11 +36,11 @@ unsigned int Claim::get_height() const {
   return m_height;
 }
 
-vector<Claim::Coordinate> Claim::generate_coordinates() const {
-  vector<Claim::Coordinate> areas_covered;
+std::vector<Claim::Coordinate> Claim::generate_coordinates() const {
+  std::vector<Claim::Coordinate> areas_covered;
   for (unsigned int x = 0; x < m_width; ++x) {
     for (unsigned int y = 0; y < m_height; ++y) {
-      areas_covered.push_back(make_pair(m_left + x, m_top + y));
+      areas_covered.push_back(std::make_pair(m_left + x, m_top + y));
     }
   }
 
