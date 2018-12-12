@@ -27,7 +27,7 @@ bool Task::operator<(const Task& other) const {
 
 unsigned int Task::task_length() const {
   unsigned int length{ static_cast<unsigned int>(m_task_name - L'A' + 1) };
-  if (!AdventOfCode::Sample::should_use_sample()) {
+  if (!advent_of_code::sample::should_use_sample()) {
     length += 60;
   }
 

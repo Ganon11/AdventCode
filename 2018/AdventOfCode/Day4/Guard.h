@@ -28,14 +28,14 @@ private:
 };
 
 namespace std {
-  template<>
-  struct hash<Guard>
-  {
-    typedef Guard argument_type;
-    typedef unsigned int result_type;
+template<>
+struct hash<Guard>
+{
+  typedef Guard argument_type;
+  typedef unsigned int result_type;
 
-    unsigned int operator()(const Guard& x) const {
-      return x.get_id();
-    }
-  };
+  unsigned int operator()(const Guard& x) const {
+    return x.get_id();
+  }
+};
 }

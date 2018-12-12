@@ -13,7 +13,7 @@
 size_t get_reduced_length(const std::wstring& polymer);
 
 int wmain(int argc, wchar_t* argv[]) {
-  AdventOfCode::InputHandler input{ argc, argv };
+  advent_of_code::InputHandler input{ argc, argv };
   std::wstring line{ input.read_single_line() };
 
   std::wcout << L"Part 1: " << get_reduced_length(line) << std::endl;

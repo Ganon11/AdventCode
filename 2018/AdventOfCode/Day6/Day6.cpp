@@ -14,10 +14,11 @@
 #include "Point.h"
 
 #include "../AoCHelpers/InputHandler.h"
+#include "../AoCHelpers/Sample.h"
 
 typedef std::vector<std::vector<size_t>> TwoDimensionalMap;
 
-bool get_points(std::vector<Point>& points, const AdventOfCode::InputHandler& input);
+bool get_points(std::vector<Point>& points, const advent_of_code::InputHandler& input);
 size_t closest_point(const Point& p, const std::vector<Point>& all_points);
 
 TwoDimensionalMap create_map(const std::vector<Point>& points);
@@ -28,7 +29,7 @@ size_t find_index_of_largest_area(const TwoDimensionalMap& map, const size_t num
 size_t find_size_of_safe_area(const std::vector<Point>& points);
 
 int wmain(int argc, wchar_t* argv[]) {
-  AdventOfCode::InputHandler input{ argc, argv };
+  advent_of_code::InputHandler input{ argc, argv };
   std::vector<Point> points;
   if (!get_points(points, input)) {
     std::wcout << L"Couldn't parse input." << std::endl;
@@ -53,7 +54,7 @@ int wmain(int argc, wchar_t* argv[]) {
   return 0;
 }
 
-bool get_points(std::vector<Point>& points, const AdventOfCode::InputHandler& input) {
+bool get_points(std::vector<Point>& points, const advent_of_code::InputHandler& input) {
   for (const std::wstring& line : input.read_all_lines()) {
     points.push_back(line);
   }
@@ -152,7 +153,7 @@ size_t find_index_of_largest_area(const TwoDimensionalMap& map, const size_t num
 }
 
 namespace {
-  const int MAX_ALLOWED_DISTANCE{ 10000 };
+const int MAX_ALLOWED_DISTANCE{ advent_of_code::sample::should_use_sample() ? 32 : 10000 };
 }
 
 size_t find_size_of_safe_area(const std::vector<Point>& points) {

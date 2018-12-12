@@ -3,8 +3,7 @@
 #include <string>
 #include <vector>
 
-namespace AdventOfCode
-{
+namespace advent_of_code {
 class InputHandler
 {
 public:
