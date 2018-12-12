@@ -15,7 +15,7 @@
 std::vector<unsigned int> parse_input(const std::wstring& line);
 
 int wmain(int argc, wchar_t* argv[]) {
-  AdventOfCode::InputHandler input{ argc, argv };
+  advent_of_code::InputHandler input{ argc, argv };
   std::vector<unsigned int> numbers{ parse_input(input.read_single_line()) };
   std::unique_ptr<TreeNode> root{ TreeNode::make_unique(numbers) };
 

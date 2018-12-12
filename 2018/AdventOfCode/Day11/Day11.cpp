@@ -8,7 +8,7 @@
 #include "Grid.h"
 
 int wmain(int argc, wchar_t* argv[]) {
-  AdventOfCode::InputHandler input{ argc, argv };
+  advent_of_code::InputHandler input{ argc, argv };
   int signed_grid_number{ _wtoi(input.read_single_line().c_str()) };
   unsigned int grid_serial_number{ static_cast<unsigned int>(signed_grid_number) };
   Grid g{ grid_serial_number };

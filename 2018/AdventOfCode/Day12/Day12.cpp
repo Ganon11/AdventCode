@@ -18,7 +18,7 @@ PlantMap calculate_generation(const PlantMap& old_plants, const std::vector<Plan
 __int64 count_plants(const PlantMap& plants);
 
 int wmain(int argc, wchar_t* argv[]) {
-  AdventOfCode::InputHandler input{ argc, argv };
+  advent_of_code::InputHandler input{ argc, argv };
   std::vector<std::wstring> lines{ input.read_all_lines() };
 
   // Initial state is in first line

@@ -16,14 +16,14 @@
 #include "../AoCHelpers/InputHandler.h"
 #include "../AoCHelpers/Sample.h"
 
-bool get_tasks(std::vector<Task>& tasks, const AdventOfCode::InputHandler& input);
+bool get_tasks(std::vector<Task>& tasks, const advent_of_code::InputHandler& input);
 Task find_next_task(const std::vector<Task>& tasks, const std::set<wchar_t> completed_tasks);
 std::vector<Task> sort_tasks(const std::vector<Task>& tasks);
 void print_tasks_in_order(const std::vector<Task>& tasks);
 unsigned int perform_tasks(const std::vector<Task>& tasks_in_order);
 
 int wmain(int argc, wchar_t* argv[]) {
-  AdventOfCode::InputHandler input{ argc, argv };
+  advent_of_code::InputHandler input{ argc, argv };
   std::vector<Task> tasks;
   if (!get_tasks(tasks, input)) {
     std::wcerr << L"Couldn't parse input." << std::endl;
@@ -39,7 +39,7 @@ int wmain(int argc, wchar_t* argv[]) {
   return 0;
 }
 
-bool get_tasks(std::vector<Task>& tasks, const AdventOfCode::InputHandler& input) {
+bool get_tasks(std::vector<Task>& tasks, const advent_of_code::InputHandler& input) {
   std::wregex task_regex{ L"Step (\\w) must be finished before step (\\w) can begin." };
   std::wsmatch matches;
   for (const std::wstring& line : input.read_all_lines()) {
@@ -112,7 +112,7 @@ void print_tasks_in_order(const std::vector<Task>& tasks) {
 }
 
 unsigned int perform_tasks(const std::vector<Task>& tasks_in_order) {
-  const size_t NUM_WORKERS{ AdventOfCode::Sample::should_use_sample() ? 2u : 5u };
+  const size_t NUM_WORKERS{ advent_of_code::sample::should_use_sample() ? 2u : 5u };
 
   std::vector<Worker> workers;
   workers.reserve(NUM_WORKERS);
