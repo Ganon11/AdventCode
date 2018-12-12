@@ -16,8 +16,8 @@
 
 using namespace std;
 
-int main() {
-  AdventOfCode::InputHandler input;
+int wmain(int argc, wchar_t* argv[]) {
+  AdventOfCode::InputHandler input{ argc, argv };
   vector<Claim> claims;
   for (const auto& line : input.read_all_lines()) {
     claims.push_back(Claim{ line });

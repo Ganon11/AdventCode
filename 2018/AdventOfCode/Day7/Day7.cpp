@@ -18,15 +18,15 @@ using namespace std;
 #include "../AoCHelpers/InputHandler.h"
 #include "../AoCHelpers/Sample.h"
 
-bool get_tasks(vector<Task>& tasks);
+bool get_tasks(vector<Task>& tasks, const int argc, wchar_t** argv);
 Task find_next_task(const vector<Task>& tasks, const set<wchar_t> completed_tasks);
 vector<Task> sort_tasks(const vector<Task>& tasks);
 void print_tasks_in_order(const vector<Task>& tasks);
 unsigned int perform_tasks(const vector<Task>& tasks_in_order);
 
-int main() {
+int wmain(int argc, wchar_t* argv[]) {
   vector<Task> tasks;
-  if (!get_tasks(tasks)) {
+  if (!get_tasks(tasks, argc, argv)) {
     wcerr << L"Couldn't parse input." << endl;
     return -1;
   }
@@ -40,8 +40,8 @@ int main() {
   return 0;
 }
 
-bool get_tasks(vector<Task>& tasks) {
-  AdventOfCode::InputHandler input;
+bool get_tasks(vector<Task>& tasks, const int argc, wchar_t** argv) {
+  AdventOfCode::InputHandler input{ argc, argv };
 
   wregex task_regex{ L"Step (\\w) must be finished before step (\\w) can begin." };
   wsmatch matches;

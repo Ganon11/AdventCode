@@ -12,8 +12,8 @@
 
 #include "Box.h"
 
-int main() {
-  AdventOfCode::InputHandler input;
+int wmain(int argc, wchar_t* argv[]) {
+  AdventOfCode::InputHandler input{ argc, argv };
   std::vector<Box> boxes;
   for (const auto& box_name : input.read_all_lines()) {
     boxes.push_back(Box{ box_name });

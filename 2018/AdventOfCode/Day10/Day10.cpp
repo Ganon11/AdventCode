@@ -15,8 +15,8 @@ bool star_map_is_small_enough(const std::vector<Star>& stars);
 bool write_stars(const std::vector<Star>& stars);
 __int64 move_stars(std::vector<Star>& stars);
 
-int main() {
-  AdventOfCode::InputHandler input;
+int wmain(int argc, wchar_t* argv[]) {
+  AdventOfCode::InputHandler input{ argc, argv };
   std::vector<Star> all_stars; // Hey now
   for (const std::wstring& line : input.read_all_lines()) {
     all_stars.push_back(line);

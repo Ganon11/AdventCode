@@ -4,12 +4,24 @@
 
 #include "Filenames.h"
 #include "InputHandler.h"
+#include "Sample.h"
 
-AdventOfCode::InputHandler::InputHandler() : InputHandler(Filenames::get_filename())
-{ }
+AdventOfCode::InputHandler::InputHandler(const int argc, wchar_t** argv) {
+  bool filename_set = false;
+  for (int argv_index = 1; argv_index < argc; ++argv_index) {
+    if (0 == _wcsicmp(L"-use-sample", argv[argv_index])) {
+      Sample::set_use_sample(true);
+    } else if (0 == _wcsicmp(L"-filename", argv[argv_index]) && argv_index + 1 < argc) {
+      m_filename = std::wstring(argv[argv_index + 1]);
+      ++argv_index;
+      filename_set = true;
+    }
+  }
 
-AdventOfCode::InputHandler::InputHandler(const wchar_t* filename) : m_filename(filename)
-{ }
+  if (!filename_set) {
+    m_filename = Filenames::get_filename();
+  }
+}
 
 std::wstring AdventOfCode::InputHandler::read_single_line() const
 {
