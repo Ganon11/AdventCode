@@ -108,7 +108,7 @@ PlantMap calculate_generation(const PlantMap& old_plants, const std::vector<Plan
       return p1.first < p2.first; } };
 
   const int min_index = std::min_element(old_plants.begin(), old_plants.end(),
-      plant_comparator)->first;
+    plant_comparator)->first;
   const int max_index = std::max_element(old_plants.begin(), old_plants.end(),
     plant_comparator)->first;
 
