@@ -8,8 +8,7 @@ namespace AdventOfCode
 class InputHandler
 {
 public:
-  InputHandler();
-  InputHandler(const wchar_t* filename);
+  InputHandler(const int argc, wchar_t** argv);
 
   std::wstring read_single_line() const;
   std::vector<std::wstring> read_all_lines() const;

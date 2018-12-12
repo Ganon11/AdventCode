@@ -9,8 +9,8 @@
 #include "../AoCHelpers/InputHandler.h"
 #include "MarbleList.h"
 
-int main() {
-  AdventOfCode::InputHandler input;
+int wmain(int argc, wchar_t* argv[]) {
+  AdventOfCode::InputHandler input{ argc, argv };
   std::wstring line{ input.read_single_line() };
 
   std::wregex marble_regex{ L"(\\d+) players; last marble is worth (\\d+) points" };

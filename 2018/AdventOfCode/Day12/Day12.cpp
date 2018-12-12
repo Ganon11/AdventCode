@@ -17,8 +17,8 @@ std::vector<PlantRule> get_rules(const std::vector<std::wstring>& lines);
 PlantMap calculate_generation(const PlantMap& old_plants, const std::vector<PlantRule>& rules);
 __int64 count_plants(const PlantMap& plants);
 
-int main() {
-  AdventOfCode::InputHandler input;
+int wmain(int argc, wchar_t* argv[]) {
+  AdventOfCode::InputHandler input{ argc, argv };
   std::vector<std::wstring> lines{ input.read_all_lines() };
 
   // Initial state is in first line
@@ -45,13 +45,18 @@ int main() {
     // constant number of plants. If we detect this pattern by checking the difference between the
     // last few pairs of generations, we can exit early and determine the final sum in one
     // calculation.
-    if (generation > 4
-      && (all_sums[generation] - all_sums[generation - 1]) == (all_sums[generation - 1] - all_sums[generation - 2])
-      && (all_sums[generation - 1] - all_sums[generation - 2]) == (all_sums[generation - 2] - all_sums[generation - 3])
-      && (all_sums[generation - 2] - all_sums[generation - 3]) == (all_sums[generation - 3] - all_sums[generation - 4])) {
-      std::wcout << L"Pattern detected!" << std::endl;
-      repeat_factor = all_sums[generation] - all_sums[generation - 1];
-      break;
+    if (generation > 4) {
+      unsigned __int64 lastDifference{ all_sums[generation] - all_sums[generation - 1] };
+      unsigned __int64 twoDifferencesAgo{ all_sums[generation - 1] - all_sums[generation - 2] };
+      unsigned __int64 threeDifferencesAgo{ all_sums[generation - 2] - all_sums[generation - 3] };
+      unsigned __int64 fourDifferencesAgo{ all_sums[generation - 3] - all_sums[generation - 4] };
+      if (lastDifference == twoDifferencesAgo
+          && twoDifferencesAgo == threeDifferencesAgo
+          && threeDifferencesAgo == fourDifferencesAgo) {
+        std::wcout << L"Pattern detected at generation " << generation << L"!" << std::endl;
+        repeat_factor = all_sums[generation] - all_sums[generation - 1];
+        break;
+      }
     }
   }
 

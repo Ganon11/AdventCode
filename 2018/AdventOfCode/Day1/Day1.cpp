@@ -15,8 +15,8 @@ using namespace std;
 
 bool add_and_check_frequency(int frequency, int& total, set<int> &seenFrequencies);
 
-int main() {
-  AdventOfCode::InputHandler input;
+int wmain(int argc, wchar_t* argv[]) {
+  AdventOfCode::InputHandler input{ argc, argv };
   int total{ 0 };
   vector<int> frequencies;
   set<int> seenFrequencies;
