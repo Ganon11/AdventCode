@@ -2,7 +2,6 @@
 #include "Track.h"
 
 #include <algorithm>
-#include <set>
 
 Track::Track(const advent_of_code::InputHandler& input) {
   unsigned int y{ 0 };
@@ -51,7 +50,7 @@ Track::Track(const advent_of_code::InputHandler& input) {
   }
 }
 
-void Track::tick() {
+Position Track::tick() {
   std::sort(m_carts.begin(), m_carts.end());
   for (Cart& cart : m_carts) {
     Position cart_position{ cart.move() };
@@ -87,20 +86,33 @@ void Track::tick() {
       break;
     }
   }
+
+  std::set<Position> crash_positions{ get_crash_positions() };
+  if (crash_positions.size() == 0) {
+    return NONE_POSITION;
+  }
+
+  for (const Position& crash : crash_positions) {
+    std::wcout << L"CRASH! at " << crash;
+    remove_carts(crash);
+    std::wcout << L", Carts left: " << num_carts() << std::endl;
+  }
+
+  return *(crash_positions.begin());
 }
 
-Position Track::get_crash_position() const {
+std::set<Position> Track::get_crash_positions() const {
+  std::set<Position> crash_positions;
   std::set<Position> cart_positions;
   for (const Cart& cart : m_carts) {
     Position p{ cart.get_current_position() };
-    if (cart_positions.end() != cart_positions.find(p)) {
-      return p;
+    auto insert_result { cart_positions.insert(p) };
+    if (!insert_result.second) {
+      crash_positions.insert(p);
     }
-
-    cart_positions.insert(p);
   }
 
-  return NONE_POSITION;
+  return crash_positions;
 }
 
 void Track::remove_carts(const Position& position) {

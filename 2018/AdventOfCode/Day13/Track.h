@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <map>
+#include <set>
 #include <vector>
 
 #include "../AoCHelpers/InputHandler.h"
@@ -23,8 +24,8 @@ class Track
 public:
   Track(const advent_of_code::InputHandler& input);
 
-  void tick();
-  Position get_crash_position() const;
+  Position tick();
+  std::set<Position> get_crash_positions() const;
   void remove_carts(const Position& position);
   size_t num_carts() const;
   Position first_cart_position() const;
