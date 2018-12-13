@@ -51,9 +51,33 @@ Track::Track(const advent_of_code::InputHandler& input) {
 }
 
 Position Track::tick() {
+  Position first_crash_position{ NONE_POSITION };
+  std::set<unsigned int> crashed_cart_ids;
   std::sort(m_carts.begin(), m_carts.end());
+
   for (Cart& cart : m_carts) {
     Position cart_position{ cart.move() };
+    bool collision{ false };
+    for (const Cart& other : m_carts) {
+      if (cart == other) {
+        continue; // Can't collide with itself
+      }
+
+      if (cart_position == other.get_current_position()) {
+        collision = true;
+        crashed_cart_ids.insert(cart.get_id());
+        crashed_cart_ids.insert(other.get_id());
+
+        if (first_crash_position == NONE_POSITION) {
+          first_crash_position = cart_position;
+        }
+      }
+    }
+
+    if (collision) {
+      continue;
+    }
+
     switch (m_tracks.at(cart_position)) {
     case RIGHTBEND:
       switch (cart.get_current_direction()) {
@@ -87,18 +111,16 @@ Position Track::tick() {
     }
   }
 
-  std::set<Position> crash_positions{ get_crash_positions() };
-  if (crash_positions.size() == 0) {
-    return NONE_POSITION;
+  if (crashed_cart_ids.size() > 0) {
+    auto cart_finder{
+        [crashed_cart_ids](const Cart& c) {
+            return crashed_cart_ids.end() != crashed_cart_ids.find(c.get_id());
+        }
+    };
+    m_carts.erase(std::remove_if(m_carts.begin(), m_carts.end(), cart_finder), m_carts.end());
   }
 
-  for (const Position& crash : crash_positions) {
-    std::wcout << L"CRASH! at " << crash;
-    remove_carts(crash);
-    std::wcout << L", Carts left: " << num_carts() << std::endl;
-  }
-
-  return *(crash_positions.begin());
+  return first_crash_position;
 }
 
 std::set<Position> Track::get_crash_positions() const {
@@ -113,11 +135,6 @@ std::set<Position> Track::get_crash_positions() const {
   }
 
   return crash_positions;
-}
-
-void Track::remove_carts(const Position& position) {
-  auto cart_finder{ [position](const Cart& c) { return position == c.get_current_position(); } };
-  m_carts.erase(std::remove_if(m_carts.begin(), m_carts.end(), cart_finder), m_carts.end());
 }
 
 size_t Track::num_carts() const {

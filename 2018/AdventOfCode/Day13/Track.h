@@ -26,7 +26,6 @@ public:
 
   Position tick();
   std::set<Position> get_crash_positions() const;
-  void remove_carts(const Position& position);
   size_t num_carts() const;
   Position first_cart_position() const;
 
