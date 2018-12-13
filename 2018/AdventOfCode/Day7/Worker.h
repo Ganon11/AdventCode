@@ -6,18 +6,18 @@
 class Worker
 {
 public:
-   Worker();
+  Worker();
 
-   void assign_task(const Task& t, const unsigned int timer);
-   bool has_completed_task(const unsigned int timer) const;
-   void deassign_task();
-   bool is_currently_assigned_task() const;
-   wchar_t get_current_task() const;
+  void assign_task(const Task& t, const unsigned int timer);
+  bool has_completed_task(const unsigned int timer) const;
+  void deassign_task();
+  bool is_currently_assigned_task() const;
+  wchar_t get_current_task() const;
 
 private:
-   const static wchar_t UNASSIGNED_TASK{ std::numeric_limits<wchar_t>::max() };
+  const static wchar_t UNASSIGNED_TASK{ std::numeric_limits<wchar_t>::max() };
 
-   wchar_t m_current_task;
-   unsigned int m_current_task_time;
-   unsigned int m_start_time;
+  wchar_t m_current_task;
+  unsigned int m_current_task_time;
+  unsigned int m_start_time;
 };

@@ -3,18 +3,16 @@
 #include <string>
 #include <vector>
 
-namespace AdventOfCode
+namespace advent_of_code {
+class InputHandler
 {
-   class InputHandler
-   {
-   public:
-      InputHandler();
-      InputHandler(const wchar_t* filename);
+public:
+  InputHandler(const int argc, wchar_t** argv);
 
-      std::wstring read_single_line() const;
-      std::vector<std::wstring> read_all_lines() const;
+  std::wstring read_single_line() const;
+  std::vector<std::wstring> read_all_lines() const;
 
-   private:
-      std::wstring m_filename;
-   };
+private:
+  std::wstring m_filename;
+};
 }

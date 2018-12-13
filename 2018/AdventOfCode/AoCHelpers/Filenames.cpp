@@ -2,7 +2,7 @@
 #include "Filenames.h"
 #include "Sample.h"
 
-const wchar_t* AdventOfCode::Filenames::get_filename()
+const wchar_t* advent_of_code::Filenames::get_filename()
 {
-   return AdventOfCode::Sample::should_use_sample() ? SAMPLE_FILENAME : INPUT_FILENAME;
+  return advent_of_code::sample::should_use_sample() ? SAMPLE_FILENAME : INPUT_FILENAME;
 }
