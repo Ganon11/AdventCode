@@ -13,18 +13,23 @@ enum Direction
 class Cart
 {
 public:
-  Cart(const unsigned int x, const unsigned int y, const Direction direction);
+  Cart(const unsigned int x,
+       const unsigned int y,
+       const Direction direction);
   Cart(const Position& p, const Direction direction);
 
   Direction get_current_direction() const;
+  Position get_current_position() const;
+  unsigned int get_id() const;
+
   Direction turn();
   Direction turn_clockwise();
   Direction turn_counterclockwise();
-
-  Position get_current_position() const;
   Position move();
 
   bool operator<(const Cart& other) const;
+  bool operator==(const Cart& other) const;
+  bool operator!=(const Cart& other) const;
 
 private:
   Position m_position;
@@ -38,4 +43,6 @@ private:
   };
 
   Turn m_next_turn;
+  static unsigned int s_next_id;
+  unsigned int m_id;
 };
