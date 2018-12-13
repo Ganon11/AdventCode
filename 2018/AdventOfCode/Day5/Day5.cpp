@@ -10,57 +10,48 @@
 
 #include "../AoCHelpers/InputHandler.h"
 
-using namespace std;
-
 size_t get_reduced_length(const std::wstring& polymer);
 
-int main()
-{
-   AdventOfCode::InputHandler input;
-   wstring line{ input.read_single_line() };
+int wmain(int argc, wchar_t* argv[]) {
+  advent_of_code::InputHandler input{ argc, argv };
+  std::wstring line{ input.read_single_line() };
 
-   wcout << L"Part 1: " << get_reduced_length(line) << endl;
+  std::wcout << L"Part 1: " << get_reduced_length(line) << std::endl;
 
-   size_t minimum_length{ std::numeric_limits<size_t>::max() };
-   for (wchar_t ch = L'a'; ch <= L'z'; ++ch)
-   {
-      wstring copy{ line };
-      copy.erase(remove_if(copy.begin(), copy.end(), [ch](const wchar_t c){ return ch == c || towupper(ch) == c; }), copy.end());
-      size_t reduced_length = get_reduced_length(copy);
+  size_t minimum_length{ std::numeric_limits<size_t>::max() };
+  for (wchar_t ch = L'a'; ch <= L'z'; ++ch) {
+    auto wchar_case_insensitive_comparator{ [ch](const wchar_t c)
+        { return ch == c || towupper(ch) == c; } };
+    std::wstring copy{ line };
+    copy.erase(std::remove_if(copy.begin(), copy.end(), wchar_case_insensitive_comparator), copy.end());
+    size_t reduced_length = get_reduced_length(copy);
 
-      if (reduced_length < minimum_length)
-      {
-         minimum_length = reduced_length;
-      }
-   }
+    if (reduced_length < minimum_length) {
+      minimum_length = reduced_length;
+    }
+  }
 
-   wcout << L"Part 2: " << minimum_length << endl;
+  std::wcout << L"Part 2: " << minimum_length << std::endl;
 }
 
-size_t get_reduced_length(const wstring& polymer)
-{
-   stack<wchar_t> shrunken_polymer;
-   for (const wchar_t ch : polymer)
-   {
-      if (0 == shrunken_polymer.size())
-      {
-         shrunken_polymer.push(ch);
-         continue;
-      }
+size_t get_reduced_length(const std::wstring& polymer) {
+  std::stack<wchar_t> shrunken_polymer;
+  for (const wchar_t ch : polymer) {
+    if (0 == shrunken_polymer.size()) {
+      shrunken_polymer.push(ch);
+      continue;
+    }
 
-      wchar_t other{ shrunken_polymer.top() };
+    wchar_t other{ shrunken_polymer.top() };
 
-      // If ch1 and ch2 are the same letter, but not the same case, then their towlower versions will be equal, but
-      // they themselves will be inequal
-      if (ch != other && towlower(ch) == towlower(other))
-      {
-         shrunken_polymer.pop();
-      }
-      else
-      {
-         shrunken_polymer.push(ch);
-      }
-   }
+    // If ch1 and ch2 are the same letter, but not the same case, then their towlower versions will
+    // be equal, but they themselves will be inequal
+    if (ch != other && towlower(ch) == towlower(other)) {
+      shrunken_polymer.pop();
+    } else {
+      shrunken_polymer.push(ch);
+    }
+  }
 
-   return shrunken_polymer.size();
+  return shrunken_polymer.size();
 }

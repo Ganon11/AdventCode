@@ -14,26 +14,23 @@
 
 std::vector<unsigned int> parse_input(const std::wstring& line);
 
-int main()
-{
-   AdventOfCode::InputHandler input;
-   std::vector<unsigned int> numbers{ parse_input(input.read_single_line()) };
-   std::unique_ptr<TreeNode> root{ TreeNode::make_unique(numbers) };
+int wmain(int argc, wchar_t* argv[]) {
+  advent_of_code::InputHandler input{ argc, argv };
+  std::vector<unsigned int> numbers{ parse_input(input.read_single_line()) };
+  std::unique_ptr<TreeNode> root{ TreeNode::make_unique(numbers) };
 
-   std::wcout << L"Part 1: " << root->sum_metadata() << std::endl;
-   std::wcout << L"Part 2: " << root->get_value() << std::endl;
-   return 0;
+  std::wcout << L"Part 1: " << root->sum_metadata() << std::endl;
+  std::wcout << L"Part 2: " << root->get_value() << std::endl;
+  return 0;
 }
 
-std::vector<unsigned int> parse_input(const std::wstring& line)
-{
-   std::vector<unsigned int> numbers;
-   std::wistringstream tokenStream{ line };
-   std::wstring token;
-   while (std::getline(tokenStream, token, L' '))
-   {
-      numbers.push_back(_wtoi(token.c_str()));
-   }
+std::vector<unsigned int> parse_input(const std::wstring& line) {
+  std::vector<unsigned int> numbers;
+  std::wistringstream tokenStream{ line };
+  std::wstring token;
+  while (std::getline(tokenStream, token, L' ')) {
+    numbers.push_back(_wtoi(token.c_str()));
+  }
 
-   return numbers;
+  return numbers;
 }
