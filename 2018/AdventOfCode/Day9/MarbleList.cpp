@@ -20,11 +20,8 @@ unsigned int MarbleList::play_game() {
       // Scoring turn
       m_player_scores[current_player] += marble;
 
-      MarbleListNodePtr marble_to_remove{ m_current };
-      for (unsigned int iteration = 0; iteration < 7; ++iteration) {
-        marble_to_remove = marble_to_remove->previous;
-      }
-
+      MarbleListNodePtr marble_to_remove{
+         m_current->previous->previous->previous->previous->previous->previous->previous };
       m_current = marble_to_remove->next;
       m_player_scores[current_player] += remove_marble(marble_to_remove);
     } else {
