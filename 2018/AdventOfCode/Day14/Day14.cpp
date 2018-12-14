@@ -9,10 +9,12 @@
 
 #include "../AoCHelpers/Sample.h"
 
-std::vector<unsigned short> get_digits_less_than_20(unsigned short sum);
+std::vector<unsigned short> get_digits(unsigned short num);
+std::vector<unsigned short> get_digits(const std::wstring& input);
+bool generate_new_recipes(std::vector<unsigned short>& recipe_scores, size_t& elf_1, size_t& elf2);
+
 void part_1(const std::wstring& input);
 
-std::vector<unsigned short> get_digits(const std::wstring& input);
 size_t find_digits_in_vector(
     const std::vector<unsigned short>& digits,
     const std::vector<unsigned short>& recipe_scores);
@@ -32,53 +34,19 @@ int wmain(int argc, wchar_t* argv[]) {
   return 0;
 }
 
-std::vector<unsigned short> get_digits_less_than_20(unsigned short sum) {
-  // There's only so many possibilities (0 through 18)
+std::vector<unsigned short> get_digits(unsigned short num) {  
   std::vector<unsigned short> digits;
-  if (sum > 18) {
-    std::wcerr << L"Unexpected input - sum is " << sum << std::endl;
-    return digits;
-  }
-
-  if (sum > 9) {
-    digits.reserve(2);
-    digits.push_back(1);
-    sum -= 10;
+  if (0u == num) {
+    digits.push_back(0);
   } else {
-    digits.reserve(1);
-  }
-
-  digits.push_back(sum);
-
-  return digits;
-}
-
-void part_1(const std::wstring& input) {
-  const size_t INPUT_AS_NUMBER{ static_cast<size_t>(_wtoi(input.c_str())) };
-  const size_t RECIPES_TO_CREATE{ INPUT_AS_NUMBER + 10 };
-  std::vector<unsigned short> recipe_scores{ 3, 7 };
-  recipe_scores.reserve(RECIPES_TO_CREATE);
-  size_t elf_1{ 0 }, elf_2{ 1 };
-
-  while (recipe_scores.size() < RECIPES_TO_CREATE) {
-    std::vector<unsigned short> digits{
-        get_digits_less_than_20(recipe_scores[elf_1] + recipe_scores[elf_2]) };
-    if (digits.size() == 0 || digits.size() > 2) {
-      std::wcerr << L"Unexpected result from get_digits" << std::endl;
-      return;
+    unsigned short num_digits{ static_cast<unsigned short>(log10(num) + 1) };
+    digits.reserve(num_digits);
+    for (int digit = 0; digit < num_digits; ++digit) {
+      digits.insert(digits.begin(), num % 10);
+      num /= 10;
     }
-
-    recipe_scores.insert(recipe_scores.end(), digits.begin(), digits.end());
-    elf_1 = (elf_1 + recipe_scores[elf_1] + 1) % recipe_scores.size();
-    elf_2 = (elf_2 + recipe_scores[elf_2] + 1) % recipe_scores.size();
   }
-
-  // Part 1
-  std::wcout << L"Recipe scores: ";
-  for (size_t index = INPUT_AS_NUMBER; index < RECIPES_TO_CREATE; ++index) {
-    std::wcout << recipe_scores[index];
-  }
-  std::wcout << std::endl;
+  return digits;
 }
 
 std::vector<unsigned short> get_digits(const std::wstring& input) {
@@ -92,14 +60,53 @@ std::vector<unsigned short> get_digits(const std::wstring& input) {
   return digits;
 }
 
+bool generate_new_recipes(std::vector<unsigned short>& recipe_scores, size_t& elf_1,
+    size_t& elf_2) {
+  std::vector<unsigned short> digits{
+          get_digits(recipe_scores[elf_1] + recipe_scores[elf_2]) };
+  if (digits.size() == 0 || digits.size() > 2) {
+    std::wcerr << L"Unexpected result from get_digits" << std::endl;
+    return false;
+  }
+
+  recipe_scores.insert(recipe_scores.end(), digits.begin(), digits.end());
+  elf_1 = (elf_1 + recipe_scores[elf_1] + 1) % recipe_scores.size();
+  elf_2 = (elf_2 + recipe_scores[elf_2] + 1) % recipe_scores.size();
+
+  return true;
+}
+
+void part_1(const std::wstring& input) {
+  const size_t INPUT_AS_NUMBER{ static_cast<size_t>(_wtoi(input.c_str())) };
+  const size_t RECIPES_TO_CREATE{ INPUT_AS_NUMBER + 10 };
+  std::vector<unsigned short> recipe_scores{ 3, 7 };
+  recipe_scores.reserve(RECIPES_TO_CREATE);
+  size_t elf_1{ 0 }, elf_2{ 1 };
+
+  while (recipe_scores.size() < RECIPES_TO_CREATE) {
+    if (!generate_new_recipes(recipe_scores, elf_1, elf_2)) {
+      return;
+    }
+  }
+
+  // Part 1
+  std::wcout << L"Recipe scores: ";
+  for (size_t index = INPUT_AS_NUMBER; index < RECIPES_TO_CREATE; ++index) {
+    std::wcout << recipe_scores[index];
+  }
+  std::wcout << std::endl;
+}
+
 size_t find_digits_in_vector(
     const std::vector<unsigned short>& digits,
     const std::vector<unsigned short>& recipe_scores) {
+  // If there are more digits than there are recipes, the digits cannot possibly be in the score
+  // sequence.
   if (digits.size() > recipe_scores.size()) {
     return std::numeric_limits<size_t>::max();
   }
 
-  // digits are either at the very end of the recipe_scores, or off by 1
+  // Check if digits are found at the end
   size_t digits_index{ 0 };
   size_t recipe_index{ recipe_scores.size() - digits.size() };
   bool found{ true };
@@ -117,6 +124,7 @@ size_t find_digits_in_vector(
     return recipe_scores.size() - digits.size();
   }
 
+  // Check if digits are found at the end, offset by 1
   digits_index = 0;
   recipe_index = recipe_scores.size() - digits.size() - 1;
   found = true;
@@ -134,34 +142,19 @@ size_t find_digits_in_vector(
     return recipe_scores.size() - digits.size() - 1;
   }
 
+  // Didn't find it
   return std::numeric_limits<size_t>::max();
 }
 
 void part_2(const std::wstring& input) {
   std::vector<unsigned short> input_digits{ get_digits(input) };
-
-  // Check
-  std::wcout << L"Input digits: ";
-  for (size_t index = 0; index < input_digits.size(); ++index) {
-    std::wcout << input_digits[index] << L' ';
-  }
-  std::wcout << std::endl;
-
   std::vector<unsigned short> recipe_scores{ 3, 7 };
   size_t elf_1{ 0 }, elf_2{ 1 };
-
   size_t found{ find_digits_in_vector(input_digits, recipe_scores) };
-
   while (found == std::numeric_limits<size_t>::max()) {
-    std::vector<unsigned short> digits{ get_digits_less_than_20(recipe_scores[elf_1] + recipe_scores[elf_2]) };
-    if (digits.size() == 0 || digits.size() > 2) {
-      std::wcerr << L"Unexpected result from get_digits" << std::endl;
+    if (!generate_new_recipes(recipe_scores, elf_1, elf_2)) {
       return;
     }
-
-    recipe_scores.insert(recipe_scores.end(), digits.begin(), digits.end());
-    elf_1 = (elf_1 + recipe_scores[elf_1] + 1) % recipe_scores.size();
-    elf_2 = (elf_2 + recipe_scores[elf_2] + 1) % recipe_scores.size();
     found = find_digits_in_vector(input_digits, recipe_scores);
   }
 
