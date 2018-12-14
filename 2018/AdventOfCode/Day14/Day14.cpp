@@ -104,43 +104,13 @@ size_t find_digits_in_recipes(const DigitVector& digits, const DigitVector& reci
     return NOT_FOUND;
   }
 
-  // Check if digits are found at the end
-  size_t digits_index{ 0 };
-  size_t recipe_index{ recipes.size() - digits.size() };
-  bool found{ true };
-  while (digits_index < digits.size()) {
-    if (digits[digits_index] != recipes[recipe_index]) {
-      found = false;
-      break;
-    } else {
-      ++digits_index;
-      ++recipe_index;
-    }
-  }
-
-  if (found) {
+  // Digits are either right at the end (if) or one index before the end (else if)
+  if (std::equal(digits.begin(), digits.end(), recipes.end() - digits.size())) {
     return recipes.size() - digits.size();
-  }
-
-  // Check if digits are found at the end, offset by 1
-  digits_index = 0;
-  recipe_index = recipes.size() - digits.size() - 1;
-  found = true;
-  while (digits_index < digits.size()) {
-    if (digits[digits_index] != recipes[recipe_index]) {
-      found = false;
-      break;
-    } else {
-      ++digits_index;
-      ++recipe_index;
-    }
-  }
-
-  if (found) {
+  } else if (std::equal(digits.begin(), digits.end(), recipes.end() - digits.size() - 1)) {
     return recipes.size() - digits.size() - 1;
   }
 
-  // Didn't find it
   return NOT_FOUND;
 }
 
