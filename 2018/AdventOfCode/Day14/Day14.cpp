@@ -17,7 +17,7 @@ bool generate_new_recipes(DigitVector& recipe_scores, size_t& elf_1, size_t& elf
 
 void part_1(const std::wstring& input);
 
-size_t find_digits_in_recipes(const DigitVector& digits,const DigitVector& recipe_scores);
+size_t find_digits_in_recipes(const DigitVector& digits, const DigitVector& recipe_scores);
 void part_2(const std::wstring& input);
 
 int wmain(int argc, wchar_t* argv[]) {
@@ -59,8 +59,7 @@ DigitVector get_digits(const std::wstring& input) {
   return digits;
 }
 
-bool generate_new_recipes(DigitVector& recipe_scores, size_t& elf_1,
-    size_t& elf_2) {
+bool generate_new_recipes(DigitVector& recipe_scores, size_t& elf_1, size_t& elf_2) {
   DigitVector digits{ get_digits(recipe_scores[elf_1] + recipe_scores[elf_2]) };
   if (digits.size() == 0 || digits.size() > 2) {
     std::wcerr << L"Unexpected result from get_digits" << std::endl;
@@ -99,7 +98,7 @@ namespace {
 const size_t NOT_FOUND{ std::numeric_limits<size_t>::max() };
 }
 
-size_t find_digits_in_recipes(const DigitVector& digits,const DigitVector& recipes) {
+size_t find_digits_in_recipes(const DigitVector& digits, const DigitVector& recipes) {
   // If there are more digits than there are recipes, the digits cannot possibly be in the recipes
   if (digits.size() > recipes.size()) {
     return NOT_FOUND;
