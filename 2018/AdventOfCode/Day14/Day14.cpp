@@ -10,22 +10,24 @@
 #include "../AoCHelpers/Sample.h"
 
 std::vector<unsigned short> get_digits_less_than_20(unsigned short sum);
-void part_1(size_t input);
+void part_1(const std::wstring& input);
 
-std::vector<unsigned short> get_digits(size_t num);
+std::vector<unsigned short> get_digits(const std::wstring& input);
 size_t find_digits_in_vector(
     const std::vector<unsigned short>& digits,
     const std::vector<unsigned short>& recipe_scores);
-void part_2(size_t input);
+void part_2(const std::wstring& input);
 
 int wmain(int argc, wchar_t* argv[]) {
-  if (argc > 1 && 0 == _wcsicmp(L"-use-sample", argv[1])) {
-    advent_of_code::sample::set_use_sample(true);
+  std::wstring input;
+  if (argc < 2) {
+    input = L"890691";
+  } else {
+    input = argv[1];
   }
 
-  const size_t PUZZLE_INPUT{ advent_of_code::sample::should_use_sample() ? 51589u : 890691u };
-  part_1(PUZZLE_INPUT);
-  part_2(PUZZLE_INPUT);
+  part_1(input);
+  part_2(input);
 
   return 0;
 }
@@ -51,8 +53,9 @@ std::vector<unsigned short> get_digits_less_than_20(unsigned short sum) {
   return digits;
 }
 
-void part_1(const size_t input) {
-  const size_t RECIPES_TO_CREATE{ input + 10 };
+void part_1(const std::wstring& input) {
+  const size_t INPUT_AS_NUMBER{ static_cast<size_t>(_wtoi(input.c_str())) };
+  const size_t RECIPES_TO_CREATE{ INPUT_AS_NUMBER + 10 };
   std::vector<unsigned short> recipe_scores{ 3, 7 };
   recipe_scores.reserve(RECIPES_TO_CREATE);
   size_t elf_1{ 0 }, elf_2{ 1 };
@@ -72,20 +75,18 @@ void part_1(const size_t input) {
 
   // Part 1
   std::wcout << L"Recipe scores: ";
-  for (size_t index = input; index < RECIPES_TO_CREATE; ++index) {
+  for (size_t index = INPUT_AS_NUMBER; index < RECIPES_TO_CREATE; ++index) {
     std::wcout << recipe_scores[index];
   }
   std::wcout << std::endl;
 }
 
-std::vector<unsigned short> get_digits(size_t num) {
+std::vector<unsigned short> get_digits(const std::wstring& input) {
   // This time we actually have to do it
   std::vector<unsigned short> digits;
-  unsigned short num_digits{ static_cast<unsigned short>(log10(num) + 1) };
-  digits.reserve(num_digits);
-  for (int digit = 0; digit < num_digits; ++digit) {
-    digits.insert(digits.begin(), num % 10);
-    num /= 10;
+  digits.reserve(input.size());
+  for (const wchar_t ch : input) {
+    digits.push_back(ch - L'0');
   }
 
   return digits;
@@ -136,7 +137,7 @@ size_t find_digits_in_vector(
   return std::numeric_limits<size_t>::max();
 }
 
-void part_2(size_t input) {
+void part_2(const std::wstring& input) {
   std::vector<unsigned short> input_digits{ get_digits(input) };
 
   // Check
