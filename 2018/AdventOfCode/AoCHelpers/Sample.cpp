@@ -5,8 +5,7 @@ namespace {
 static bool SHOULD_USE_SAMPLE = false;
 }
 
-bool advent_of_code::sample::should_use_sample()
-{
+bool advent_of_code::sample::should_use_sample() {
   return ::SHOULD_USE_SAMPLE;
 }
 

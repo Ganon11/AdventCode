@@ -23,8 +23,7 @@ advent_of_code::InputHandler::InputHandler(const int argc, wchar_t** argv) {
   }
 }
 
-std::wstring advent_of_code::InputHandler::read_single_line() const
-{
+std::wstring advent_of_code::InputHandler::read_single_line() const {
   std::vector<std::wstring> lines;
   std::wifstream input{ m_filename };
   std::wstring line;
@@ -32,8 +31,7 @@ std::wstring advent_of_code::InputHandler::read_single_line() const
   return line;
 }
 
-std::vector<std::wstring> advent_of_code::InputHandler::read_all_lines() const
-{
+std::vector<std::wstring> advent_of_code::InputHandler::read_all_lines() const {
   std::vector<std::wstring> lines;
   std::wifstream input{ m_filename };
   std::wstring line;
