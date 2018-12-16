@@ -102,8 +102,8 @@ bool Map::simulate_round() {
 
          // Determine reachable squares and closest
          size_t closest{ std::numeric_limits<size_t>::max() };
-         std::set<Position> candidate_positions;
-         //Position new_position{ NONE_POSITION };
+         // Map of destination to best starting step
+         std::map<Position, Position> candidate_paths;
          for (const Position& open_neighbor : open_neighbors) {
             auto path{ shortest_path_between(current_position, open_neighbor) };
             // A* returns an empty path if the destination is unreachable
@@ -113,22 +113,23 @@ bool Map::simulate_round() {
 
             if (path.size() < closest) {
                closest = path.size();
-               candidate_positions.clear();
-               candidate_positions.insert(path[0]);
-               //new_position = path[0];
+
+               candidate_paths.clear();
+               candidate_paths[open_neighbor] = path[0];
             }
             else if (path.size() == closest) {
-               candidate_positions.insert(path[0]);
+               if (path[0] < candidate_paths[open_neighbor]) {
+                  candidate_paths[open_neighbor] = path[0];
+               }
             }
          }
 
-         if (0 == candidate_positions.size()) {
+         if (0 == candidate_paths.size()) {
             // Huh?
             continue;
          }
-         
-         size_t num_candidates{ candidate_positions.size() };
-         unit->move(*(candidate_positions.begin()));
+
+         unit->move((*candidate_paths.begin()).second);
 
          for (const UnitPtr& enemy : enemies) {
             if (unit->get_position().is_adjacent_to(enemy->get_position())) {
