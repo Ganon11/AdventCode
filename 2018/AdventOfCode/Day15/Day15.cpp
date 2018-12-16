@@ -14,16 +14,20 @@
 int wmain(int argc, wchar_t* argv[]) {
    advent_of_code::InputHandler input{ argc, argv };
    Map the_map{ input };
+   std::wcout << L"Initially:" << std::endl;
    std::wcout << the_map << std::endl;
 
    unsigned int rounds{ 0 };
-   while (NONE == the_map.victory_reached()) {
-      if (!the_map.simulate_round()) {
+   bool round_completed{ true };
+   while (round_completed) {
+      round_completed = the_map.simulate_round();
+      if (!round_completed) {
          std::wcout << L"Ended early!" << std::endl;
          continue;
       }
-      //std::wcout << the_map << std::endl;
       ++rounds;
+      std::wcout << L"After " << rounds << L" rounds:" << std::endl;
+      std::wcout << the_map << std::endl;
    }
 
    std::wcout << the_map << std::endl;
