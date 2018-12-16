@@ -102,7 +102,8 @@ bool Map::simulate_round() {
 
          // Determine reachable squares and closest
          size_t closest{ std::numeric_limits<size_t>::max() };
-         Position new_position{ NONE_POSITION };
+         std::set<Position> candidate_positions;
+         //Position new_position{ NONE_POSITION };
          for (const Position& open_neighbor : open_neighbors) {
             auto path{ shortest_path_between(current_position, open_neighbor) };
             // A* returns an empty path if the destination is unreachable
@@ -112,16 +113,22 @@ bool Map::simulate_round() {
 
             if (path.size() < closest) {
                closest = path.size();
-               new_position = path[0];
+               candidate_positions.clear();
+               candidate_positions.insert(path[0]);
+               //new_position = path[0];
+            }
+            else if (path.size() == closest) {
+               candidate_positions.insert(path[0]);
             }
          }
 
-         if (new_position == NONE_POSITION) {
+         if (0 == candidate_positions.size()) {
             // Huh?
             continue;
          }
-
-         unit->move(new_position);
+         
+         size_t num_candidates{ candidate_positions.size() };
+         unit->move(*(candidate_positions.begin()));
 
          for (const UnitPtr& enemy : enemies) {
             if (unit->get_position().is_adjacent_to(enemy->get_position())) {
@@ -150,8 +157,8 @@ bool Map::simulate_round() {
             return false;
          }
       );
-      adjacent_enemies[0]->take_hit(unit->get_attack_power());
-      if (adjacent_enemies[0]->is_dead()) {
+
+      if (adjacent_enemies[0]->take_hit(unit->get_attack_power())) {
          dead_unit_ids.insert(adjacent_enemies[0]->get_id());
       }
    }
@@ -172,8 +179,19 @@ bool Map::simulate_round() {
 // Implementation of A*
 std::vector<Position> Map::shortest_path_between(const Position& source, const Position& dest) const {
    // Heuristic is Manhattan Distance to destination
-   auto heuristic = [dest](const Position& p1, const Position& p2)
-      { return p1.distance_to(dest) < p2.distance_to(dest); };
+   auto heuristic{ [dest](const Position& p1, const Position& p2) {
+      auto p1distance{ p1.distance_to(dest) };
+      auto p2distance{ p2.distance_to(dest) };
+      if (p1distance < p2distance) {
+         return true;
+      }
+
+      if (p1distance == p2distance && p2 < p1) {
+         return true;
+      }
+
+      return false;
+   } };
 
    // Will sort positions by heuristic
    std::priority_queue<Position,
@@ -214,7 +232,10 @@ std::vector<Position> Map::shortest_path_between(const Position& source, const P
          auto old_cost{ cost_so_far.find(next) };
 
          // If we've reached next faster than before (or for the first time)
-         if (cost_so_far.end() == old_cost || new_cost < old_cost->second) {
+         if (cost_so_far.end() == old_cost || new_cost < old_cost->second
+            // Special case to prefer reading-order paths:
+            || (new_cost == old_cost->second && next < old_cost->first)) {
+            
             // Update cost
             cost_so_far[next] = new_cost;
 
@@ -335,7 +356,7 @@ std::wostream& operator<<(std::wostream& out, const Map& m) {
 }
 
 bool Map::position_is_open(const Position& p) const {
-   auto unit_finder{ [p](const UnitPtr& u) { return p == u->get_position(); } };
+   auto unit_finder{ [p](const UnitPtr& u) { return p == u->get_position() && !u->is_dead(); } };
    return m_the_map[p.m_y][p.m_x] != WALL // Can't walk into a wall
       && !std::any_of(m_units.begin(), m_units.end(), unit_finder); // Can't walk into a unit
 }

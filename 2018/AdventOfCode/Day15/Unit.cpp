@@ -40,11 +40,11 @@ void Unit::move(const Position& new_position) {
 bool Unit::take_hit(const unsigned int damage) {
   if (damage >= m_health) {
     m_health = 0;
-    return false;
+    return true;
   }
 
   m_health -= damage;
-  return true;
+  return false;
 }
 
 void Unit::set_attack_power(unsigned int power) {
