@@ -232,9 +232,7 @@ std::vector<Position> Map::shortest_path_between(const Position& source, const P
          auto old_cost{ cost_so_far.find(next) };
 
          // If we've reached next faster than before (or for the first time)
-         if (cost_so_far.end() == old_cost || new_cost < old_cost->second
-            // Special case to prefer reading-order paths:
-            || (new_cost == old_cost->second && next < old_cost->first)) {
+         if (cost_so_far.end() == old_cost || new_cost < old_cost->second) {
             
             // Update cost
             cost_so_far[next] = new_cost;
@@ -294,7 +292,9 @@ void Map::write_path(const std::vector<Position>& path) {
 void Map::clear_path() {
    for (size_t y = 0; y < m_the_map.size(); ++y) {
       for (size_t x = 0; x < m_the_map[y].size(); ++x) {
-         m_the_map[y][x] = PATH;
+         if (m_the_map[y][x] == PATH) {
+            m_the_map[y][x] = FLOOR;
+         }
       }
    }
 }
