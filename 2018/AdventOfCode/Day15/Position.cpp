@@ -38,9 +38,9 @@ bool Position::is_adjacent_to(const Position& other) const {
 
 std::vector<Position> Position::get_adjacent_positions() const {
    return std::vector<Position>{
+      Position(m_x, m_y - 1),
       Position(m_x - 1, m_y),
       Position(m_x + 1, m_y),
-      Position(m_x, m_y - 1),
       Position(m_x, m_y + 1)
    };
 }

@@ -2,7 +2,10 @@
 //
 
 #include "pch.h"
+#include <algorithm>
+#include <functional>
 #include <iostream>
+#include <queue>
 
 #include "../AoCHelpers/InputHandler.h"
 #include "Map.h"
@@ -11,12 +14,12 @@
 int wmain(int argc, wchar_t* argv[]) {
    advent_of_code::InputHandler input{ argc, argv };
    Map the_map{ input };
-
    std::wcout << the_map << std::endl;
 
    unsigned int rounds{ 0 };
    while (NONE == the_map.victory_reached()) {
       if (!the_map.simulate_round()) {
+         std::wcout << L"Ended early!" << std::endl;
          continue;
       }
       //std::wcout << the_map << std::endl;
