@@ -52,7 +52,7 @@ bool star_map_is_small_enough(const std::vector<Star>& stars) {
   int max_x = std::max_element(stars.begin(), stars.end(), x_comparator)->get_position().first;
   int max_y = std::max_element(stars.begin(), stars.end(), y_comparator)->get_position().second;
 
-  if ((max_x - min_x) < 80 && (max_y - min_y) < 20) {
+  if ((max_x - min_x) < 400 && (max_y - min_y) < 300) {
     return true;
   }
 
