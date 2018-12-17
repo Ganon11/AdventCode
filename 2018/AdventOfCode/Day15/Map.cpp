@@ -287,7 +287,7 @@ unsigned int Map::get_total_remaining_health() const {
 
 void Map::write_path(const std::vector<advent_of_code::Position>& path) {
   for (const advent_of_code::Position& p : path) {
-    m_the_map[p.m_y][p.m_x] = PATH;
+    m_the_map[static_cast<unsigned int>(p.m_y)][static_cast<unsigned int>(p.m_x)] = PATH;
   }
 }
 
@@ -359,6 +359,6 @@ std::wostream& operator<<(std::wostream& out, const Map& m) {
 
 bool Map::position_is_open(const advent_of_code::Position& p) const {
   auto unit_finder{ [p](const UnitPtr& u) { return p == u->get_position() && !u->is_dead(); } };
-  return m_the_map[p.m_y][p.m_x] != WALL // Can't walk into a wall
+  return m_the_map[static_cast<unsigned int>(p.m_y)][static_cast<unsigned int>(p.m_x)] != WALL // Can't walk into a wall
     && !std::any_of(m_units.begin(), m_units.end(), unit_finder); // Can't walk into a unit
 }
