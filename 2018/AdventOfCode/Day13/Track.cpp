@@ -149,17 +149,17 @@ std::wostream& operator<<(std::wostream& out, const Track& t) {
   auto x_comparator{ [](const std::map<advent_of_code::Position, Path>::value_type& p1,
                         const std::map<advent_of_code::Position, Path>::value_type& p2)
                         { return p1.first.m_x < p2.first.m_x; } };
-  unsigned int max_x{
+  long long max_x{
       std::max_element(t.m_tracks.begin(), t.m_tracks.end(), x_comparator)->first.m_x };
 
   auto y_comparator{ [](const std::map<advent_of_code::Position, Path>::value_type& p1,
                         const std::map<advent_of_code::Position, Path>::value_type& p2)
                         { return p1.first.m_y < p2.first.m_y; } };
-  unsigned int max_y{
+  long long max_y{
       std::max_element(t.m_tracks.begin(), t.m_tracks.end(), y_comparator)->first.m_y };
 
-  for (unsigned int y = 0; y <= max_y; ++y) {
-    for (unsigned int x = 0; x <= max_x; ++x) {
+  for (long long y = 0; y <= max_y; ++y) {
+    for (long long x = 0; x <= max_x; ++x) {
       advent_of_code::Position p{ x, y };
 
       auto cart_finder{ [p](const Cart& c) { return p == c.get_current_position(); } };
