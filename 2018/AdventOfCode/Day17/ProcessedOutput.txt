@@ -1769,5 +1769,5 @@
 |     |                               |                               |#~~~~~~~~~~~~~~~#|                                                                                                                                               
 |     |                               |                               |#~~~~~~~~~~~~~~~#|                                                                                                                                               
 |     |                               |                               |#################|
-27911 squiggles
-7460 pipes (excluding first two)
+28204 squiggles
+7967 pipes (excluding first two)

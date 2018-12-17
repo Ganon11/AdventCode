@@ -3,10 +3,11 @@
 #include "Position.h"
 #include <memory>
 
-enum UnitType {
-   ELF,
-   GOBLIN,
-   NONE
+enum UnitType
+{
+  ELF,
+  GOBLIN,
+  NONE
 };
 
 extern unsigned int DEFAULT_ATTACK_POWER;
@@ -63,9 +64,9 @@ public:
 class Goblin : public Unit
 {
 public:
-   Goblin(const Position& position);
-   virtual ~Goblin() = default;
-   virtual UnitType get_type() const;
+  Goblin(const Position& position);
+  virtual ~Goblin() = default;
+  virtual UnitType get_type() const;
 
-   static void set_attack_power(unsigned int power);
+  static void set_attack_power(unsigned int power);
 };
