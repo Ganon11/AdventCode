@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Position.h"
+#include "../AoCHelpers/Position.h"
 
 enum Direction
 {
@@ -16,23 +16,23 @@ public:
   Cart(const unsigned int x,
        const unsigned int y,
        const Direction direction);
-  Cart(const Position& p, const Direction direction);
+  Cart(const advent_of_code::Position& p, const Direction direction);
 
   Direction get_current_direction() const;
-  Position get_current_position() const;
+  advent_of_code::Position get_current_position() const;
   unsigned int get_id() const;
 
   Direction turn();
   Direction turn_clockwise();
   Direction turn_counterclockwise();
-  Position move();
+  advent_of_code::Position move();
 
   bool operator<(const Cart& other) const;
   bool operator==(const Cart& other) const;
   bool operator!=(const Cart& other) const;
 
 private:
-  Position m_position;
+  advent_of_code::Position m_position;
   Direction m_direction;
 
   enum Turn

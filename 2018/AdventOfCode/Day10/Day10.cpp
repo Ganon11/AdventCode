@@ -44,13 +44,13 @@ int wmain(int argc, wchar_t* argv[]) {
 
 bool star_map_is_small_enough(const std::vector<Star>& stars) {
   auto x_comparator{ [](const Star& s1, const Star& s2) {
-      return s1.get_position().first < s2.get_position().first; } };
+      return s1.get_position().m_x < s2.get_position().m_x; } };
   auto y_comparator{ [](const Star& s1, const Star& s2) {
-      return s1.get_position().second < s2.get_position().second; } };
-  int min_x = std::min_element(stars.begin(), stars.end(), x_comparator)->get_position().first;
-  int min_y = std::min_element(stars.begin(), stars.end(), y_comparator)->get_position().second;
-  int max_x = std::max_element(stars.begin(), stars.end(), x_comparator)->get_position().first;
-  int max_y = std::max_element(stars.begin(), stars.end(), y_comparator)->get_position().second;
+      return s1.get_position().m_y < s2.get_position().m_y; } };
+  int min_x = std::min_element(stars.begin(), stars.end(), x_comparator)->get_position().m_x;
+  int min_y = std::min_element(stars.begin(), stars.end(), y_comparator)->get_position().m_y;
+  int max_x = std::max_element(stars.begin(), stars.end(), x_comparator)->get_position().m_x;
+  int max_y = std::max_element(stars.begin(), stars.end(), y_comparator)->get_position().m_y;
 
   if ((max_x - min_x) < 400 && (max_y - min_y) < 300) {
     return true;
@@ -61,13 +61,13 @@ bool star_map_is_small_enough(const std::vector<Star>& stars) {
 
 bool write_stars(const std::vector<Star>& stars) {
   auto x_comparator{ [](const Star& s1, const Star& s2) {
-      return s1.get_position().first < s2.get_position().first; } };
+      return s1.get_position().m_x < s2.get_position().m_x; } };
   auto y_comparator{ [](const Star& s1, const Star& s2) {
-      return s1.get_position().second < s2.get_position().second; } };
-  int min_x = std::min_element(stars.begin(), stars.end(), x_comparator)->get_position().first;
-  int min_y = std::min_element(stars.begin(), stars.end(), y_comparator)->get_position().second;
-  int max_x = std::max_element(stars.begin(), stars.end(), x_comparator)->get_position().first;
-  int max_y = std::max_element(stars.begin(), stars.end(), y_comparator)->get_position().second;
+      return s1.get_position().m_y < s2.get_position().m_y; } };
+  int min_x = std::min_element(stars.begin(), stars.end(), x_comparator)->get_position().m_x;
+  int min_y = std::min_element(stars.begin(), stars.end(), y_comparator)->get_position().m_y;
+  int max_x = std::max_element(stars.begin(), stars.end(), x_comparator)->get_position().m_x;
+  int max_y = std::max_element(stars.begin(), stars.end(), y_comparator)->get_position().m_y;
 
   std::wofstream output{ L"StarMap.txt" };
   if (!output.good()) {
@@ -78,7 +78,7 @@ bool write_stars(const std::vector<Star>& stars) {
     for (int x = min_x; x <= max_x; ++x) {
       auto star_is_at_position{ [x, y](const Star& s) {
           auto position{ s.get_position() };
-          return position.first == x && position.second == y;
+          return position.m_x == x && position.m_y == y;
       }};
 
       if (std::any_of(stars.begin(), stars.end(), star_is_at_position)) {
@@ -100,18 +100,18 @@ __int64 move_stars(std::vector<Star>& stars) {
   }
 
   auto x_comparator{ [](const Star& s1, const Star& s2) {
-      return s1.get_position().first < s2.get_position().first; } };
+      return s1.get_position().m_x < s2.get_position().m_x; } };
   __int64 min_x =
-      std::min_element(stars.begin(), stars.end(), x_comparator)->get_position().first;
+      std::min_element(stars.begin(), stars.end(), x_comparator)->get_position().m_x;
   __int64 max_x =
-    std::max_element(stars.begin(), stars.end(), x_comparator)->get_position().first;
+    std::max_element(stars.begin(), stars.end(), x_comparator)->get_position().m_x;
 
   auto y_comparator{ [](const Star& s1, const Star& s2) {
-      return s1.get_position().second < s2.get_position().second; } };
+      return s1.get_position().m_y < s2.get_position().m_y; } };
   __int64 min_y =
-      std::min_element(stars.begin(), stars.end(), y_comparator)->get_position().second;
+      std::min_element(stars.begin(), stars.end(), y_comparator)->get_position().m_y;
   __int64 max_y =
-      std::max_element(stars.begin(), stars.end(), y_comparator)->get_position().second;
+      std::max_element(stars.begin(), stars.end(), y_comparator)->get_position().m_y;
 
   return (max_x - min_x) * (max_y - min_y);
 }

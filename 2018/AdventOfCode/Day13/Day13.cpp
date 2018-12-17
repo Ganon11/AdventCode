@@ -6,19 +6,19 @@
 #include <set>
 
 #include "../AoCHelpers/InputHandler.h"
-#include "Position.h"
+#include "../AoCHelpers/Position.h"
 #include "Track.h"
 
 int wmain(int argc, wchar_t* argv[])
 {
   advent_of_code::InputHandler input{ argc, argv };
   Track t{ input };
-  Position first_crash{ NONE_POSITION };
+  advent_of_code::Position first_crash{ advent_of_code::NONE_POSITION };
 
   while (t.num_carts() > 1) {
-    Position crash{ t.tick() };
+    advent_of_code::Position crash{ t.tick() };
 
-    if (crash != NONE_POSITION && first_crash == NONE_POSITION) {
+    if (crash != advent_of_code::NONE_POSITION && first_crash == advent_of_code::NONE_POSITION) {
       first_crash = crash;
     }
   }

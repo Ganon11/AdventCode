@@ -18,7 +18,7 @@ Map::Map(const advent_of_code::InputHandler& input) {
     current_row.reserve(line.length());
     unsigned int x{ 0 };
     for (const wchar_t ch : line) {
-      Position p{ x++, y };
+      advent_of_code::Position p{ x++, y };
       if (L'#' == ch) {
         current_row.push_back(WALL);
       } else {
@@ -57,7 +57,7 @@ bool Map::simulate_round() {
       continue;
     }
 
-    Position current_position{ unit->get_position() };
+    advent_of_code::Position current_position{ unit->get_position() };
 
     std::vector<UnitPtr> enemies;
     for (const UnitPtr& other : m_units) {
@@ -84,7 +84,7 @@ bool Map::simulate_round() {
 
     if (adjacent_enemies.empty()) {
       // Determine open neighboring squares
-      std::set<Position> open_neighbors;
+      std::set<advent_of_code::Position> open_neighbors;
       for (const UnitPtr& enemy : enemies) {
         auto neighbors{ enemy->get_position().get_adjacent_positions() };
         for (const auto neighbor : neighbors) {
@@ -102,8 +102,8 @@ bool Map::simulate_round() {
       // Determine reachable squares and closest
       size_t closest{ std::numeric_limits<size_t>::max() };
       // Map of destination to best starting step
-      std::map<Position, Position> candidate_paths;
-      for (const Position& open_neighbor : open_neighbors) {
+      std::map<advent_of_code::Position, advent_of_code::Position> candidate_paths;
+      for (const advent_of_code::Position& open_neighbor : open_neighbors) {
         auto path{ shortest_path_between(current_position, open_neighbor) };
         // A* returns an empty path if the destination is unreachable
         if (path.size() == 0) {
@@ -176,9 +176,10 @@ bool Map::simulate_round() {
 }
 
 // Implementation of A*
-std::vector<Position> Map::shortest_path_between(const Position& source, const Position& dest) const {
+std::vector<advent_of_code::Position> Map::shortest_path_between(
+    const advent_of_code::Position& source, const advent_of_code::Position& dest) const {
   // Heuristic is Manhattan Distance to destination
-  auto heuristic{ [dest](const Position& p1, const Position& p2) {
+  auto heuristic{ [dest](const advent_of_code::Position& p1, const advent_of_code::Position& p2) {
      auto p1distance{ p1.distance_to(dest) };
      auto p2distance{ p2.distance_to(dest) };
      if (p1distance < p2distance) {
@@ -193,16 +194,16 @@ std::vector<Position> Map::shortest_path_between(const Position& source, const P
   } };
 
   // Will sort positions by heuristic
-  std::priority_queue<Position,
-    std::vector<Position>,
-    std::function<bool(Position, Position)>> frontier{ heuristic };
+  std::priority_queue<advent_of_code::Position,
+    std::vector<advent_of_code::Position>,
+    std::function<bool(advent_of_code::Position, advent_of_code::Position)>> frontier{ heuristic };
 
   // Reached key Position from value Position, allowing you to walk backwards from the destination to
   // the source
-  std::map<Position, Position> came_from;
+  std::map<advent_of_code::Position, advent_of_code::Position> came_from;
 
   // Used to revisit old Positions from shorter paths
-  std::map<Position, size_t> cost_so_far;
+  std::map<advent_of_code::Position, size_t> cost_so_far;
 
   // The frontier starts as just the source
   frontier.push(source);
@@ -212,7 +213,7 @@ std::vector<Position> Map::shortest_path_between(const Position& source, const P
 
   while (!frontier.empty()) {
     // Pick a node from the frontier
-    Position current{ frontier.top() };
+    advent_of_code::Position current{ frontier.top() };
     frontier.pop();
 
     // If we've reached our destination, we're done!
@@ -246,8 +247,8 @@ std::vector<Position> Map::shortest_path_between(const Position& source, const P
   }
 
   // Walk came_from backwards to find source
-  Position current{ dest };
-  std::vector<Position> path;
+  advent_of_code::Position current{ dest };
+  std::vector<advent_of_code::Position> path;
   while (current != source) {
     auto from{ came_from.find(current) };
     if (came_from.end() == from) {
@@ -262,11 +263,13 @@ std::vector<Position> Map::shortest_path_between(const Position& source, const P
 }
 
 UnitType Map::victory_reached() const {
-  if (std::all_of(m_units.begin(), m_units.end(), [](const UnitPtr& u) { return u->get_type() == ELF; })) {
+  if (std::all_of(m_units.begin(), m_units.end(),
+      [](const UnitPtr& u) { return u->get_type() == ELF; })) {
     return ELF;
   }
 
-  if (std::all_of(m_units.begin(), m_units.end(), [](const UnitPtr& u) { return u->get_type() == GOBLIN; })) {
+  if (std::all_of(m_units.begin(), m_units.end(),
+      [](const UnitPtr& u) { return u->get_type() == GOBLIN; })) {
     return GOBLIN;
   }
 
@@ -282,8 +285,8 @@ unsigned int Map::get_total_remaining_health() const {
   return sum;
 }
 
-void Map::write_path(const std::vector<Position>& path) {
-  for (const Position& p : path) {
+void Map::write_path(const std::vector<advent_of_code::Position>& path) {
+  for (const advent_of_code::Position& p : path) {
     m_the_map[p.m_y][p.m_x] = PATH;
   }
 }
@@ -302,7 +305,7 @@ std::wostream& operator<<(std::wostream& out, const Map& m) {
   for (size_t y = 0; y < m.m_the_map.size(); ++y) {
     std::vector<UnitPtr> units_in_this_row;
     for (size_t x = 0; x < m.m_the_map[y].size(); ++x) {
-      Position p{ x, y };
+      advent_of_code::Position p{ x, y };
       auto unit = std::find_if(m.m_units.begin(), m.m_units.end(), [p](const UnitPtr& u) { return p == u->get_position(); });
       if (m.m_units.end() == unit) {
         switch (m.m_the_map[y][x]) {
@@ -354,7 +357,7 @@ std::wostream& operator<<(std::wostream& out, const Map& m) {
   return out;
 }
 
-bool Map::position_is_open(const Position& p) const {
+bool Map::position_is_open(const advent_of_code::Position& p) const {
   auto unit_finder{ [p](const UnitPtr& u) { return p == u->get_position() && !u->is_dead(); } };
   return m_the_map[p.m_y][p.m_x] != WALL // Can't walk into a wall
     && !std::any_of(m_units.begin(), m_units.end(), unit_finder); // Can't walk into a unit

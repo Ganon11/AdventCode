@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Position.h"
+#include "../AoCHelpers/Position.h"
 #include <memory>
 
 enum UnitType
@@ -23,7 +23,7 @@ class Unit
 public:
   virtual ~Unit() = default;
 
-  Position get_position() const;
+  advent_of_code::Position get_position() const;
   unsigned int get_remaining_health() const;
   unsigned int get_attack_power() const;
   unsigned int get_id() const;
@@ -31,19 +31,19 @@ public:
   bool operator<(const Unit& other) const;
   bool operator==(const Unit& other) const;
 
-  void move(const Position& new_position);
+  void move(const advent_of_code::Position& new_position);
   bool take_hit(const unsigned int damage);
 
   virtual UnitType get_type() const = 0;
 
   static void set_attack_power(unsigned int power);
-  static UnitPtr make_shared(const Position& position, const UnitType type);
+  static UnitPtr make_shared(const advent_of_code::Position& position, const UnitType type);
 
 protected:
-  Unit(const Position& position, const unsigned int attack_power = DEFAULT_ATTACK_POWER);
+  Unit(const advent_of_code::Position& position, const unsigned int attack_power = DEFAULT_ATTACK_POWER);
 
 private:
-  Position m_position;
+  advent_of_code::Position m_position;
   unsigned int m_health;
   unsigned int m_attack_power;
   unsigned int m_id;
@@ -54,7 +54,7 @@ private:
 class Elf : public Unit
 {
 public:
-  Elf(const Position& position);
+  Elf(const advent_of_code::Position& position);
   virtual ~Elf() = default;
   virtual UnitType get_type() const;
 
@@ -64,7 +64,7 @@ public:
 class Goblin : public Unit
 {
 public:
-  Goblin(const Position& position);
+  Goblin(const advent_of_code::Position& position);
   virtual ~Goblin() = default;
   virtual UnitType get_type() const;
 
