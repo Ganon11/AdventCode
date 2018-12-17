@@ -28,11 +28,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Sample.txt">
-      <Filter>Header Files</Filter>
-    </Text>
     <Text Include="Input.txt">
-      <Filter>Header Files</Filter>
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Sample.txt">
+      <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>
 </Project>

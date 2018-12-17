@@ -1,8 +1,8 @@
 #pragma once
 
 #include <string>
+#include "../AoCHelpers/Position.h"
 
-typedef std::pair<int, int> Position;
 typedef std::pair<int, int> Velocity;
 
 class Star
@@ -11,10 +11,10 @@ public:
   Star(const std::wstring& line);
 
   void move();
-  Position get_position() const;
+  advent_of_code::Position get_position() const;
 
 private:
-  Position m_position;
+  advent_of_code::Position m_position;
   Velocity m_velocity;
 };
 

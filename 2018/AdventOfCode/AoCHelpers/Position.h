@@ -4,6 +4,7 @@
 #include <limits>
 #include <vector>
 
+namespace advent_of_code {
 struct Position
 {
    Position() = default;
@@ -23,5 +24,10 @@ struct Position
    unsigned int m_y;
 };
 
+#ifdef max
+#undef max
+#endif
+
 const Position NONE_POSITION{
     std::numeric_limits<unsigned int>::max(), std::numeric_limits<unsigned int>::max() };
+}

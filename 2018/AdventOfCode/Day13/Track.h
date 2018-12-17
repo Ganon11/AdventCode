@@ -6,8 +6,8 @@
 #include <vector>
 
 #include "../AoCHelpers/InputHandler.h"
+#include "../AoCHelpers/Position.h"
 #include "Cart.h"
-#include "Position.h"
 
 enum Path
 {
@@ -24,14 +24,14 @@ class Track
 public:
   Track(const advent_of_code::InputHandler& input);
 
-  Position tick();
-  std::set<Position> get_crash_positions() const;
+  advent_of_code::Position tick();
+  std::set<advent_of_code::Position> get_crash_positions() const;
   size_t num_carts() const;
-  Position first_cart_position() const;
+  advent_of_code::Position first_cart_position() const;
 
   friend std::wostream& operator<<(std::wostream& out, const Track& t);
 
 private:
   std::vector<Cart> m_carts;
-  std::map<Position, Path> m_tracks;
+  std::map<advent_of_code::Position, Path> m_tracks;
 };

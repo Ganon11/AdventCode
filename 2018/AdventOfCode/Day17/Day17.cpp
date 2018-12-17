@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "../AoCHelpers/InputHandler.h"
-#include "Position.h"
+#include "../AoCHelpers/Position.h"
 
 #include <set>
 
@@ -18,7 +18,7 @@ int wmain(int argc, wchar_t* argv[]) {
   std::wregex vertical_line_regex{ L"x=(\\d+), y=(\\d+)..(\\d+)" };
   std::wregex horizontal_line_regex{ L"y=(\\d+), x=(\\d+)..(\\d+)" };
   std::wsmatch matches;
-  std::set<Position> walls;
+  std::set<advent_of_code::Position> walls;
   unsigned int min_x{ std::numeric_limits<unsigned int>::max() };
   unsigned int max_x{ std::numeric_limits<unsigned int>::min() };
   unsigned int max_y{ std::numeric_limits<unsigned int>::min() };
@@ -41,7 +41,7 @@ int wmain(int argc, wchar_t* argv[]) {
           max_y = y;
         }
 
-        walls.insert(Position{x, y});
+        walls.insert(advent_of_code::Position{x, y});
       }
     } else if (std::regex_search(line, matches, horizontal_line_regex) && matches.size() == 4) {
       unsigned int y{ static_cast<unsigned int>(_wtoi(matches[1].str().c_str())) };
@@ -60,7 +60,7 @@ int wmain(int argc, wchar_t* argv[]) {
           max_x = x;
         }
 
-        walls.insert(Position{ x, y });
+        walls.insert(advent_of_code::Position{ x, y });
       }
     }
   }
@@ -72,7 +72,7 @@ int wmain(int argc, wchar_t* argv[]) {
         continue;
       }
 
-      if (walls.end() == walls.find(Position{ x, y })) {
+      if (walls.end() == walls.find(advent_of_code::Position{ x, y })) {
         std::wcout << L' ';
       } else {
         std::wcout << L'#';

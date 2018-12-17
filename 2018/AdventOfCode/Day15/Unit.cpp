@@ -5,7 +5,7 @@ unsigned int DEFAULT_ATTACK_POWER = 3;
 unsigned int ELF_ATTACK_POWER = DEFAULT_ATTACK_POWER;
 unsigned int GOBLIN_ATTACK_POWER = DEFAULT_ATTACK_POWER;
 
-Position Unit::get_position() const {
+advent_of_code::Position Unit::get_position() const {
   return m_position;
 }
 
@@ -33,7 +33,7 @@ bool Unit::operator==(const Unit& other) const {
   return m_id == other.get_id();
 }
 
-void Unit::move(const Position& new_position) {
+void Unit::move(const advent_of_code::Position& new_position) {
   m_position = new_position;
 }
 
@@ -51,7 +51,7 @@ void Unit::set_attack_power(unsigned int power) {
   DEFAULT_ATTACK_POWER = power;
 }
 
-UnitPtr Unit::make_shared(const Position& position, const UnitType type) {
+UnitPtr Unit::make_shared(const advent_of_code::Position& position, const UnitType type) {
   switch (type) {
   case ELF:
     return std::make_shared<Elf>(position);
@@ -62,7 +62,7 @@ UnitPtr Unit::make_shared(const Position& position, const UnitType type) {
   return std::shared_ptr<Unit>();
 }
 
-Unit::Unit(const Position& position, const unsigned int attack_power)
+Unit::Unit(const advent_of_code::Position& position, const unsigned int attack_power)
   : m_position{ position },
   m_health{ 200 },
   m_attack_power{ attack_power },
@@ -71,7 +71,7 @@ Unit::Unit(const Position& position, const unsigned int attack_power)
 
 unsigned int Unit::s_next_id = 1;
 
-Elf::Elf(const Position& position) : Unit(position, ELF_ATTACK_POWER) { }
+Elf::Elf(const advent_of_code::Position& position) : Unit(position, ELF_ATTACK_POWER) { }
 
 UnitType Elf::get_type() const {
   return ELF;
@@ -81,7 +81,7 @@ void Elf::set_attack_power(unsigned int power) {
   ELF_ATTACK_POWER = power;
 }
 
-Goblin::Goblin(const Position& position) : Unit(position) { }
+Goblin::Goblin(const advent_of_code::Position& position) : Unit(position) { }
 
 UnitType Goblin::get_type() const {
   return GOBLIN;

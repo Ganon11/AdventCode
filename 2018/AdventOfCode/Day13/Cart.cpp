@@ -7,7 +7,7 @@ Cart::Cart(const unsigned int x,
     : m_position{ x, y }, m_direction{ direction }, m_next_turn{ LEFT }, m_id { s_next_id++ }
 {}
 
-Cart::Cart(const Position& p, const Direction direction)
+Cart::Cart(const advent_of_code::Position& p, const Direction direction)
     : m_position{ p }, m_direction{ direction }, m_next_turn{ LEFT }, m_id{ s_next_id++ }
 {}
 
@@ -15,7 +15,7 @@ Direction Cart::get_current_direction() const {
   return m_direction;
 }
 
-Position Cart::get_current_position() const {
+advent_of_code::Position Cart::get_current_position() const {
   return m_position;
 }
 
@@ -81,20 +81,20 @@ Direction Cart::turn_counterclockwise() {
   return m_direction;
 }
 
-Position Cart::move() {
+advent_of_code::Position Cart::move() {
   switch (m_direction) {
   case NORTH:
-    m_position = Position(m_position.m_x, m_position.m_y - 1);
+    m_position = advent_of_code::Position(m_position.m_x, m_position.m_y - 1);
     break;
   case EAST:
-    m_position = Position(m_position.m_x + 1, m_position.m_y);
+    m_position = advent_of_code::Position(m_position.m_x + 1, m_position.m_y);
     break;
   case SOUTH:
-    m_position = Position(m_position.m_x, m_position.m_y + 1);
+    m_position = advent_of_code::Position(m_position.m_x, m_position.m_y + 1);
     break;
   case WEST:
   default:
-    m_position = Position(m_position.m_x - 1, m_position.m_y);
+    m_position = advent_of_code::Position(m_position.m_x - 1, m_position.m_y);
     break;
   }
 
