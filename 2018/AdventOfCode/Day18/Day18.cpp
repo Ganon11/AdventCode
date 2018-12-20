@@ -54,6 +54,8 @@ int wmain(int argc, wchar_t* argv[]) {
       memory[area] = minute;
     } else {
       unsigned long long cycle_length{ minute - dejavu->second };
+      std::wcout << L"At minute " << minute << L", cycle of length " << cycle_length
+          << L" detected." << std::endl;
       unsigned long long skip = (MAX_GENERATIONS - minute) / cycle_length;
       minute += (skip * cycle_length);
     }

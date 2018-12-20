@@ -15,7 +15,12 @@ struct Position
    bool operator!=(const Position& other) const;
    bool is_adjacent_to(const Position& other) const;
 
+   Position north() const;
+   Position south() const;
+   Position east() const;
+   Position west() const;
    std::vector<Position> get_adjacent_positions() const;
+
    size_t distance_to(const Position& other) const;
 
    friend std::wostream& operator<<(std::wostream& out, const Position& t);
@@ -30,4 +35,15 @@ struct Position
 
 const Position NONE_POSITION{
     std::numeric_limits<long long>::max(), std::numeric_limits<long long>::max() };
+}
+
+namespace std {
+template <> struct hash<advent_of_code::Position>
+{
+  typedef advent_of_code::Position argument_type;
+  typedef std::size_t result_type;
+  std::size_t operator()(const advent_of_code::Position& p) const noexcept {
+    return std::hash<long long>()(p.m_x ^ (p.m_y << 4));
+  }
+};
 }
