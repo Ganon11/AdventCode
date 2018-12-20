@@ -36,12 +36,28 @@ bool advent_of_code::Position::is_adjacent_to(const Position& other) const {
    return false;
 }
 
+advent_of_code::Position advent_of_code::Position::north() const {
+  return Position{ m_x, m_y - 1 };
+}
+
+advent_of_code::Position advent_of_code::Position::south() const {
+  return Position{ m_x, m_y + 1 };
+}
+
+advent_of_code::Position advent_of_code::Position::east() const {
+  return Position{ m_x + 1, m_y };
+}
+
+advent_of_code::Position advent_of_code::Position::west() const {
+  return Position{ m_x - 1, m_y };
+}
+
 std::vector<advent_of_code::Position> advent_of_code::Position::get_adjacent_positions() const {
    return std::vector<Position>{
-      Position(m_x, m_y - 1),
-      Position(m_x - 1, m_y),
-      Position(m_x + 1, m_y),
-      Position(m_x, m_y + 1)
+      north(),
+      west(),
+      east(),
+      south()
    };
 }
 
