@@ -142,9 +142,9 @@ void process_regex(const advent_of_code::Position& start, const std::wstring& re
   advent_of_code::Position current{ start };
   size_t index = 0;
   while (index < regex.size()) {
-//#ifdef _DEBUG
+#ifdef _DEBUG
     print_facility(facility, current);
-//#endif
+#endif
     wchar_t ch{ regex[index] };
 
     switch (ch) {
@@ -305,7 +305,7 @@ void complete(ConstructionProject& facility) {
   for (long long y = min_y; y <= max_y; ++y) {
     for (long long x = min_x; x <= max_x; ++x) {
       advent_of_code::Position p{ x, y };
-      if (UNKNOWN == facility.at(p)) {
+      if (facility.end() != facility.find(p) && UNKNOWN == facility.at(p)) {
         facility[p] = WALL;
       }
     }
