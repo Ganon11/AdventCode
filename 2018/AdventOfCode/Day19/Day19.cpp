@@ -4,6 +4,7 @@
 #include "pch.h"
 #include <iostream>
 #include <regex>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -70,6 +71,8 @@ void print_registers(const std::vector<int>& registers) {
   std::wcout << L']';
 }
 
+std::set<unsigned long long> register_5_values_seen;
+
 bool execute_instruction(std::vector<int>& registers, const std::vector<Instruction>& program,
     unsigned int& instruction_pointer, const unsigned int ip_register) {
 
@@ -78,20 +81,14 @@ bool execute_instruction(std::vector<int>& registers, const std::vector<Instruct
   }
 
   registers[ip_register] = instruction_pointer;
+  if (28 == instruction_pointer) {
+    auto insertion_result{ register_5_values_seen.insert(registers[5]) };
+    if (insertion_result.second) {
+      std::wcout << L"Register 5 == " << registers[5] << std::endl;
+    }
+  }
 
-  //if (registers[ip_register] == 3) {
-  //  if (0 == registers[1] % registers[5]) {
-  //    registers[3] = registers[1];
-  //    registers[4] = 1;
-  //    registers[ip_register] = 7;
-  //  } else {
-  //    registers[3] = registers[1] + 1;
-  //    registers[4] = 1;
-  //    registers[ip_register] = 12;
-  //  }
-  //} else {
-    do_command(registers, program[instruction_pointer]);
-  //}
+  do_command(registers, program[instruction_pointer]);
 
   instruction_pointer = registers[ip_register];
 
