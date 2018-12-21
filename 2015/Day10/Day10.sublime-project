@@ -1,0 +1,21 @@
+{
+  "folders":
+  [
+    {
+      "path": "src",
+      "name": "Source"
+    }
+  ],
+  "build_systems":
+  [
+    {
+      "name": "Run with input",
+      "cmd": ["python", "$file", "1113222113"]
+    },
+    {
+      "name": "Run with sample",
+      "cmd": ["python", "$file", "1"]
+    }
+  ]
+}
+

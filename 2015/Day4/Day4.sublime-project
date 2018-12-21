@@ -1,0 +1,25 @@
+{
+  "folders":
+  [
+    {
+      "path": "src",
+      "name": "Source"
+    }
+  ],
+  "build_systems":
+  [
+    {
+      "name": "Run with input",
+      "cmd": ["python", "$file", "yzbqklnj"]
+    },
+    {
+      "name": "Run with sample 1",
+      "cmd": ["python", "$file", "abcdef"]
+    },
+    {
+      "name": "Run with sample 2",
+      "cmd": ["python", "$file", "pqrstuv"]
+    }
+  ]
+}
+
