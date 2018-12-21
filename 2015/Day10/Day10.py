@@ -1,32 +1,17 @@
-def expand(num):
-  print("Num: %s" % num)
-  out = ""
-  old = num[0]
-  print("Old: %s" % old)
-  count = 1
+from itertools import groupby
+import sys
 
-  while len(num) > 1:
-    num = num[1:]
-    print("\tnum: %s" % num)
-    char = num[0]
-    print("\tchar: %s" % char)
-    print("\told: %s" % old)
-    if old == char:
-      count = count + 1
-    else:
-      out = "%s%s%s" % (out, str(count), old)
-      count = 1
-    old = char
+def look_and_say(input_string, num_iterations):
+  for i in range(num_iterations):
+    input_string = ''.join([str(len(list(g))) + str(k) for k,g in groupby(input_string)])
+  return input_string
 
-  out = "%s%s%s" % (out, str(count), old)
-
-  return out
-
-def main():
-  num = "1"
-  for i in range(0, 2):
-    num = expand(num)
-    print("Result: %s" % num)
+def main(start):
+  print("Result length: %d" % len(look_and_say(start, 40)))
+  print("Result length: %d" % len(look_and_say(start, 50)))
 
 if __name__ == "__main__":
-  main()
+  start = '1'
+  if len(sys.argv) > 1:
+    start = sys.argv[1]
+  main(start)
