@@ -143,151 +143,57 @@ std::wostream& operator<<(std::wostream& out, const Instruction& i) {
   return out;
 }
 
-void do_addr(std::vector<int>& registers, int A, int B, int C) {
-  registers[C] = registers[A] + registers[B];
+std::map<Opcode, std::function<void(std::vector<int>&, int, int, int)>> Instruction::opcode_map = {
+  // Addition
+  { ADDR, [](std::vector<int>& registers, int A, int B, int C)
+      { registers[C] = registers[A] + registers[B]; } },
+  { ADDI, [](std::vector<int>& registers, int A, int B, int C)
+      { registers[C] = registers[A] + B; } },
+
+  // Multiplication
+  { MULR, [](std::vector<int>& registers, int A, int B, int C)
+      { registers[C] = registers[A] * registers[B]; } },
+  { MULI, [](std::vector<int>& registers, int A, int B, int C)
+      { registers[C] = registers[A] * B; } },
+
+  // Bitwise-And
+  { BANR, [](std::vector<int>& registers, int A, int B, int C)
+      { registers[C] = registers[A] & registers[B]; } },
+  { BANI, [](std::vector<int>& registers, int A, int B, int C)
+      { registers[C] = registers[A] & B; } },
+
+  // Bitwise-Or
+  { BORR, [](std::vector<int>& registers, int A, int B, int C)
+      { registers[C] = registers[A] | registers[B]; } },
+  { BORI, [](std::vector<int>& registers, int A, int B, int C)
+      { registers[C] = registers[A] | B; } },
+
+  // Set
+  { SETR, [](std::vector<int>& registers, int A, int B, int C)
+      { registers[C] = registers[A]; } },
+  { SETI, [](std::vector<int>& registers, int A, int B, int C)
+      { registers[C] = A; } },
+
+  // Greater-Than
+  { GTIR, [](std::vector<int>& registers, int A, int B, int C)
+      { registers[C] = (A > registers[B] ? 1 : 0); } },
+  { GTRI, [](std::vector<int>& registers, int A, int B, int C)
+      { registers[C] = (registers[A] > B ? 1 : 0); } },
+  { GTRR, [](std::vector<int>& registers, int A, int B, int C)
+      { registers[C] = (registers[A] > registers[B] ? 1 : 0); } },
+
+  // Equality
+  { EQIR, [](std::vector<int>& registers, int A, int B, int C)
+      { registers[C] = (A == registers[B] ? 1 : 0); } },
+  { EQRI, [](std::vector<int>& registers, int A, int B, int C)
+      { registers[C] = (registers[A] == B ? 1 : 0); } },
+  { EQRR, [](std::vector<int>& registers, int A, int B, int C)
+      { registers[C] = (registers[A] == registers[B] ? 1 : 0); } },
+};
+
+void Instruction::do_command(std::vector<int>& registers, const Instruction& instruction) {
+  Instruction::opcode_map.at(instruction.get_code())(registers,
+      instruction.get_a(),
+      instruction.get_b(),
+      instruction.get_c());
 }
-
-void do_addi(std::vector<int>& registers, int A, int B, int C) {
-  registers[C] = registers[A] + B;
-}
-
-void do_mulr(std::vector<int>& registers, int A, int B, int C) {
-  registers[C] = registers[A] * registers[B];
-}
-
-void do_muli(std::vector<int>& registers, int A, int B, int C) {
-  registers[C] = registers[A] * B;
-}
-
-void do_banr(std::vector<int>& registers, int A, int B, int C) {
-  registers[C] = registers[A] & registers[B];
-}
-
-void do_bani(std::vector<int>& registers, int A, int B, int C) {
-  registers[C] = registers[A] & B;
-}
-
-void do_borr(std::vector<int>& registers, int A, int B, int C) {
-  registers[C] = registers[A] | registers[B];
-}
-
-void do_bori(std::vector<int>& registers, int A, int B, int C) {
-  registers[C] = registers[A] | B;
-}
-
-void do_setr(std::vector<int>& registers, int A, int B, int C) {
-  registers[C] = registers[A];
-}
-
-void do_seti(std::vector<int>& registers, int A, int B, int C) {
-  registers[C] = A;
-}
-
-void do_gtir(std::vector<int>& registers, int A, int B, int C) {
-  if (A > registers[B]) {
-    registers[C] = 1;
-  } else {
-    registers[C] = 0;
-  }
-}
-
-void do_gtri(std::vector<int>& registers, int A, int B, int C) {
-  if (registers[A] > B) {
-    registers[C] = 1;
-  } else {
-    registers[C] = 0;
-  }
-}
-
-void do_gtrr(std::vector<int>& registers, int A, int B, int C) {
-  if (registers[A] > registers[B]) {
-    registers[C] = 1;
-  } else {
-    registers[C] = 0;
-  }
-}
-
-void do_eqir(std::vector<int>& registers, int A, int B, int C) {
-  if (A == registers[B]) {
-    registers[C] = 1;
-  } else {
-    registers[C] = 0;
-  }
-}
-
-void do_eqri(std::vector<int>& registers, int A, int B, int C) {
-  if (registers[A] == B) {
-    registers[C] = 1;
-  } else {
-    registers[C] = 0;
-  }
-}
-
-void do_eqrr(std::vector<int>& registers, int A, int B, int C) {
-  if (registers[A] == registers[B]) {
-    registers[C] = 1;
-  } else {
-    registers[C] = 0;
-  }
-}
-
-void do_command(std::vector<int>& registers, const Instruction& instruction) {
-  int A{ instruction.get_a() };
-  int B{ instruction.get_b() };
-  int C{ instruction.get_c() };
-
-  switch (instruction.get_code()) {
-  case ADDR:
-    do_addr(registers, A, B, C);
-    break;
-  case ADDI:
-    do_addi(registers, A, B, C);
-    break;
-  case MULR:
-    do_mulr(registers, A, B, C);
-    break;
-  case MULI:
-    do_muli(registers, A, B, C);
-    break;
-  case BANR:
-    do_banr(registers, A, B, C);
-    break;
-  case BANI:
-    do_bani(registers, A, B, C);
-    break;
-  case BORR:
-    do_borr(registers, A, B, C);
-    break;
-  case BORI:
-    do_bori(registers, A, B, C);
-    break;
-  case SETR:
-    do_setr(registers, A, B, C);
-    break;
-  case SETI:
-    do_seti(registers, A, B, C);
-    break;
-  case GTIR:
-    do_gtir(registers, A, B, C);
-    break;
-  case GTRI:
-    do_gtri(registers, A, B, C);
-    break;
-  case GTRR:
-    do_gtrr(registers, A, B, C);
-    break;
-  case EQIR:
-    do_eqir(registers, A, B, C);
-    break;
-  case EQRI:
-    do_eqri(registers, A, B, C);
-    break;
-  case EQRR:
-  default:
-    do_eqrr(registers, A, B, C);
-    break;
-  }
-
-  return;
-}
-

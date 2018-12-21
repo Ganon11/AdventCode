@@ -1,6 +1,8 @@
 #pragma once
 
+#include <functional>
 #include <iostream>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -41,34 +43,15 @@ public:
 
   friend std::wostream& operator<<(std::wostream& out, const Instruction& i);
 
+  static void do_command(std::vector<int>& registers, const Instruction& instruction);
+
 private:
   Opcode m_code;
   int m_a;
   int m_b;
   int m_c;
+
+  static std::map<Opcode, std::function<void(std::vector<int>&, int, int, int)>> opcode_map;
 };
-
-void do_addr(std::vector<int>& registers, int A, int B, int C);
-void do_addi(std::vector<int>& registers, int A, int B, int C);
-
-void do_mulr(std::vector<int>& registers, int A, int B, int C);
-void do_muli(std::vector<int>& registers, int A, int B, int C);
-
-void do_banr(std::vector<int>& registers, int A, int B, int C);
-void do_bani(std::vector<int>& registers, int A, int B, int C);
-
-void do_borr(std::vector<int>& registers, int A, int B, int C);
-void do_bori(std::vector<int>& registers, int A, int B, int C);
-
-void do_setr(std::vector<int>& registers, int A, int B, int C);
-void do_seti(std::vector<int>& registers, int A, int B, int C);
-
-void do_gtir(std::vector<int>& registers, int A, int B, int C);
-void do_gtri(std::vector<int>& registers, int A, int B, int C);
-void do_gtrr(std::vector<int>& registers, int A, int B, int C);
-
-void do_eqir(std::vector<int>& registers, int A, int B, int C);
-void do_eqri(std::vector<int>& registers, int A, int B, int C);
-void do_eqrr(std::vector<int>& registers, int A, int B, int C);
 
 void do_command(std::vector<int>& registers, const Instruction& instruction);

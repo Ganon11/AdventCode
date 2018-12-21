@@ -27,7 +27,7 @@ int wmain(int argc, wchar_t* argv[]) {
     program.push_back(lines[index]);
   }
 
-  std::vector<int> registers = { 0, 0, 0, 0, 0, 0 };
+  std::vector<int> registers = { 13813247, 0, 0, 0, 0, 0 };
   unsigned int instruction_pointer{ 0 };
   while (execute_instruction(registers, program, instruction_pointer, ip_register)) {
     ++instruction_pointer;
@@ -88,7 +88,7 @@ bool execute_instruction(std::vector<int>& registers, const std::vector<Instruct
     }
   }
 
-  do_command(registers, program[instruction_pointer]);
+  Instruction::do_command(registers, program[instruction_pointer]);
 
   instruction_pointer = registers[ip_register];
 
