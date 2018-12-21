@@ -41,9 +41,9 @@ public:
   int get_b() const;
   int get_c() const;
 
-  friend std::wostream& operator<<(std::wostream& out, const Instruction& i);
+  void execute(std::vector<int>& registers) const;
 
-  static void do_command(std::vector<int>& registers, const Instruction& instruction);
+  friend std::wostream& operator<<(std::wostream& out, const Instruction& i);
 
 private:
   Opcode m_code;
@@ -51,7 +51,6 @@ private:
   int m_b;
   int m_c;
 
-  static std::map<Opcode, std::function<void(std::vector<int>&, int, int, int)>> opcode_map;
+  typedef std::map<Opcode, std::function<void(std::vector<int>&, int, int, int)>> DynamicDispatchMap;
+  static DynamicDispatchMap opcode_map;
 };
-
-void do_command(std::vector<int>& registers, const Instruction& instruction);

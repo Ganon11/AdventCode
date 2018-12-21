@@ -88,7 +88,7 @@ bool execute_instruction(std::vector<int>& registers, const std::vector<Instruct
     }
   }
 
-  Instruction::do_command(registers, program[instruction_pointer]);
+  program[instruction_pointer].execute(registers);
 
   instruction_pointer = registers[ip_register];
 

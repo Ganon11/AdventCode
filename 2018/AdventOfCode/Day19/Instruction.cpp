@@ -143,57 +143,38 @@ std::wostream& operator<<(std::wostream& out, const Instruction& i) {
   return out;
 }
 
-std::map<Opcode, std::function<void(std::vector<int>&, int, int, int)>> Instruction::opcode_map = {
+Instruction::DynamicDispatchMap Instruction::opcode_map = {
   // Addition
-  { ADDR, [](std::vector<int>& registers, int A, int B, int C)
-      { registers[C] = registers[A] + registers[B]; } },
-  { ADDI, [](std::vector<int>& registers, int A, int B, int C)
-      { registers[C] = registers[A] + B; } },
+  { ADDR, [](std::vector<int>& registers, int A, int B, int C) { registers[C] = registers[A] + registers[B]; } },
+  { ADDI, [](std::vector<int>& registers, int A, int B, int C) { registers[C] = registers[A] + B; } },
 
   // Multiplication
-  { MULR, [](std::vector<int>& registers, int A, int B, int C)
-      { registers[C] = registers[A] * registers[B]; } },
-  { MULI, [](std::vector<int>& registers, int A, int B, int C)
-      { registers[C] = registers[A] * B; } },
+  { MULR, [](std::vector<int>& registers, int A, int B, int C) { registers[C] = registers[A] * registers[B]; } },
+  { MULI, [](std::vector<int>& registers, int A, int B, int C) { registers[C] = registers[A] * B; } },
 
   // Bitwise-And
-  { BANR, [](std::vector<int>& registers, int A, int B, int C)
-      { registers[C] = registers[A] & registers[B]; } },
-  { BANI, [](std::vector<int>& registers, int A, int B, int C)
-      { registers[C] = registers[A] & B; } },
+  { BANR, [](std::vector<int>& registers, int A, int B, int C) { registers[C] = registers[A] & registers[B]; } },
+  { BANI, [](std::vector<int>& registers, int A, int B, int C) { registers[C] = registers[A] & B; } },
 
   // Bitwise-Or
-  { BORR, [](std::vector<int>& registers, int A, int B, int C)
-      { registers[C] = registers[A] | registers[B]; } },
-  { BORI, [](std::vector<int>& registers, int A, int B, int C)
-      { registers[C] = registers[A] | B; } },
+  { BORR, [](std::vector<int>& registers, int A, int B, int C) { registers[C] = registers[A] | registers[B]; } },
+  { BORI, [](std::vector<int>& registers, int A, int B, int C) { registers[C] = registers[A] | B; } },
 
   // Set
-  { SETR, [](std::vector<int>& registers, int A, int B, int C)
-      { registers[C] = registers[A]; } },
-  { SETI, [](std::vector<int>& registers, int A, int B, int C)
-      { registers[C] = A; } },
+  { SETR, [](std::vector<int>& registers, int A, int B, int C) { registers[C] = registers[A]; } },
+  { SETI, [](std::vector<int>& registers, int A, int B, int C) { registers[C] = A; } },
 
   // Greater-Than
-  { GTIR, [](std::vector<int>& registers, int A, int B, int C)
-      { registers[C] = (A > registers[B] ? 1 : 0); } },
-  { GTRI, [](std::vector<int>& registers, int A, int B, int C)
-      { registers[C] = (registers[A] > B ? 1 : 0); } },
-  { GTRR, [](std::vector<int>& registers, int A, int B, int C)
-      { registers[C] = (registers[A] > registers[B] ? 1 : 0); } },
+  { GTIR, [](std::vector<int>& registers, int A, int B, int C) { registers[C] = (A > registers[B] ? 1 : 0); } },
+  { GTRI, [](std::vector<int>& registers, int A, int B, int C) { registers[C] = (registers[A] > B ? 1 : 0); } },
+  { GTRR, [](std::vector<int>& registers, int A, int B, int C) { registers[C] = (registers[A] > registers[B] ? 1 : 0); } },
 
   // Equality
-  { EQIR, [](std::vector<int>& registers, int A, int B, int C)
-      { registers[C] = (A == registers[B] ? 1 : 0); } },
-  { EQRI, [](std::vector<int>& registers, int A, int B, int C)
-      { registers[C] = (registers[A] == B ? 1 : 0); } },
-  { EQRR, [](std::vector<int>& registers, int A, int B, int C)
-      { registers[C] = (registers[A] == registers[B] ? 1 : 0); } },
+  { EQIR, [](std::vector<int>& registers, int A, int B, int C) { registers[C] = (A == registers[B] ? 1 : 0); } },
+  { EQRI, [](std::vector<int>& registers, int A, int B, int C) { registers[C] = (registers[A] == B ? 1 : 0); } },
+  { EQRR, [](std::vector<int>& registers, int A, int B, int C) { registers[C] = (registers[A] == registers[B] ? 1 : 0); } },
 };
 
-void Instruction::do_command(std::vector<int>& registers, const Instruction& instruction) {
-  Instruction::opcode_map.at(instruction.get_code())(registers,
-      instruction.get_a(),
-      instruction.get_b(),
-      instruction.get_c());
+void Instruction::execute(std::vector<int>& registers) const {
+  opcode_map.at(m_code)(registers, m_a, m_b, m_c);
 }
