@@ -1,0 +1,112 @@
+#ip 1
+
+Registers start at [X, 0, 0, 0, 0, 0]
+
+####################################################################################################
+Set Register 5 to 123
+0  seti 123 0 5 
+
+Set Register 5 to (Register 5 & 456)
+1  bani 5 456 5
+
+Set Register 5 to (Register 5 == 72) (123 & 456 == 72)
+2  eqri 5 72 5
+
+Add Register 5 to Register 1 (IP) (If bani is working correctly, skip next instruction)
+3  addr 5 1 1
+
+Set Register 1 to 0 (IP) (Infinitely loop beginning 5 instructions if bani is incorrect)
+4  seti 0 0 1
+####################################################################################################
+
+Set Register 5 to 0 (Reset register 5)
+5  seti 0 3 5
+
+  ################################################## LOOP
+  Set Register 4 to (Register 5 | 65536) (Register 4 = 65536)
+  6  bori 5 65536 4
+
+  Set Register 5 to 13284195
+  7  seti 13284195 4 5
+
+    ################################################## LOOP
+    Set Register 3 to (Register 4 & 255) (Register 3 = 0)
+    8  bani 4 255 3
+
+    Add Register 3 to Register 5 (Register 3 starts at 0, so no change)
+    9  addr 5 3 5
+
+    Set Register 5 to (Register 5 & 16777215) (Register 5 = 13284195)
+    10 bani 5 16777215 5
+
+    Set Register 5 to (Register 5 * 65899) (Register 5 = 875415166305)
+    11 muli 5 65899 5
+
+    Set Register 5 to (Register 5 & 16777215) (Register 5 = 13589857)
+    12 bani 5 16777215 5
+
+    Set Register 3 to (256 > Register 4) (Register 4 starts at 65536, so Register 3 = 0)
+    13 gtir 256 4 3
+
+    Add Register 3 to Register 1 (IP) (If Register 4 was less than 256, skip next instruction)
+    14 addr 3 1 1
+
+    Add 1 to Register 1 (IP) (Skip next instruction)
+    15 addi 1 1 1
+
+    Set Register 1 to 27 (IP) (Jump to command 28)
+    16 seti 27 1 1
+
+    Set Register 3 to 0 (Reset Register 3)
+    17 seti 0 5 3
+
+      ################################################## LOOP
+      Set Register 2 to (Register 3 + 1) (Register 2 = 1)
+      18 addi 3 1 2
+
+      Multiply Register 2 by 256 (Register 2 = 256)
+      19 muli 2 256 2
+
+      Set Register 2 to (Register 2 > Register 4) (256 > Register 4 - was less than 256 at instruction 14, so Register 2 = 0)
+      20 gtrr 2 4 2
+
+      Add Register 2 to Register 1 (IP) (If Register 4 was greater than or equal to 256, skip next instruction)
+      21 addr 2 1 1
+
+      Add 1 to Register 1 (IP) (Skip next instruction)
+      22 addi 1 1 1
+
+      Set Register 1 to 25 (IP) (Jump to command 26)
+      23 seti 25 2 1
+
+      Add 1 to Register 3 (Register 3 = 1)
+      24 addi 3 1 3
+
+      Set Register 1 to 17 (Jump to instruction 18)
+      25 seti 17 1 1
+      ################################################## LOOP
+
+    Set Register 4 to Register 3 (Register 3 = 256?)
+    26 setr 3 7 4
+
+    Set Register 1 to 7 (IP) (Jump to command 8)
+    27 seti 7 3 1
+    ################################################## LOOP
+
+  Set Register 3 to (Register 5 == Register 0)
+  28 eqrr 5 0 3
+
+  Add Register 3 to Register 1 (IP) (If Register 5 == Register 0, exit) <--------------------------------------- EXIT CONDITION
+  29 addr 3 1 1
+
+  Set Register 1 to 5 (IP) (Jump to command 6)
+  30 seti 5 3 1
+  ################################################## LOOP
+
+
+
+
+
+Set Register 0 to expected value of register 5 when command 16 is run
+For command 16 to run, Register 4 needs to be 256 at command 14
+Register 4 is set at Commands 6 and 26
