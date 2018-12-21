@@ -1,0 +1,29 @@
+{
+  "folders":
+  [
+    {
+      "path": "src",
+      "name": "Source"
+    }
+  ],
+  "build_systems":
+  [
+    {
+      "name": "Run part 1",
+      "cmd": ["python", "$file", "hepxcrrq"]
+    },
+    {
+      "name": "Run part 2",
+      "cmd": ["python", "$file", "hepxxyzz"]
+    },
+    {
+      "name": "Run with sample 1",
+      "cmd": ["python", "$file", "abcdefgh"]
+    },
+    {
+      "name": "Run with sample 2",
+      "cmd": ["python", "$file", "ghijklmn"]
+    }
+  ]
+}
+
