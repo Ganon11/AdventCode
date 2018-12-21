@@ -44,7 +44,7 @@ def determine_nice_1(words):
     else:
       naughty = naughty + 1
 
-  print("Part 1: Naughty: %d, Nice: %d", (naughty, nice))
+  print("Part 1: Naughty: %d, Nice: %d" % (naughty, nice))
 
 double_pair_pattern = re.compile(r'.*([a-z]{2}).*\1.*', re.IGNORECASE)
 def has_double_pair(word):
@@ -77,10 +77,10 @@ def determine_nice_2(words):
     else:
       naughty = naughty + 1
 
-  print("Part 2: Naughty: %d, Nice: %d", (naughty, nice))
+  print("Part 2: Naughty: %d, Nice: %d" % (naughty, nice))
 
 def main():
-  f = open('Day5Input.txt', 'r')
+  f = open('Input.txt', 'r')
   words = f.readlines()
   determine_nice_1(words)
   determine_nice_2(words)

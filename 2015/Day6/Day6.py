@@ -116,7 +116,7 @@ def part2(directions):
   print("Part 2: Total brightness %d" % sum_brightness(lights))
 
 def main():
-  f = open('Day6Input.txt', 'r')
+  f = open('Input.txt', 'r')
   directions = f.readlines()
   part1(directions)
   part2(directions)

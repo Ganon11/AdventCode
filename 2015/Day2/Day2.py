@@ -2,7 +2,7 @@ import os
 import re
 
 def main():
-  f = open('Day2Input.txt', 'r')
+  f = open('Input.txt', 'r')
   presents = f.readlines()
   p = re.compile('(\d+)x(\d+)x(\d+)', re.IGNORECASE)
   paper = 0
@@ -23,7 +23,7 @@ def main():
     ribLength = int(2 * (l + w + h - max(l, w, h)))
     ribbon = ribbon + (l * w * h) + ribLength
 
-  print str(paper) + ' ft^2 of wrapping paper, ' + str(ribbon) + ' ft of ribbon'
+  print(str(paper) + ' ft^2 of wrapping paper, ' + str(ribbon) + ' ft of ribbon')
 
 if __name__ == "__main__":
   main()
