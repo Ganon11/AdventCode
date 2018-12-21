@@ -24,7 +24,7 @@ def do_part1(directions):
     elif directions[i] == '^':
       y = y + 1
     gib_present(x, y)
-  print "Part 1: Unique: " + str(gib_present.unique) + ", Total: " + str(gib_present.total)
+  print("Part 1: Unique: " + str(gib_present.unique) + ", Total: " + str(gib_present.total))
 
 def do_part2(directions):
   length = len(directions)
@@ -59,10 +59,10 @@ def do_part2(directions):
       gib_present(robox, roboy)
       is_santa = True
       
-  print "Part 2: Unique: " + str(gib_present.unique) + ", Total: " + str(gib_present.total)
+  print("Part 2: Unique: " + str(gib_present.unique) + ", Total: " + str(gib_present.total))
 
 def main():
-  f = open('Day3Input.txt', 'r')
+  f = open('Input.txt', 'r')
   directions = f.read()
 
   gib_present.presents = {}

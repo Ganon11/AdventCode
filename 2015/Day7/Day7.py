@@ -93,7 +93,7 @@ def build_circuit1(directions):
   print("Part 2: Wire a has value %d" % a_val)
 
 def main():
-  f = open('Day7Input.txt', 'r')
+  f = open('Input.txt', 'r')
   directions = [l.rstrip() for l in f.readlines()]
   build_circuit1(directions)
 

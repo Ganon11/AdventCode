@@ -1,14 +1,12 @@
 import hashlib
 
 def main():
-  secret_key = 'ckczppom'
+  secret_key = 'yzbqklnj'
   i = 1
   while True:
     hashee = (secret_key + str(i)).encode('utf-8')
-    m = hashlib.md5(hashee)
-    h = m.hexdigest()
-    check = h[0:6]
-    if check == '000000':
+    h = hashlib.md5(hashee).hexdigest()
+    if h[0:5] == '00000':
       print("Found one: i = %d, hex = %s" % (i, h))
       break
     i = i + 1
