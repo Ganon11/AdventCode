@@ -80,89 +80,89 @@ class SueCandidate:
     else:
       self.perfumes = None
 
-  def matches_children(self, children):
+  def matches_children(self):
     if self.children is None:
       return True
 
-    return self.children == children
+    return self.children == 3
 
-  def matches_cats(self, cats):
+  def matches_cats(self):
     if self.cats is None:
       return True
 
-    return self.cats == cats
+    return self.cats == 7
 
-  def matches_samoyeds(self, samoyeds):
+  def matches_samoyeds(self):
     if self.samoyeds is None:
       return True
 
-    return self.samoyeds == samoyeds
+    return self.samoyeds == 2
 
-  def matches_pomeranians(self, pomeranians):
+  def matches_pomeranians(self):
     if self.pomeranians is None:
       return True
 
-    return self.pomeranians == pomeranians
+    return self.pomeranians == 3
 
-  def matches_akitas(self, akitas):
+  def matches_akitas(self):
     if self.akitas is None:
       return True
 
-    return self.akitas == akitas
+    return self.akitas == 0
 
-  def matches_vizslas(self, vizslas):
+  def matches_vizslas(self):
     if self.vizslas is None:
       return True
 
-    return self.vizslas == vizslas
+    return self.vizslas == 0
 
-  def matches_goldfish(self, goldfish):
+  def matches_goldfish(self):
     if self.goldfish is None:
       return True
 
-    return self.goldfish == goldfish
+    return self.goldfish == 5
 
-  def matches_trees(self, trees):
+  def matches_trees(self):
     if self.trees is None:
       return True
 
-    return self.trees == trees
+    return self.trees == 3
 
-  def matches_cars(self, cars):
+  def matches_cars(self):
     if self.cars is None:
       return True
 
-    return self.cars == cars
+    return self.cars == 2
 
-  def matches_perfumes(self, perfumes):
+  def matches_perfumes(self):
     if self.perfumes is None:
       return True
 
-    return self.perfumes == perfumes
+    return self.perfumes == 1
 
-  def greater_cats(self, cats):
+  def greater_cats(self):
     if self.cats is None:
       return True
 
-    return self.cats > cats
+    return self.cats > 7
 
-  def greater_trees(self, trees):
+  def greater_trees(self):
     if self.trees is None:
       return True
 
-    return self.trees > trees
+    return self.trees > 3
 
-  def less_pomeranians(self, pomeranians):
+  def less_pomeranians(self):
     if self.pomeranians is None:
       return True
 
-    return self.pomeranians < pomeranians
+    return self.pomeranians < 3
 
-  def less_goldfish(self, goldfish):
+  def less_goldfish(self):
     if self.goldfish is None:
       return True
 
-    return self.goldfish < goldfish
+    return self.goldfish < 5
 
 def get_sues(filename):
   sues = list()
@@ -175,16 +175,16 @@ def get_sues(filename):
 def part_1(filename):
   sues = get_sues(filename)
 
-  sues = list(filter(lambda x: x.matches_children(3), sues))
-  sues = list(filter(lambda x: x.matches_cats(7), sues))
-  sues = list(filter(lambda x: x.matches_samoyeds(2), sues))
-  sues = list(filter(lambda x: x.matches_pomeranians(3), sues))
-  sues = list(filter(lambda x: x.matches_akitas(0), sues))
-  sues = list(filter(lambda x: x.matches_vizslas(0), sues))
-  sues = list(filter(lambda x: x.matches_goldfish(5), sues))
-  sues = list(filter(lambda x: x.matches_trees(3), sues))
-  sues = list(filter(lambda x: x.matches_cars(3), sues))
-  sues = list(filter(lambda x: x.matches_perfumes(3), sues))
+  sues = list(filter(lambda x: x.matches_children(), sues))
+  sues = list(filter(lambda x: x.matches_cats(), sues))
+  sues = list(filter(lambda x: x.matches_samoyeds(), sues))
+  sues = list(filter(lambda x: x.matches_pomeranians(), sues))
+  sues = list(filter(lambda x: x.matches_akitas(), sues))
+  sues = list(filter(lambda x: x.matches_vizslas(), sues))
+  sues = list(filter(lambda x: x.matches_goldfish(), sues))
+  sues = list(filter(lambda x: x.matches_trees(), sues))
+  sues = list(filter(lambda x: x.matches_cars(), sues))
+  sues = list(filter(lambda x: x.matches_perfumes(), sues))
 
   if 1 == len(sues):
     print("Found target Sue: %d" % sues[0].id)
@@ -192,22 +192,17 @@ def part_1(filename):
 def part_2(filename):
   sues = get_sues(filename)
 
-  sues = list(filter(lambda x: x.matches_children(3), sues))
-  sues = list(filter(lambda x: x.matches_samoyeds(2), sues))
-  sues = list(filter(lambda x: x.matches_akitas(0), sues))
-  sues = list(filter(lambda x: x.matches_vizslas(0), sues))
-  sues = list(filter(lambda x: x.matches_cars(3), sues))
-  sues = list(filter(lambda x: x.matches_perfumes(3), sues))
+  sues = list(filter(lambda x: x.matches_children(), sues))
+  sues = list(filter(lambda x: x.matches_samoyeds(), sues))
+  sues = list(filter(lambda x: x.matches_akitas(), sues))
+  sues = list(filter(lambda x: x.matches_vizslas(), sues))
+  sues = list(filter(lambda x: x.matches_cars(), sues))
+  sues = list(filter(lambda x: x.matches_perfumes(), sues))
 
-  print("Starting with %d Sues" % len(sues))
-  sues = list(filter(lambda x: x.greater_cats(7), sues))
-  print("Filtered cats to %d Sues" % len(sues))
-  sues = list(filter(lambda x: x.less_pomeranians(3), sues))
-  print("Filtered pomeranians to %d Sues" % len(sues))
-  sues = list(filter(lambda x: x.less_goldfish(5), sues))
-  print("Filtered goldfish to %d Sues" % len(sues))
-  sues = list(filter(lambda x: x.greater_trees(3), sues))
-  print("Filtered trees to %d Sues" % len(sues))
+  sues = list(filter(lambda x: x.greater_cats(), sues))
+  sues = list(filter(lambda x: x.less_pomeranians(), sues))
+  sues = list(filter(lambda x: x.less_goldfish(), sues))
+  sues = list(filter(lambda x: x.greater_trees(), sues))
 
   if 1 == len(sues):
     print("Found target Sue: %d" % sues[0].id)
