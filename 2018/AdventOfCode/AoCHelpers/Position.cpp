@@ -16,6 +16,18 @@ bool advent_of_code::Position::operator<(const Position& other) const {
    return false;
 }
 
+bool advent_of_code::Position::operator>(const Position& other) const {
+  if (m_y > other.m_y) {
+    return true;
+  }
+
+  if (m_y == other.m_y && m_x > other.m_x) {
+    return true;
+  }
+
+  return false;
+}
+
 bool advent_of_code::Position::operator==(const Position& other) const {
    return m_x == other.m_x && m_y == other.m_y;
 }
