@@ -58,7 +58,6 @@ def part_2(filename, steps):
     lead = all_reindeer[0].distance
     for r in all_reindeer:
       if lead == r.distance:
-        #print("Awarding point to %s" % r.name)
         r.points = r.points + 1
       else:
         break
@@ -68,8 +67,8 @@ def part_2(filename, steps):
 
 def main():
   parser = argparse.ArgumentParser()
-  parser.add_argument('-f', '--filename')
-  parser.add_argument('-s', '--steps')
+  parser.add_argument('filename')
+  parser.add_argument('-s', '--steps', type=int)
   args = parser.parse_args()
 
   filename = '../input/Sample.txt'
