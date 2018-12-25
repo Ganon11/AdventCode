@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -12,7 +13,10 @@ public:
   std::wstring read_single_line() const;
   std::vector<std::wstring> read_all_lines() const;
 
+  bool get_argument(const std::wstring& flag, std::wstring& value) const;
+
 private:
   std::wstring m_filename;
+  std::map<std::wstring, std::wstring> m_arguments;
 };
 }
