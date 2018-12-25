@@ -1,20 +1,24 @@
 #include "stdafx.h"
 #include "Position.h"
 
-advent_of_code::Position::Position(const long long x, const long long y, const long long z)
-  : m_x{ x }, m_y{ y }, m_z{ z }
+advent_of_code::Position::Position(const long long x, const long long y, const long long z, const long long a)
+  : m_x{ x }, m_y{ y }, m_z{ z }, m_a{ a }
 {}
 
 bool advent_of_code::Position::operator<(const Position& other) const {
-  if (m_z < other.m_z) {
+  if (m_a < other.m_a) {
     return true;
   }
 
-  if (m_z == other.m_z && m_y < other.m_y) {
+  if (m_a == other.m_a && m_z < other.m_z) {
     return true;
   }
 
-  if (m_z == other.m_z && m_y == other.m_y && m_x < other.m_x) {
+  if (m_a == other.m_a && m_z == other.m_z && m_y < other.m_y) {
+    return true;
+  }
+
+  if (m_a == other.m_a && m_z == other.m_z && m_y == other.m_y && m_x < other.m_x) {
     return true;
   }
 
@@ -22,15 +26,19 @@ bool advent_of_code::Position::operator<(const Position& other) const {
 }
 
 bool advent_of_code::Position::operator>(const Position& other) const {
-  if (m_z > other.m_z) {
+  if (m_a > other.m_a) {
     return true;
   }
 
-  if (m_z == other.m_z && m_y > other.m_y) {
+  if (m_a == other.m_a && m_z > other.m_z) {
     return true;
   }
 
-  if (m_z == other.m_z && m_y == other.m_y && m_x > other.m_x) {
+  if (m_a == other.m_a && m_z == other.m_z && m_y > other.m_y) {
+    return true;
+  }
+
+  if (m_a == other.m_a && m_z == other.m_z && m_y == other.m_y && m_x > other.m_x) {
     return true;
   }
 
@@ -38,7 +46,7 @@ bool advent_of_code::Position::operator>(const Position& other) const {
 }
 
 bool advent_of_code::Position::operator==(const Position& other) const {
-  return m_x == other.m_x && m_y == other.m_y && m_z == other.m_z;
+  return m_x == other.m_x && m_y == other.m_y && m_z == other.m_z && m_a == other.m_a;
 }
 
 bool advent_of_code::Position::operator!=(const Position& other) const {
@@ -46,15 +54,19 @@ bool advent_of_code::Position::operator!=(const Position& other) const {
 }
 
 bool advent_of_code::Position::is_adjacent_to(const Position& other) const {
-  if (m_x == other.m_x && m_y == other.m_y && 1 == abs(m_z - other.m_z)) {
+  if (m_x == other.m_x && m_y == other.m_y && m_z == other.m_z && 1 == abs(m_a - other.m_a)) {
     return true;
   }
 
-  if (m_x == other.m_x && 1 == abs(m_y - other.m_y) && m_z == other.m_z) {
+  if (m_x == other.m_x && m_y == other.m_y && 1 == abs(m_z - other.m_z) && m_a == other.m_a) {
     return true;
   }
 
-  if (1 == abs(m_x - other.m_x) && m_y == other.m_y && m_z == other.m_z) {
+  if (m_x == other.m_x && 1 == abs(m_y - other.m_y) && m_z == other.m_z && m_a == other.m_a) {
+    return true;
+  }
+
+  if (1 == abs(m_x - other.m_x) && m_y == other.m_y && m_z == other.m_z && m_a == other.m_a) {
     return true;
   }
 
@@ -106,10 +118,13 @@ std::vector<advent_of_code::Position> advent_of_code::Position::get_adjacent_pos
 }
 
 size_t advent_of_code::Position::distance_to(const Position& other) const {
-  return static_cast<size_t>(abs(m_x - other.m_x) + abs(m_y - other.m_y) + abs(m_z - other.m_z));
+  return static_cast<size_t>(abs(m_x - other.m_x)
+                           + abs(m_y - other.m_y)
+                           + abs(m_z - other.m_z)
+                           + abs(m_a - other.m_a));
 }
 
 std::wostream& advent_of_code::operator<<(std::wostream& out, const advent_of_code::Position& p) {
-  out << p.m_x << L',' << p.m_y;
+  out << p.m_x << L',' << p.m_y << L',' << p.m_z << L',' << p.m_a;
   return out;
 }
