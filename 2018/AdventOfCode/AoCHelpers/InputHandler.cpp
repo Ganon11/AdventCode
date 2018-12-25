@@ -15,6 +15,8 @@ advent_of_code::InputHandler::InputHandler(const int argc, wchar_t** argv) {
       m_filename = std::wstring(argv[argv_index + 1]);
       ++argv_index;
       filename_set = true;
+    } else if (argv_index + 1 < argc) {
+      m_arguments[argv[argv_index]] = argv[argv_index + 1];
     }
   }
 
@@ -42,4 +44,14 @@ std::vector<std::wstring> advent_of_code::InputHandler::read_all_lines() const {
   }
 
   return lines;
+}
+
+bool advent_of_code::InputHandler::get_argument(const std::wstring& flag, std::wstring& value) const {
+  auto arg{ m_arguments.find(flag) };
+  if (m_arguments.end() == arg) {
+    return false;
+  }
+
+  value = arg->second;
+  return true;
 }
