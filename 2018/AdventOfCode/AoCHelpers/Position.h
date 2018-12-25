@@ -8,7 +8,7 @@ namespace advent_of_code {
 struct Position
 {
   Position() = default;
-  Position(const long long x, const long long y, const long long z = 0);
+  Position(const long long x, const long long y, const long long z = 0, const long long a = 0);
   Position(const Position& p) = default;
   bool operator<(const Position& other) const;
   bool operator>(const Position& other) const;
@@ -32,6 +32,7 @@ struct Position
   long long m_x;
   long long m_y;
   long long m_z;
+  long long m_a; // THE FOURTH DIMENSION WOOOOAH
 };
 
 #ifdef max
@@ -41,9 +42,10 @@ struct Position
 const Position NONE_POSITION{
     std::numeric_limits<long long>::max(),
     std::numeric_limits<long long>::max(),
+    std::numeric_limits<long long>::max(),
     std::numeric_limits<long long>::max() };
 
-const Position ORIGIN{ 0, 0, 0 };
+const Position ORIGIN{ 0, 0, 0, 0 };
 }
 
 
