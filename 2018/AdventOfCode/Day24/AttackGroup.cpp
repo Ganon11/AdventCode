@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "AttackGroup.h"
 #include <regex>
+#include <sstream>
 
 std::wstring team_to_string(const Team t) {
   switch (t) {
@@ -99,26 +100,32 @@ void AttackGroup::take_damage(const ull damage_amount, const DamageType damage_t
 }
 
 void AttackGroup::parse_resistances(const std::wstring& s) {
-  std::wregex weak_regex{ L"weak to (\\w+)(?:, (\\w+))*" };
-  std::wregex immune_regex{ L"immune to (\\w+)(?:, (\\w+))*" };
+  std::wregex weak_regex{ L"weak to ((?:\\w+,?\\s*)+)" };
+  std::wregex immune_regex{ L"immune to ((?:\\w+,?\\s*)+)" };
   std::wsmatch matches;
 
   if (std::regex_search(s, matches, weak_regex)) {
-    for (size_t index = 1; index < matches.size(); ++index) {
-      std::wstring damage_type{ matches[index].str() };
-      if (!damage_type.empty()) {
-        m_damage_map[get_damage_type(damage_type)] = WEAK;
-      }
+    std::wstring comma_seperated_string{ matches[1].str() };
+    size_t comma_position{ comma_seperated_string.find(L", ") };
+    while (std::wstring::npos != comma_position) {
+      m_damage_map[get_damage_type(comma_seperated_string.substr(0, comma_position))] = WEAK;
+      comma_seperated_string = comma_seperated_string.substr(comma_position + 2);
+      comma_position = comma_seperated_string.find(L", ");
     }
+
+    m_damage_map[get_damage_type(comma_seperated_string)] = WEAK;
   }
 
   if (std::regex_search(s, matches, immune_regex)) {
-    for (size_t index = 1; index < matches.size(); ++index) {
-      std::wstring damage_type{ matches[index].str() };
-      if (!damage_type.empty()) {
-        m_damage_map[get_damage_type(damage_type)] = IMMUNE;
-      }
+    std::wstring comma_seperated_string{ matches[1].str() };
+    size_t comma_position{ comma_seperated_string.find(L", ") };
+    while (std::wstring::npos != comma_position) {
+      m_damage_map[get_damage_type(comma_seperated_string.substr(0, comma_position))] = IMMUNE;
+      comma_seperated_string = comma_seperated_string.substr(comma_position + 2);
+      comma_position = comma_seperated_string.find(L", ");
     }
+
+    m_damage_map[get_damage_type(comma_seperated_string)] = IMMUNE;
   }
 }
 
