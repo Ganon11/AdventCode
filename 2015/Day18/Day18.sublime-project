@@ -17,16 +17,8 @@
       "cmd": ["python", "$file", "../input/Input.txt"]
     },
     {
-      "name": "Run with sample 1",
-      "cmd": ["python", "$file", "../input/Sample1.txt"]
-    },
-    {
-      "name": "Run with sample 2",
-      "cmd": ["python", "$file", "../input/Sample2.txt"]
-    },
-    {
-      "name": "Run with sample 3",
-      "cmd": ["python", "$file", "../input/Sample3.txt"]
+      "name": "Run with sample",
+      "cmd": ["python", "$file", "../input/Sample.txt"]
     }
   ]
 }
