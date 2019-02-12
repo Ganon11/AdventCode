@@ -31,37 +31,39 @@ def parse_reverse_input(filename):
 
 def part_1(filename):
   (rules, molecule) = parse_input(filename)
-  values = dict()
+  values = set()
   for key in rules:
     for newVal in rules[key]:
       length = len(key)
       index = molecule.find(key)
       while index != -1:
         newMol = molecule[:index] + newVal + molecule[index + length:]
-        values[newMol] = 1
+        values.add(newMol)
         index = molecule.find(key, index + length)
   print("Found %d unique values" % len(values))
 
 def part_2(filename):
   (rules, molecule) = parse_reverse_input(filename)
   frontier = dict()
-  seen = dict()
-  gens_seen = dict()
+  seen = set()
+  gens_seen = set()
   frontier[molecule] = 0
 
   while 0 < len(frontier):
-    current = min(frontier, key=frontier.get)
+    current = min(frontier, key=len)
     gen = frontier[current]
 
     if not gen in gens_seen:
       print("Now checking gen %d" % gen)
-      gens_seen[gen] = 1
+      gens_seen.add(gen)
 
     frontier.pop(current)
     if current in seen:
       next
 
-    seen[current] = 1
+    seen.add(current)
+    #print("Checking %s" % current)
+
     if current == 'e':
       print("Got target in %d generations" % gen)
       break
