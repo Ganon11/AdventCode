@@ -14,19 +14,15 @@
   [
     {
       "name": "Run with input",
-      "cmd": ["python", "$file", "../input/Input.txt"]
+      "cmd": ["python", "$file", "-f", "../input/Input.txt", "-ph", "50", "-pm", "500"]
     },
     {
       "name": "Run with sample 1",
-      "cmd": ["python", "$file", "../input/Sample1.txt"]
+      "cmd": ["python", "$file", "-ph", "10", "-pm", "250", "-bh", "13", "-bd", "8"]
     },
     {
       "name": "Run with sample 2",
-      "cmd": ["python", "$file", "../input/Sample2.txt"]
-    },
-    {
-      "name": "Run with sample 3",
-      "cmd": ["python", "$file", "../input/Sample3.txt"]
+      "cmd": ["python", "$file", "-ph", "10", "-pm", "250", "-bh", "14", "-bd", "8"]
     }
   ]
 }
