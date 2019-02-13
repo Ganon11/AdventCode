@@ -14,7 +14,7 @@
   [
     {
       "name": "Run with input",
-      "cmd": ["python", "$file", "../input/Input.txt"]
+      "cmd": ["python", "$file", "-f", "../input/Input.txt"]
     },
     {
       "name": "Run with sample",
