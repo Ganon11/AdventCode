@@ -91,7 +91,7 @@ def part_1(player, boss):
         p.armor = w[2] + a[2] + r1[2] + r2[2]
         if simulate_combat(p, b) and cost < mincost:
           mincost = cost
-          print("Player wins with cost %d" % cost)
+  print("Player wins with cost %d" % mincost)
 
 def part_2(player, boss):
   maxcost = 0
@@ -105,7 +105,7 @@ def part_2(player, boss):
         p.armor = w[2] + a[2] + r1[2] + r2[2]
         if not simulate_combat(p, b) and cost > maxcost:
           maxcost = cost
-          print("Boss wins with cost %d" % cost)
+  print("Boss wins with cost %d" % maxcost)
 
 def main():
   parser = argparse.ArgumentParser()
@@ -119,13 +119,11 @@ def main():
   args = parser.parse_args()
 
   player = Target('Player', args.player_health, args.player_damage, args.player_armor)
-  player.print()
 
   (bh, bd, ba) = (args.boss_health, args.boss_damage, args.boss_armor)
   if args.filename:
     (bh, bd, ba) = get_stats(args.filename)
   boss = Target('Boss', bh, bd, ba)
-  boss.print()
 
   part_1(player, boss)
   part_2(player, boss)
