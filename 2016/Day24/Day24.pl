@@ -50,6 +50,7 @@ sub StateToString {
 
   $output .= join(', ', @objectives);
 
+  print "$output\n";
   return $output;
 }
 
