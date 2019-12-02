@@ -2,21 +2,8 @@ import argparse
 import os
 import sys
 
-def execute(program):
-  ip = 0
-
-  while program[ip] != 99:
-    a = program[ip + 1]
-    b = program[ip + 2]
-    dest = program[ip + 3]
-    if program[ip] == 1:
-      program[dest] = program[a] + program[b]
-    elif program[ip] == 2:
-      program[dest] = program[a] * program[b]
-
-    ip += 4
-
-  return program[0]
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from IntCode import IntCodeProgram
 
 def main():
   parser = argparse.ArgumentParser()
@@ -27,20 +14,21 @@ def main():
 
   f = open(args.filename, 'r')
   text = f.read()
-  program = [int(n) for n in text.split(',')]
+  values = [int(n) for n in text.split(',')]
 
   if args.part == 1:
+    program = IntCodeProgram(values)
     if (args.replace):
-      program[1] = 12
-      program[2] = 2
-    print(execute(program))
+      program.memory[1] = 12
+      program.memory[2] = 2
+    print(program.execute())
   elif args.part == 2:
     for noun in range(0, 99):
       for verb in range(0, 99):
-        programCopy = program.copy()
-        programCopy[1] = noun
-        programCopy[2] = verb
-        if execute(programCopy) == 19690720:
+        program = IntCodeProgram(values)
+        program.memory[1] = noun
+        program.memory[2] = verb
+        if program.execute() == 19690720:
           print(f'100 * {noun} + {verb} == {100 * noun + verb}')
 
 
