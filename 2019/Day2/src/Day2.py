@@ -2,12 +2,12 @@ import argparse
 import os
 import sys
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from IntCode import IntCodeProgram
 
 def main():
   parser = argparse.ArgumentParser()
-  parser.add_argument('-f', '--filename', default='sample1.txt')
+  parser.add_argument('-f', '--filename', default='../input/sample1.txt')
   parser.add_argument('-p', '--part', choices=[1, 2], default=1, type=int)
   parser.add_argument('-r', '--replace', action='store_true')
   args = parser.parse_args()
