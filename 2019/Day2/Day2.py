@@ -17,17 +17,12 @@ def main():
   values = [int(n) for n in text.split(',')]
 
   if args.part == 1:
-    program = IntCodeProgram(values)
-    if (args.replace):
-      program.memory[1] = 12
-      program.memory[2] = 2
+    program = IntCodeProgram(values, useNounVerb=args.replace)
     print(program.execute())
   elif args.part == 2:
     for noun in range(0, 99):
       for verb in range(0, 99):
-        program = IntCodeProgram(values)
-        program.memory[1] = noun
-        program.memory[2] = verb
+        program = IntCodeProgram(values, noun=noun, verb=verb)
         if program.execute() == 19690720:
           print(f'100 * {noun} + {verb} == {100 * noun + verb}')
 
