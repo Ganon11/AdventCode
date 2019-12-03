@@ -1,3 +1,5 @@
+import warnings
+
 class IntCodeProgram:
   ADD = 1
   MUL = 2
@@ -33,12 +35,41 @@ class IntCodeProgram:
     self.ip += 4
 
   def execute(self):
-    functions = {
-      IntCodeProgram.ADD: IntCodeProgram.__add,
-      IntCodeProgram.MUL: IntCodeProgram.__mul
-    }
+    if self.ip != 0:
+      warnings.warn("Program has already executed")
+      return self.memory[0]
+
     while self.memory[self.ip] != IntCodeProgram.HALT:
-      instruction = functions.get(self.memory[self.ip])
-      instruction(self)
+      opcode = self.memory[self.ip]
+      if opcode == IntCodeProgram.ADD:
+        self.__add()
+      elif opcode == IntCodeProgram.MUL:
+        self.__mul()
+      else:
+        raise Exception(f'Unrecognized opcode {opcode}')
 
     return self.memory[0]
+
+  def _is_valid_operand(self, other):
+    return hasattr(other, "memory") and hasattr(other, "ip")
+
+  def __str__(self):
+    return f'Memory: {self.memory}, IP: {self.ip}'
+
+  def __hash__(self):
+    return hash(str(self))
+
+  def __repr__(self):
+    return str(self)
+
+  def __eq__(self, other):
+    if not self._is_valid_operand(other):
+      return NotImplemented
+
+    return self.memory == other.memory and self.ip == other.ip
+
+  def __ne__(self, other):
+    if not self._is_valid_operand(other):
+      return NotImplemented
+
+    return self.memory != other.memory or self.ip != other.ip
