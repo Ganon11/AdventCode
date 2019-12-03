@@ -1,0 +1,17 @@
+{
+  "folders":
+  [
+    {
+      "name": "Source",
+      "path": "."
+    }
+  ],
+  "build_systems":
+  [
+    {
+      "name": "Run Tests",
+      "cmd": ["tox"],
+      "working_dir": "${project_path}"
+    }
+  ]
+}
