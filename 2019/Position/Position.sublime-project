@@ -3,7 +3,8 @@
   [
     {
       "name": "Source",
-      "path": "."
+      "path": ".",
+      "folder_exclude_patterns": [".eggs", ".pytest_cache", ".tox", "*.egg-info"],
     }
   ],
   "build_systems":
