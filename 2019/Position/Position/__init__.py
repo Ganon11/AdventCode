@@ -44,6 +44,9 @@ class Position:
     """Returns the Position one step to the west (negative X)"""
     return Position(self.x - 1, self.y)
 
+  def GetAdjacentPositions(self):
+    return [self.North(), self.West(), self.East(), self.South()]
+
   def _is_valid_operand(self, other):
     return hasattr(other, "x") and hasattr(other, "y")
 
