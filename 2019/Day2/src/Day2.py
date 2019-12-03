@@ -1,9 +1,7 @@
 import argparse
 import os
 import sys
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-from IntCode import IntCodeProgram
+import IntCode
 
 def main():
   parser = argparse.ArgumentParser()
@@ -17,12 +15,12 @@ def main():
   values = [int(n) for n in text.split(',')]
 
   if args.part == 1:
-    program = IntCodeProgram(values, useNounVerb=args.replace)
+    program = IntCode.IntCodeProgram(values, useNounVerb=args.replace)
     print(program.execute())
   elif args.part == 2:
     for noun in range(0, 99):
       for verb in range(0, 99):
-        program = IntCodeProgram(values, noun=noun, verb=verb)
+        program = IntCode.IntCodeProgram(values, noun=noun, verb=verb)
         if program.execute() == 19690720:
           print(f'100 * {noun} + {verb} == {100 * noun + verb}')
 
