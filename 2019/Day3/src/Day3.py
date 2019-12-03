@@ -1,6 +1,6 @@
 import argparse
 import os
-import Position
+import position
 
 def main():
   parser = argparse.ArgumentParser()
@@ -12,15 +12,15 @@ def main():
   with open(args.filename, 'r') as f:
     text = f.readlines()
 
-  path1 = Position.walk_path(text[0].split(','))
-  path2 = Position.walk_path(text[1].split(','))
+  path1 = position.walk_path(text[0].split(','))
+  path2 = position.walk_path(text[1].split(','))
 
   path1set = {p for p in path1 if p.x != 0 and p.y != 0}
   path2set = {p for p in path2 if p.x != 0 and p.y != 0}
   intersections = path1set.intersection(path2set)
   if args.part == 1:
-    intersections = sorted(intersections, key=lambda p: p.Distance())
-    print(f'Closest intersection distance: {intersections[0].Distance()}')
+    intersections = sorted(intersections, key=lambda p: p.distance())
+    print(f'Closest intersection distance: {intersections[0].distance()}')
   elif args.part == 2:
     intersections = sorted(intersections, key=lambda p: path1.index(p) + path2.index(p))
     print(f'Best step count: {path1.index(intersections[0]) + path2.index(intersections[0]) + 2}')

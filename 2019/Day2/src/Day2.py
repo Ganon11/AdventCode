@@ -1,7 +1,7 @@
 import argparse
 import os
 import sys
-import IntCode
+import intcode
 
 def main():
   parser = argparse.ArgumentParser()
@@ -15,12 +15,12 @@ def main():
   values = [int(n) for n in text.split(',')]
 
   if args.part == 1:
-    program = IntCode.IntCodeProgram(values, useNounVerb=args.replace)
+    program = intcode.IntCodeProgram(values, useNounVerb=args.replace)
     print(program.execute())
   elif args.part == 2:
     for noun in range(0, 99):
       for verb in range(0, 99):
-        program = IntCode.IntCodeProgram(values, noun=noun, verb=verb)
+        program = intcode.IntCodeProgram(values, noun=noun, verb=verb)
         if program.execute() == 19690720:
           print(f'100 * {noun} + {verb} == {100 * noun + verb}')
 
