@@ -23,7 +23,7 @@ def main():
     print(f'Closest intersection distance: {intersections[0].distance()}')
   elif args.part == 2:
     intersections = sorted(intersections, key=lambda p: path1.index(p) + path2.index(p))
-    print(f'Best step count: {path1.index(intersections[0]) + path2.index(intersections[0]) + 2}')
+    print(f'Best step count: {path1.index(intersections[0]) + path2.index(intersections[0])}')
   else:
     print(f'Unrecognized part {args.part}')
 
