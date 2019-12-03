@@ -135,6 +135,7 @@ def walk_path(moves, start=Position()):
   """
   p = start
   visited = list()
+  visited.append(p)
   for m in moves:
     direction = m[0]
     count = int(m[1:])
