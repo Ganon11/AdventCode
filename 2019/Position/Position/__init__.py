@@ -3,13 +3,46 @@ class Position:
     self.x = x
     self.y = y
 
-  def ManhattanDistance(self, other):
+  def Distance(self, other=None):
+    """
+    Returns the Manhattan Distance (change in X plus change in Y) from this point to other.
+
+    If other is not provided, the origin (0, 0) is used.
+    """
+    if other is None:
+      other = Position()
     if not self._is_valid_operand(other):
       return NotImplemented
     return abs(self.x - other.x) + abs(self.y - other.y)
 
-  def DistanceToOrigin(self):
-    return abs(self.x) + abs(self.y)
+  def IsAdjacentTo(self, other):
+    """Returns True if this point is one step (not counting diagonals) from other, and False otherwise"""
+    if not self._is_valid_operand(other):
+      return NotImplemented
+
+    if self.x == other.x and 1 == abs(self.y - other.y):
+      return True
+
+    if 1 == abs(self.x - other.x) and self.y == other.y:
+      return True
+
+    return False
+
+  def North(self):
+    """Returns the Position one step to the north (positive Y)"""
+    return Position(self.x, self.y + 1)
+
+  def South(self):
+    """Returns the Position one step to the south (negative Y)"""
+    return Position(self.x, self.y - 1)
+
+  def East(self):
+    """Returns the Position one step to the east (positive X)"""
+    return Position(self.x + 1, self.y)
+
+  def West(self):
+    """Returns the Position one step to the west (negative X)"""
+    return Position(self.x - 1, self.y)
 
   def _is_valid_operand(self, other):
     return hasattr(other, "x") and hasattr(other, "y")
@@ -92,10 +125,10 @@ def walk_path(moves, start=Position()):
   direction.
 
   Acceptable directions are:
-  U -- Up (a positive change in Y)
-  D -- Down (a negative change in Y)
-  L -- Left (a negative change in X)
-  R -- Right (a positive change in X)
+  U -- Up (North)
+  D -- Down (South)
+  L -- Left (West)
+  R -- Right (East)
   """
   p = start
   visited = list()
@@ -104,22 +137,22 @@ def walk_path(moves, start=Position()):
     count = int(m[1:])
     if direction == 'U':
       for i in range(0, count):
-        newP = Position(p.x, p.y + 1)
+        newP = p.North()
         visited.append(newP)
         p = newP
     elif direction == 'D':
       for i in range(0, count):
-        newP = Position(p.x, p.y - 1)
+        newP = p.South()
         visited.append(newP)
         p = newP
     elif direction == 'L':
       for i in range(0, count):
-        newP = Position(p.x - 1, p.y)
+        newP = p.West()
         visited.append(newP)
         p = newP
     elif direction == 'R':
       for i in range(0, count):
-        newP = Position(p.x + 1, p.y)
+        newP = p.East()
         visited.append(newP)
         p = newP
     else:
