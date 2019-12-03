@@ -3,7 +3,7 @@ class Position:
     self.x = x
     self.y = y
 
-  def Distance(self, other=None):
+  def distance(self, other=None):
     """
     Returns the Manhattan Distance (change in X plus change in Y) from this point to other.
 
@@ -15,7 +15,7 @@ class Position:
       return NotImplemented
     return abs(self.x - other.x) + abs(self.y - other.y)
 
-  def IsAdjacentTo(self, other):
+  def is_adjacent_to(self, other):
     """Returns True if this point is one step (not counting diagonals) from other, and False otherwise"""
     if not self._is_valid_operand(other):
       return NotImplemented
@@ -28,24 +28,24 @@ class Position:
 
     return False
 
-  def North(self):
+  def north(self):
     """Returns the Position one step to the north (positive Y)"""
     return Position(self.x, self.y + 1)
 
-  def South(self):
+  def south(self):
     """Returns the Position one step to the south (negative Y)"""
     return Position(self.x, self.y - 1)
 
-  def East(self):
+  def east(self):
     """Returns the Position one step to the east (positive X)"""
     return Position(self.x + 1, self.y)
 
-  def West(self):
+  def west(self):
     """Returns the Position one step to the west (negative X)"""
     return Position(self.x - 1, self.y)
 
-  def GetAdjacentPositions(self):
-    return [self.North(), self.West(), self.East(), self.South()]
+  def get_adjacent_positions(self):
+    return [self.north(), self.west(), self.east(), self.south()]
 
   def _is_valid_operand(self, other):
     return hasattr(other, "x") and hasattr(other, "y")
@@ -140,22 +140,22 @@ def walk_path(moves, start=Position()):
     count = int(m[1:])
     if direction == 'U':
       for i in range(0, count):
-        newP = p.North()
+        newP = p.north()
         visited.append(newP)
         p = newP
     elif direction == 'D':
       for i in range(0, count):
-        newP = p.South()
+        newP = p.south()
         visited.append(newP)
         p = newP
     elif direction == 'L':
       for i in range(0, count):
-        newP = p.West()
+        newP = p.west()
         visited.append(newP)
         p = newP
     elif direction == 'R':
       for i in range(0, count):
-        newP = p.East()
+        newP = p.east()
         visited.append(newP)
         p = newP
     else:

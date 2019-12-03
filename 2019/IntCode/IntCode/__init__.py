@@ -15,7 +15,7 @@ class IntCodeProgram:
     self.ip = 0
 
   @classmethod
-  def fromText(cls, text, useNounVerb=True, noun=12, verb=2):
+  def from_text(cls, text, useNounVerb=True, noun=12, verb=2):
     return cls([int(n) for n in text.split(',')], useNounVerb, noun, verb)
 
   def __add(self):
