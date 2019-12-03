@@ -12,7 +12,6 @@
   ],
   "build_systems":
   [
-    { "name": "Test", "cmd": ["python", "-V"]},
     {
       "name": "Run Part 1",
       "cmd": ["python", "$file", "-f", "../input/input.txt", "-p", "1", "-r"]
