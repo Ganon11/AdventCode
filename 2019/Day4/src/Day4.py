@@ -1,13 +1,15 @@
 import argparse
 import os
 from collections import defaultdict
+from collections import Counter
 
-def double_digits(value):
+def double_digits(value, part):
   value_str = str(value)
-  for i in range(0, 5):
-    if value_str[i] == value_str[i + 1]:
-      return True
-  return False
+  c = Counter(value_str)
+  if part == 1:
+    return any(v >= 2 for v in c.values())
+  elif part == 2:
+    return 2 in c.values()
 
 def increasing_digits(value):
   value_str = str(value)
@@ -19,22 +21,11 @@ def increasing_digits(value):
 
   return True
 
-def double_is_not_part_of_triple(value):
-  value_str = str(value)
-  digits = defaultdict(int)
-  for i in range(0, 6):
-    digits[value_str[i]] += 1
-
-  return any(digits[key] == 2 for key in digits)
-
 def check(value, part):
-  if not double_digits(value):
-    return False
-
   if not increasing_digits(value):
     return False
 
-  if part == 2 and not double_is_not_part_of_triple(value):
+  if not double_digits(value, part):
     return False
 
   return True
