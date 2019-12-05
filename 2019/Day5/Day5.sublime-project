@@ -14,35 +14,91 @@
   [
     {
       "name": "Run Part 1",
-      "cmd": ["python", "$file", "-f", "../input/input.txt", "-p", "1"]
+      "cmd": ["python", "$file", "-f", "../input/input.txt", "-i", "1"]
     },
     {
       "name": "Run Part 2",
-      "cmd": ["python", "$file", "-f", "../input/input.txt", "-p", "2"]
+      "cmd": ["python", "$file", "-f", "../input/input.txt", "-i", "5"]
     },
     {
-      "name": "Run Sample 1 Part 1",
-      "cmd": ["python", "$file", "-f", "../input/sample1.txt", "-p", "1"]
+      "name": "Run Simple Input Output program Part 1",
+      "cmd": ["python", "$file", "-f", "../input/sample1.txt", "-i", "1"]
     },
     {
-      "name": "Run Sample 2 Part 1",
-      "cmd": ["python", "$file", "-f", "../input/sample2.txt", "-p", "1"]
+      "name": "Run Simple Input Output program Part 2",
+      "cmd": ["python", "$file", "-f", "../input/sample1.txt", "-i", "5"]
     },
     {
-      "name": "Run Sample 3 Part 1",
-      "cmd": ["python", "$file", "-f", "../input/sample3.txt", "-p", "1"]
+      "name": "Run Immediate Mode Multiply Test",
+      "cmd": ["python", "$file", "-f", "../input/sample2.txt"]
     },
     {
-      "name": "Run Sample 1 Part 2",
-      "cmd": ["python", "$file", "-f", "../input/sample1.txt", "-p", "2"]
+      "name": "Run Position Mode Equal-To-8 Program (8)",
+      "cmd": ["python", "$file", "-f", "../input/sample3.txt", "-i", "8"]
     },
     {
-      "name": "Run Sample 2 Part 2",
-      "cmd": ["python", "$file", "-f", "../input/sample2.txt", "-p", "2"]
+      "name": "Run Position Mode Equal-To-8 Program (9)",
+      "cmd": ["python", "$file", "-f", "../input/sample3.txt", "-i", "9"]
     },
     {
-      "name": "Run Sample 3 Part 2",
-      "cmd": ["python", "$file", "-f", "../input/sample3.txt", "-p", "2"]
+      "name": "Run Position Mode Less-Than-8 Program (7)",
+      "cmd": ["python", "$file", "-f", "../input/sample4.txt", "-i", "7"]
+    },
+    {
+      "name": "Run Position Mode Less-Than-8 Program (8)",
+      "cmd": ["python", "$file", "-f", "../input/sample4.txt", "-i", "8"]
+    },
+    {
+      "name": "Run Position Mode Less-Than-8 Program (9)",
+      "cmd": ["python", "$file", "-f", "../input/sample4.txt", "-i", "9"]
+    },
+    {
+      "name": "Run Immediate Mode Equal-To-8 Program (8)",
+      "cmd": ["python", "$file", "-f", "../input/sample5.txt", "-i", "8"]
+    },
+    {
+      "name": "Run Immediate Mode Equal-To-8 Program (9)",
+      "cmd": ["python", "$file", "-f", "../input/sample5.txt", "-i", "9"]
+    },
+    {
+      "name": "Run Immediate Mode Less-Than-8 Program (7)",
+      "cmd": ["python", "$file", "-f", "../input/sample6.txt", "-i", "7"]
+    },
+    {
+      "name": "Run Immediate Mode Less-Than-8 Program (8)",
+      "cmd": ["python", "$file", "-f", "../input/sample6.txt", "-i", "8"]
+    },
+    {
+      "name": "Run Immediate Mode Less-Than-8 Program (9)",
+      "cmd": ["python", "$file", "-f", "../input/sample6.txt", "-i", "9"]
+    },
+    {
+      "name": "Run Position Mode Jump Tests (0)",
+      "cmd": ["python", "$file", "-f", "../input/sample7.txt", "-i", "0"]
+    },
+    {
+      "name": "Run Position Mode Jump Tests (1)",
+      "cmd": ["python", "$file", "-f", "../input/sample7.txt", "-i", "1"]
+    },
+    {
+      "name": "Run Immediate Mode Jump Tests (0)",
+      "cmd": ["python", "$file", "-f", "../input/sample8.txt", "-i", "0"]
+    },
+    {
+      "name": "Run Immediate Mode Jump Tests (1)",
+      "cmd": ["python", "$file", "-f", "../input/sample8.txt", "-i", "1"]
+    },
+    {
+      "name": "Run Compare-To-8 Program (7)",
+      "cmd": ["python", "$file", "-f", "../input/sample9.txt", "-i", "7"]
+    },
+    {
+      "name": "Run Compare-To-8 Program (8)",
+      "cmd": ["python", "$file", "-f", "../input/sample9.txt", "-i", "8"]
+    },
+    {
+      "name": "Run Compare-To-8 Program (9)",
+      "cmd": ["python", "$file", "-f", "../input/sample9.txt", "-i", "9"]
     }
   ]
 }

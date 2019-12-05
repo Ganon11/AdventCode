@@ -29,13 +29,12 @@ class IntCodeProgram:
     return cls([int(n) for n in text.split(',')], useNounVerb, noun, verb)
 
   def _get_modes(self, value, numberOfModes=3):
-    #print(f'get_modes({value}, numberOfModes={numberOfModes})')
     modes = str(value // 100)
     if numberOfModes == 0:
       return ()
 
     elif numberOfModes == 1:
-      return (int(modes[0]))
+      return (int(modes[0]), )
 
     elif numberOfModes == 2:
       if len(modes) == 1:
@@ -97,13 +96,15 @@ class IntCodeProgram:
     self.ip += 2
 
   def _output(self):
-    address = self.memory[self.ip + 1]
-    print(f"memory[{address}] = {self.memory[address]}")
+    modes = self._get_modes(self.memory[self.ip], numberOfModes=1)
+    A = self.memory[self.ip + 1]
+    if modes[0] == IntCodeProgram.POSITION_MODE:
+      A = self.memory[A]
+    print(f"{A}")
 
     self.ip += 2
 
   def _jump_if_true(self):
-    #print("_jump_if_true: " + str(self))
     modes = self._get_modes(self.memory[self.ip], numberOfModes=2)
 
     A = self.memory[self.ip + 1]
@@ -114,7 +115,6 @@ class IntCodeProgram:
     if modes[1] == IntCodeProgram.POSITION_MODE:
       B = self.memory[B]
 
-    #print(f'  checking if {A} != 0 (and jumping to {B}')
     if A != 0:
       self.ip = B
     else:
@@ -137,7 +137,6 @@ class IntCodeProgram:
       self.ip += 3
 
   def _less_than(self):
-    #print("_less_than: " + str(self))
     modes = self._get_modes(self.memory[self.ip], numberOfModes=3)
     if modes[2] == IntCodeProgram.IMMEDIATE_MODE:
       raise Exception("Cannot write to an immediate mode value")
@@ -152,7 +151,6 @@ class IntCodeProgram:
 
     destination = self.memory[self.ip + 3]
 
-    #print(f'  comparing {A} < {B}, writing to {destination}')
     if A < B:
       self.memory[destination] = 1
     else:
