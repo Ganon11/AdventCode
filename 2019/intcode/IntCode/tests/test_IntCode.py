@@ -74,6 +74,13 @@ def test_execute_output():
   assert p.ip == 2
   assert output == 4
 
+def test_execute_output_immediate_mode():
+  values = [104, 50, 99]
+  p = intcode.IntCodeProgram(values, useNounVerb=False)
+  output = p.execute()
+  assert p.ip == 2
+  assert output == 104
+
 def test_execute_add_immediate_mode():
   values = [1101, 50, 60, 0, 99]
   p = intcode.IntCodeProgram(values, useNounVerb=False)
