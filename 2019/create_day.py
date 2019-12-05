@@ -72,8 +72,12 @@ if __name__ == "__main__":
 def create_input_file(daystr, day):
   os.mkdir(os.path.join(daystr, 'input'))
   url = 'https://adventofcode.com/2019/day/' + str(day) + '/input'
+  cookies = dict()
+  with open('session.txt', 'r') as f:
+    cookies['session'] = f.read()
+
   with open(os.path.join(daystr, 'input', 'input.txt'), 'w') as f:
-    r = requests.get(url=url)
+    r = requests.get(url=url, cookies=cookies)
     f.write(r.text)
 
 def main():

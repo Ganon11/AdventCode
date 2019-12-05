@@ -380,3 +380,6 @@ __pycache__/
 
 # Sublime workspaces
 *.sublime-workspace
+
+# Secret Session ID
+session.txt
