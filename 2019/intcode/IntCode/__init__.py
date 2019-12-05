@@ -90,7 +90,7 @@ class IntCodeProgram:
     self.memory[destination] = A * B
     self.ip += 4
 
-  def __input(self):
+  def _input(self):
     address = self.memory[self.ip + 1]
     self.memory[address] = self._user_input
 
@@ -193,7 +193,7 @@ class IntCodeProgram:
       elif opcode == IntCodeProgram.MUL:
         self._mul()
       elif opcode == IntCodeProgram.INPUT:
-        self.__input()
+        self._input()
       elif opcode == IntCodeProgram.OUTPUT:
         self._output()
       elif opcode == IntCodeProgram.JUMP_IF_TRUE:
