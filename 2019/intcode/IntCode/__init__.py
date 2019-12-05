@@ -28,7 +28,7 @@ class IntCodeProgram:
   def from_text(cls, text, useNounVerb=True, noun=12, verb=2):
     return cls([int(n) for n in text.split(',')], useNounVerb, noun, verb)
 
-  def __get_modes(self, value, numberOfModes=3):
+  def _get_modes(self, value, numberOfModes=3):
     #print(f'get_modes({value}, numberOfModes={numberOfModes})')
     modes = str(value // 100)
     if numberOfModes == 0:
@@ -54,8 +54,8 @@ class IntCodeProgram:
     else:
       raise Exception(f'Unrecognized number of modes {numberOfModes}')
 
-  def __add(self):
-    modes = self.__get_modes(self.memory[self.ip], numberOfModes=3)
+  def _add(self):
+    modes = self._get_modes(self.memory[self.ip], numberOfModes=3)
     if modes[2] == IntCodeProgram.IMMEDIATE_MODE:
       raise Exception("Cannot write to an immediate mode value")
 
@@ -72,8 +72,8 @@ class IntCodeProgram:
     self.memory[destination] = A + B
     self.ip += 4
 
-  def __mul(self):
-    modes = self.__get_modes(self.memory[self.ip], numberOfModes=3)
+  def _mul(self):
+    modes = self._get_modes(self.memory[self.ip], numberOfModes=3)
     if modes[2] == IntCodeProgram.IMMEDIATE_MODE:
       raise Exception("Cannot write to an immediate mode value")
 
@@ -96,15 +96,15 @@ class IntCodeProgram:
 
     self.ip += 2
 
-  def __output(self):
+  def _output(self):
     address = self.memory[self.ip + 1]
     print(f"memory[{address}] = {self.memory[address]}")
 
     self.ip += 2
 
-  def __jump_if_true(self):
-    #print("__jump_if_true: " + str(self))
-    modes = self.__get_modes(self.memory[self.ip], numberOfModes=2)
+  def _jump_if_true(self):
+    #print("_jump_if_true: " + str(self))
+    modes = self._get_modes(self.memory[self.ip], numberOfModes=2)
 
     A = self.memory[self.ip + 1]
     if modes[0] == IntCodeProgram.POSITION_MODE:
@@ -120,8 +120,8 @@ class IntCodeProgram:
     else:
       self.ip += 3
 
-  def __jump_if_false(self):
-    modes = self.__get_modes(self.memory[self.ip], numberOfModes=2)
+  def _jump_if_false(self):
+    modes = self._get_modes(self.memory[self.ip], numberOfModes=2)
 
     A = self.memory[self.ip + 1]
     if modes[0] == IntCodeProgram.POSITION_MODE:
@@ -136,9 +136,9 @@ class IntCodeProgram:
     else:
       self.ip += 3
 
-  def __less_than(self):
-    #print("__less_than: " + str(self))
-    modes = self.__get_modes(self.memory[self.ip], numberOfModes=3)
+  def _less_than(self):
+    #print("_less_than: " + str(self))
+    modes = self._get_modes(self.memory[self.ip], numberOfModes=3)
     if modes[2] == IntCodeProgram.IMMEDIATE_MODE:
       raise Exception("Cannot write to an immediate mode value")
 
@@ -159,8 +159,8 @@ class IntCodeProgram:
       self.memory[destination] = 0
     self.ip += 4
 
-  def __equals(self):
-    modes = self.__get_modes(self.memory[self.ip], numberOfModes=3)
+  def _equals(self):
+    modes = self._get_modes(self.memory[self.ip], numberOfModes=3)
     if modes[2] == IntCodeProgram.IMMEDIATE_MODE:
       raise Exception("Cannot write to an immediate mode value")
 
@@ -189,21 +189,21 @@ class IntCodeProgram:
       instruction = self.memory[self.ip]
       opcode = instruction % 100
       if opcode == IntCodeProgram.ADD:
-        self.__add()
+        self._add()
       elif opcode == IntCodeProgram.MUL:
-        self.__mul()
+        self._mul()
       elif opcode == IntCodeProgram.INPUT:
         self.__input()
       elif opcode == IntCodeProgram.OUTPUT:
-        self.__output()
+        self._output()
       elif opcode == IntCodeProgram.JUMP_IF_TRUE:
-        self.__jump_if_true()
+        self._jump_if_true()
       elif opcode == IntCodeProgram.JUMP_IF_FALSE:
-        self.__jump_if_false()
+        self._jump_if_false()
       elif opcode == IntCodeProgram.LESS_THAN:
-        self.__less_than()
+        self._less_than()
       elif opcode == IntCodeProgram.EQUALS:
-        self.__equals()
+        self._equals()
       elif opcode == IntCodeProgram.HALT:
         break
       else:
