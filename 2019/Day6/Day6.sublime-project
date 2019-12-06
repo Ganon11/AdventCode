@@ -14,19 +14,19 @@
   [
     {
       "name": "Run Part 1",
-      "cmd": ["python", "$file", "-f", "../input/input.txt", "-p", "1"]
+      "cmd": ["python", "$file", "-p", "1"]
     },
     {
       "name": "Run Part 2",
-      "cmd": ["python", "$file", "-f", "../input/input.txt", "-p", "2"]
+      "cmd": ["python", "$file", "-p", "2"]
     },
     {
       "name": "Run Sample Part 1",
-      "cmd": ["python", "$file", "-f", "../input/sample.txt", "-p", "1"]
+      "cmd": ["python", "$file", "-s", "-p", "1"]
     },
     {
       "name": "Run Sample Part 2",
-      "cmd": ["python", "$file", "-f", "../input/sample.txt", "-p", "2"]
+      "cmd": ["python", "$file", "-s", "-p", "2"]
     },
   ]
 }
