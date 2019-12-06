@@ -21,13 +21,20 @@ class SpaceObject:
     return children
 
   def distance_to(self, target):
+    path = self.get_path_to(target)
+    if path is not None:
+      return len(path) - 1
+
+    return None
+
+  def get_path_to(self, target):
     if target in map(lambda o: o.name, self.children):
-      return 1
+      return [self.name, target]
 
     for child in self.children:
-      child_distance = child.distance_to(target)
-      if child_distance is not None:
-        return child_distance + 1
+      path = child.get_path_to(target)
+      if path is not None:
+        return [self.name] + path
 
     return None
 
@@ -38,29 +45,28 @@ class SpaceObject:
     return f'Object {self.name} has {len(self.children)} children'
 
 def part1(objects):
+  queue = objects['COM'].children
+  seen = set(['COM'])
   total = 0
-  root = objects['COM']
-  for child in root.get_children_set():
-    total += root.distance_to(child)
-
+  level = 1
+  while len(queue) > 0:
+    next_queue = []
+    for node in queue:
+      if node.name not in seen:
+        total += level
+        next_queue.extend(node.children)
+        seen.add(node.name)
+    level += 1
+    queue = next_queue
   print(total)
 
 def part2(objects):
   (you, santa) = ('YOU', 'SAN')
   current = objects['COM']
-  while True:
-    currentChildren = current.get_children_set()
-    childFound = False
-    for child in current.children:
-      childSet = child.get_children_set()
-      if you in childSet and santa in childSet:
-        childFound = True
-        current = child
-        break
-    if not childFound:
-      break
-
-  print(current.distance_to(you) + current.distance_to(santa) - 2)
+  path_to_you = current.get_path_to(you)
+  path_to_santa = current.get_path_to(santa)
+  path = list(set(path_to_you) ^ set(path_to_santa))
+  print(len(path) - 2)
 
 def get_space_objects(filename):
   lines = None
