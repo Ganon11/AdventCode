@@ -20,13 +20,6 @@ class SpaceObject:
 
     return children
 
-  def distance_to(self, target):
-    path = self.get_path_to(target)
-    if path is not None:
-      return len(path) - 1
-
-    return None
-
   def get_path_to(self, target):
     if target in map(lambda o: o.name, self.children):
       return [self.name, target]
@@ -42,7 +35,7 @@ class SpaceObject:
     return str(self)
 
   def __str__(self):
-    return f'Object {self.name} has {len(self.children)} children'
+    return f'Object {self.name} has {len(self.children)} children {list(map(lambda o: o.name, self.children))}'
 
 def part1(objects):
   queue = objects['COM'].children
@@ -61,10 +54,8 @@ def part1(objects):
   print(total)
 
 def part2(objects):
-  (you, santa) = ('YOU', 'SAN')
-  current = objects['COM']
-  path_to_you = current.get_path_to(you)
-  path_to_santa = current.get_path_to(santa)
+  path_to_you = objects['COM'].get_path_to('YOU')
+  path_to_santa = objects['COM'].get_path_to('SAN')
   path = list(set(path_to_you) ^ set(path_to_santa))
   print(len(path) - 2)
 
