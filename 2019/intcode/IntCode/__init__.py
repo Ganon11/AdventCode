@@ -64,9 +64,8 @@ class IntCodeProgram:
     """
     return cls([int(n) for n in text.split(',')], user_input)
 
-  @staticmethod
-  def _get_modes(value, number_of_modes=3):
-    modes = str(value // 100)
+  def _get_modes(self, number_of_modes=3):
+    modes = str(self.memory[self.instruction_pointer] // 100)
     modes_tuple = None
     if number_of_modes == 0:
       modes_tuple = ()
@@ -94,7 +93,7 @@ class IntCodeProgram:
     return modes_tuple
 
   def _add(self):
-    modes = IntCodeProgram._get_modes(self.memory[self.instruction_pointer], number_of_modes=3)
+    modes = self._get_modes(number_of_modes=3)
     if modes[2] == IntCodeProgram.IMMEDIATE_MODE:
       raise Exception("Cannot write to an immediate mode value")
 
@@ -112,7 +111,7 @@ class IntCodeProgram:
     self.instruction_pointer += 4
 
   def _mul(self):
-    modes = IntCodeProgram._get_modes(self.memory[self.instruction_pointer], number_of_modes=3)
+    modes = self._get_modes(number_of_modes=3)
     if modes[2] == IntCodeProgram.IMMEDIATE_MODE:
       raise Exception("Cannot write to an immediate mode value")
 
@@ -138,7 +137,7 @@ class IntCodeProgram:
     self.instruction_pointer += 2
 
   def _output(self):
-    modes = IntCodeProgram._get_modes(self.memory[self.instruction_pointer], number_of_modes=1)
+    modes = self._get_modes(number_of_modes=1)
     value_a = self.memory[self.instruction_pointer + 1]
     if modes[0] == IntCodeProgram.POSITION_MODE:
       value_a = self.memory[value_a]
@@ -148,7 +147,7 @@ class IntCodeProgram:
     self.instruction_pointer += 2
 
   def _jump_if_true(self):
-    modes = IntCodeProgram._get_modes(self.memory[self.instruction_pointer], number_of_modes=2)
+    modes = self._get_modes(number_of_modes=2)
 
     value_a = self.memory[self.instruction_pointer + 1]
     if modes[0] == IntCodeProgram.POSITION_MODE:
@@ -164,7 +163,7 @@ class IntCodeProgram:
       self.instruction_pointer += 3
 
   def _jump_if_false(self):
-    modes = IntCodeProgram._get_modes(self.memory[self.instruction_pointer], number_of_modes=2)
+    modes = self._get_modes(number_of_modes=2)
 
     value_a = self.memory[self.instruction_pointer + 1]
     if modes[0] == IntCodeProgram.POSITION_MODE:
@@ -180,7 +179,7 @@ class IntCodeProgram:
       self.instruction_pointer += 3
 
   def _less_than(self):
-    modes = IntCodeProgram._get_modes(self.memory[self.instruction_pointer], number_of_modes=3)
+    modes = self._get_modes(number_of_modes=3)
     if modes[2] == IntCodeProgram.IMMEDIATE_MODE:
       raise Exception("Cannot write to an immediate mode value")
 
@@ -201,7 +200,7 @@ class IntCodeProgram:
     self.instruction_pointer += 4
 
   def _equals(self):
-    modes = IntCodeProgram._get_modes(self.memory[self.instruction_pointer], number_of_modes=3)
+    modes = self._get_modes(number_of_modes=3)
     if modes[2] == IntCodeProgram.IMMEDIATE_MODE:
       raise Exception("Cannot write to an immediate mode value")
 
@@ -231,29 +230,9 @@ class IntCodeProgram:
       warnings.warn("Program has already executed")
       return self.memory[0]
 
-    while True:
-      instruction = self.memory[self.instruction_pointer]
-      opcode = instruction % 100
-      if opcode == IntCodeProgram.ADD:
-        self._add()
-      elif opcode == IntCodeProgram.MUL:
-        self._mul()
-      elif opcode == IntCodeProgram.INPUT:
-        self._input()
-      elif opcode == IntCodeProgram.OUTPUT:
-        self._output()
-      elif opcode == IntCodeProgram.JUMP_IF_TRUE:
-        self._jump_if_true()
-      elif opcode == IntCodeProgram.JUMP_IF_FALSE:
-        self._jump_if_false()
-      elif opcode == IntCodeProgram.LESS_THAN:
-        self._less_than()
-      elif opcode == IntCodeProgram.EQUALS:
-        self._equals()
-      elif opcode == IntCodeProgram.HALT:
-        break
-      else:
-        raise Exception(f'Unrecognized opcode {opcode}')
+    not_halted = self.step()
+    while not_halted:
+      not_halted = self.step()
 
     return self.memory[0]
 
