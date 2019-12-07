@@ -1,5 +1,4 @@
 import argparse
-import os
 import position
 
 def main():
@@ -9,8 +8,8 @@ def main():
   args = parser.parse_args()
 
   text = list()
-  with open(args.filename, 'r') as f:
-    text = f.readlines()
+  with open(args.filename, 'r') as file:
+    text = file.readlines()
 
   path1 = position.walk_path(text[0].split(','))
   path2 = position.walk_path(text[1].split(','))
