@@ -92,19 +92,23 @@ class IntCodeProgram:
 
     return modes_tuple
 
+  def _get_values(self, number_of_values, modes):
+    values = list()
+    for index in range(0, number_of_values):
+      value = self.memory[self.instruction_pointer + index + 1]
+      if modes[index] == IntCodeProgram.POSITION_MODE:
+        value = self.memory[value]
+
+      values.append(value)
+
+    return values
+
   def _add(self):
     modes = self._get_modes(number_of_modes=3)
     if modes[2] == IntCodeProgram.IMMEDIATE_MODE:
       raise Exception("Cannot write to an immediate mode value")
 
-    value_a = self.memory[self.instruction_pointer + 1]
-    if modes[0] == IntCodeProgram.POSITION_MODE:
-      value_a = self.memory[value_a]
-
-    value_b = self.memory[self.instruction_pointer + 2]
-    if modes[1] == IntCodeProgram.POSITION_MODE:
-      value_b = self.memory[value_b]
-
+    value_a, value_b = self._get_values(2, modes) # pylint: disable=unbalanced-tuple-unpacking
     destination = self.memory[self.instruction_pointer + 3]
 
     self.memory[destination] = value_a + value_b
@@ -115,14 +119,7 @@ class IntCodeProgram:
     if modes[2] == IntCodeProgram.IMMEDIATE_MODE:
       raise Exception("Cannot write to an immediate mode value")
 
-    value_a = self.memory[self.instruction_pointer + 1]
-    if modes[0] == IntCodeProgram.POSITION_MODE:
-      value_a = self.memory[value_a]
-
-    value_b = self.memory[self.instruction_pointer + 2]
-    if modes[1] == IntCodeProgram.POSITION_MODE:
-      value_b = self.memory[value_b]
-
+    value_a, value_b = self._get_values(2, modes) # pylint: disable=unbalanced-tuple-unpacking
     destination = self.memory[self.instruction_pointer + 3]
 
     self.memory[destination] = value_a * value_b
@@ -149,13 +146,7 @@ class IntCodeProgram:
   def _jump_if_true(self):
     modes = self._get_modes(number_of_modes=2)
 
-    value_a = self.memory[self.instruction_pointer + 1]
-    if modes[0] == IntCodeProgram.POSITION_MODE:
-      value_a = self.memory[value_a]
-
-    value_b = self.memory[self.instruction_pointer + 2]
-    if modes[1] == IntCodeProgram.POSITION_MODE:
-      value_b = self.memory[value_b]
+    value_a, value_b = self._get_values(2, modes) # pylint: disable=unbalanced-tuple-unpacking
 
     if value_a != 0:
       self.instruction_pointer = value_b
@@ -165,13 +156,7 @@ class IntCodeProgram:
   def _jump_if_false(self):
     modes = self._get_modes(number_of_modes=2)
 
-    value_a = self.memory[self.instruction_pointer + 1]
-    if modes[0] == IntCodeProgram.POSITION_MODE:
-      value_a = self.memory[value_a]
-
-    value_b = self.memory[self.instruction_pointer + 2]
-    if modes[1] == IntCodeProgram.POSITION_MODE:
-      value_b = self.memory[value_b]
+    value_a, value_b = self._get_values(2, modes) # pylint: disable=unbalanced-tuple-unpacking
 
     if value_a == 0:
       self.instruction_pointer = value_b
@@ -183,14 +168,7 @@ class IntCodeProgram:
     if modes[2] == IntCodeProgram.IMMEDIATE_MODE:
       raise Exception("Cannot write to an immediate mode value")
 
-    value_a = self.memory[self.instruction_pointer + 1]
-    if modes[0] == IntCodeProgram.POSITION_MODE:
-      value_a = self.memory[value_a]
-
-    value_b = self.memory[self.instruction_pointer + 2]
-    if modes[1] == IntCodeProgram.POSITION_MODE:
-      value_b = self.memory[value_b]
-
+    value_a, value_b = self._get_values(2, modes) # pylint: disable=unbalanced-tuple-unpacking
     destination = self.memory[self.instruction_pointer + 3]
 
     if value_a < value_b:
@@ -204,14 +182,7 @@ class IntCodeProgram:
     if modes[2] == IntCodeProgram.IMMEDIATE_MODE:
       raise Exception("Cannot write to an immediate mode value")
 
-    value_a = self.memory[self.instruction_pointer + 1]
-    if modes[0] == IntCodeProgram.POSITION_MODE:
-      value_a = self.memory[value_a]
-
-    value_b = self.memory[self.instruction_pointer + 2]
-    if modes[1] == IntCodeProgram.POSITION_MODE:
-      value_b = self.memory[value_b]
-
+    value_a, value_b = self._get_values(2, modes) # pylint: disable=unbalanced-tuple-unpacking
     destination = self.memory[self.instruction_pointer + 3]
 
     if value_a == value_b:
