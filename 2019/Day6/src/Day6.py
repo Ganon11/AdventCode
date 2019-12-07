@@ -1,5 +1,4 @@
 import argparse
-from functools import reduce
 import os
 
 class SpaceObject:
@@ -35,7 +34,9 @@ class SpaceObject:
     return str(self)
 
   def __str__(self):
-    return f'Object {self.name} has {len(self.children)} children {list(map(lambda o: o.name, self.children))}'
+    children_len = len(self.children)
+    children_names = list(map(lambda o: o.name, self.children))
+    return f'Object {self.name} has {children_len} children {children_names}'
 
 def part1(objects):
   queue = objects['COM'].children
@@ -61,26 +62,26 @@ def part2(objects):
 
 def get_space_objects(filename):
   lines = None
-  with open(filename, 'r') as f:
-    lines = f.readlines()
+  with open(filename, 'r') as file:
+    lines = file.readlines()
 
   objects = dict()
   for line in lines:
     (parent, child) = line.strip().split(')')
-    parentObject = None
+    parent_object = None
     if parent in objects:
-      parentObject = objects[parent]
+      parent_object = objects[parent]
     else:
-      parentObject = SpaceObject(parent)
-      objects[parent] = parentObject
+      parent_object = SpaceObject(parent)
+      objects[parent] = parent_object
 
-    childObject = None
+    child_object = None
     if child in objects:
-      childObject = objects[child]
-      parentObject.add_child(childObject)
+      child_object = objects[child]
+      parent_object.add_child(child_object)
     else:
-      childObject = SpaceObject(child, parentObject)
-      objects[child] = childObject
+      child_object = SpaceObject(child, parent_object)
+      objects[child] = child_object
 
   return objects
 
