@@ -1,15 +1,16 @@
 import argparse
-import os
-from collections import defaultdict
 from collections import Counter
 
 def double_digits(value, part):
   value_str = str(value)
-  c = Counter(value_str)
+  digit_counter = Counter(value_str)
   if part == 1:
-    return any(v >= 2 for v in c.values())
-  elif part == 2:
-    return 2 in c.values()
+    return any(v >= 2 for v in digit_counter.values())
+
+  if part == 2:
+    return 2 in digit_counter.values()
+
+  return None
 
 def increasing_digits(value):
   value_str = str(value)
@@ -45,8 +46,8 @@ def main():
 
   if args.filename:
     # read start/end from file
-    with open(args.filename, 'r') as f:
-      line = f.read()
+    with open(args.filename, 'r') as file:
+      line = file.read()
       args.start = int(line[0:6])
       args.end = int(line[7:])
 
