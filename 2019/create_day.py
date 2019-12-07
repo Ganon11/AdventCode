@@ -64,7 +64,6 @@ def create_src_file(daystr):
   os.mkdir(os.path.join(daystr, 'src'))
   with open(os.path.join(daystr, 'src', daystr + '.py'), 'w') as file:
     file.write("""import argparse
-import os
 
 def main():
   parser = argparse.ArgumentParser()
