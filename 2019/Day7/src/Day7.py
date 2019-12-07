@@ -1,6 +1,5 @@
 import argparse
 from itertools import permutations
-import os
 
 import intcode
 
@@ -44,7 +43,8 @@ def part_2(program_text):
     programs = list()
     halted = set()
     for index in range(0, 5):
-      programs.append(intcode.IntCodeProgram.from_text(program_text, user_input=[phase_setting_sequence[index]]))
+      program_input = [phase_setting_sequence[index]]
+      programs.append(intcode.IntCodeProgram.from_text(program_text, user_input=program_input))
     programs[0].provide_input([0])
 
     program_5_output = list()
