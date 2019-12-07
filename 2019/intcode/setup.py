@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
   name="intcode-Ganon11",
-  version="2.0.0",
+  version="3.0.0",
   author="Ganon11",
   author_email="stark3@gmail.com",
   description="An interpreter for Advent of Code 2019's IntCode",
