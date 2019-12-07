@@ -39,7 +39,8 @@ def part_2(program_text):
       for index in range(0, 5):
         if index in halted:
           pass
-        if not programs[index].step():
+        programs[index].execute()
+        if programs[index].has_halted:
           halted.add(index)
 
     if programs[4].output[-1] > max_thruster_signal:
