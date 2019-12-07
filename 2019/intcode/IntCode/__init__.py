@@ -33,10 +33,11 @@ class IntCodeProgram:
   POSITION_MODE = 0
   IMMEDIATE_MODE = 1
 
-  def __init__(self, values, user_input=1):
+  def __init__(self, values, user_input=[]):
     self.memory = values.copy()
     self.instruction_pointer = 0
     self._user_input = user_input
+    self.output = list()
 
   def set_noun(self, noun):
     """Sets the noun (memory value 1)"""
@@ -47,13 +48,13 @@ class IntCodeProgram:
     self.memory[2] = verb
 
   @classmethod
-  def from_text(cls, text):
+  def from_text(cls, text, user_input=[]):
     """
     Creates an IntCodeProgram from text.
 
     The given string should be a comma-separated list of integers.
     """
-    return cls([int(n) for n in text.split(',')])
+    return cls([int(n) for n in text.split(',')], user_input)
 
   @staticmethod
   def _get_modes(value, number_of_modes=3):
@@ -121,8 +122,10 @@ class IntCodeProgram:
     self.instruction_pointer += 4
 
   def _input(self):
+    if len(self._user_input) == 0:
+      return
     address = self.memory[self.instruction_pointer + 1]
-    self.memory[address] = self._user_input
+    self.memory[address] = self._user_input.pop(0)
 
     self.instruction_pointer += 2
 
@@ -131,7 +134,8 @@ class IntCodeProgram:
     value_a = self.memory[self.instruction_pointer + 1]
     if modes[0] == IntCodeProgram.POSITION_MODE:
       value_a = self.memory[value_a]
-    print(f"{value_a}")
+    
+    self.output.append(value_a)
 
     self.instruction_pointer += 2
 
@@ -244,6 +248,41 @@ class IntCodeProgram:
         raise Exception(f'Unrecognized opcode {opcode}')
 
     return self.memory[0]
+
+  def step(self):
+    """
+    Executes the program one step at a time.
+
+    Returns True if the program has more steps, and False otherwise.
+    """
+    instruction = self.memory[self.instruction_pointer]
+    opcode = instruction % 100
+    if opcode == IntCodeProgram.ADD:
+      self._add()
+    elif opcode == IntCodeProgram.MUL:
+      self._mul()
+    elif opcode == IntCodeProgram.INPUT:
+      self._input()
+    elif opcode == IntCodeProgram.OUTPUT:
+      self._output()
+    elif opcode == IntCodeProgram.JUMP_IF_TRUE:
+      self._jump_if_true()
+    elif opcode == IntCodeProgram.JUMP_IF_FALSE:
+      self._jump_if_false()
+    elif opcode == IntCodeProgram.LESS_THAN:
+      self._less_than()
+    elif opcode == IntCodeProgram.EQUALS:
+      self._equals()
+    elif opcode == IntCodeProgram.HALT:
+      return False
+    else:
+      raise Exception(f'Unrecognized opcode {opcode}')
+
+    return True
+
+  def provide_input(self, new_input=[]):
+    """Give additional input to the program."""
+    self._user_input.extend(new_input)
 
   @staticmethod
   def _is_valid_operand(other):
