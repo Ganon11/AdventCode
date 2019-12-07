@@ -1,5 +1,4 @@
 import argparse
-import os
 import intcode
 
 def main():
@@ -9,11 +8,12 @@ def main():
   args = parser.parse_args()
 
   values = []
-  with open(args.filename, 'r') as f:
-    values = [int (n) for n in f.read().split(',')]
+  with open(args.filename, 'r') as file:
+    values = [int(value) for value in file.read().split(',')]
 
-  program = intcode.IntCodeProgram(values, useNounVerb=False, userInput=args.input)
-  output = program.execute()
+  program = intcode.IntCodeProgram(values, user_input=[args.input])
+  program.execute()
+  print(f'Program Output: {program.output}')
 
 if __name__ == "__main__":
   main()
