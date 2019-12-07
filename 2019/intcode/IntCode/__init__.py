@@ -157,9 +157,8 @@ class IntCodeProgram:
       warnings.warn("Program has already executed")
       return self.memory[0]
 
-    not_halted = True
-    while not_halted:
-      not_halted = self.step()
+    while self.step():
+      pass
 
     return self.memory[0]
 
