@@ -33,10 +33,18 @@ class IntCodeProgram:
   POSITION_MODE = 0
   IMMEDIATE_MODE = 1
 
-  def __init__(self, values, user_input=[]):
+  def __init__(self, values, user_input=None):
     self.memory = values.copy()
     self.instruction_pointer = 0
-    self._user_input = user_input
+    if user_input is not None:
+      if isinstance(user_input, list):
+        self._user_input = user_input
+      elif isinstance(user_input, int):
+        self._user_input = [user_input]
+      else:
+        raise Exception("Unacceptable user input type")
+    else:
+      self._user_input = list()
     self.output = list()
 
   def set_noun(self, noun):
@@ -48,7 +56,7 @@ class IntCodeProgram:
     self.memory[2] = verb
 
   @classmethod
-  def from_text(cls, text, user_input=[]):
+  def from_text(cls, text, user_input=None):
     """
     Creates an IntCodeProgram from text.
 
@@ -134,7 +142,7 @@ class IntCodeProgram:
     value_a = self.memory[self.instruction_pointer + 1]
     if modes[0] == IntCodeProgram.POSITION_MODE:
       value_a = self.memory[value_a]
-    
+
     self.output.append(value_a)
 
     self.instruction_pointer += 2
@@ -280,9 +288,18 @@ class IntCodeProgram:
 
     return True
 
-  def provide_input(self, new_input=[]):
-    """Give additional input to the program."""
-    self._user_input.extend(new_input)
+  def provide_input(self, new_input):
+    """
+    Give additional input to the program.
+
+    This input can either be a single integer value, or a list of integer values.
+    """
+    if isinstance(new_input, list):
+      self._user_input.extend(new_input)
+    elif isinstance(new_input, int):
+      self._user_input.append(new_input)
+    else:
+      raise Exception("Unacceptable input type")
 
   @staticmethod
   def _is_valid_operand(other):

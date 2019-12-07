@@ -55,12 +55,37 @@ def test_execute_input():
   assert program.memory[0] == 77
   assert output == 77
 
+  program2 = intcode.IntCodeProgram(values, user_input=77)
+  output2 = program2.execute()
+  assert program2.instruction_pointer == 2
+  assert program2.memory[0] == 77
+  assert output2 == 77
+
+def test_multiple_input():
+  values=[3, 0, 3, 1, 99]
+  program = intcode.IntCodeProgram(values, user_input=[1, 2])
+  output = program.execute()
+  assert program.instruction_pointer == 4
+  assert program.memory[0] == 1
+  assert program.memory[1] == 2
+  assert output == 1
+
+  program2 = intcode.IntCodeProgram(values, user_input=1)
+  program2.provide_input(2)
+  output2 = program2.execute()
+  assert program2.instruction_pointer == 4
+  assert program2.memory[0] == 1
+  assert program2.memory[1] == 2
+  assert output2 == 1
+
 def test_execute_output():
   values = [4, 0, 99]
   program = intcode.IntCodeProgram(values)
   output = program.execute()
   assert program.instruction_pointer == 2
   assert output == 4
+  assert len(program.output) == 1
+  assert 4 in program.output
 
 def test_execute_output_immediate_mode():
   values = [104, 50, 99]
@@ -68,6 +93,18 @@ def test_execute_output_immediate_mode():
   output = program.execute()
   assert program.instruction_pointer == 2
   assert output == 104
+  assert len(program.output) == 1
+  assert 50 in program.output
+
+def test_execute_multiple_output():
+  values = [4, 0, 104, 50, 99]
+  program = intcode.IntCodeProgram(values)
+  output = program.execute()
+  assert program.instruction_pointer == 4
+  assert output == 4
+  assert len(program.output) == 2
+  assert 4 in program.output
+  assert 50 in program.output
 
 def test_execute_add_immediate_mode():
   values = [1101, 50, 60, 0, 99]
@@ -172,3 +209,42 @@ def test_execute_equals():
   output = program.execute()
   assert program.instruction_pointer == 4
   assert output == 0
+
+def test_step():
+  values = [1108, 1, 2, 0, 1108, 2, 2, 0, 1108, 2, 1, 0, 99]
+  program = intcode.IntCodeProgram(values)
+
+  not_halted = program.step()
+  assert not_halted
+  assert program.instruction_pointer == 4
+
+  not_halted = program.step()
+  assert not_halted
+  assert program.instruction_pointer == 8
+
+  not_halted = program.step()
+  assert not_halted
+  assert program.instruction_pointer == 12
+
+  not_halted = program.step()
+  assert not not_halted
+  assert program.instruction_pointer == 12
+
+def test_step_without_input_is_no_op():
+  values = [3, 1, 99]
+  program = intcode.IntCodeProgram(values)
+
+  assert program.instruction_pointer == 0
+
+  not_halted = program.step()
+  assert program.instruction_pointer == 0
+  assert not_halted
+
+  program.provide_input(103)
+  not_halted = program.step()
+  assert program.instruction_pointer == 2
+  assert not_halted
+
+  not_halted = program.step()
+  assert program.instruction_pointer == 2
+  assert not not_halted
