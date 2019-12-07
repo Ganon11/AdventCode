@@ -1,4 +1,7 @@
+"""Represents simple points in 2D space."""
+
 class Position:
+  """A simple 2D point."""
   def __init__(self, x=0, y=0):
     self.x = x
     self.y = y
@@ -16,14 +19,17 @@ class Position:
     return abs(self.x - other.x) + abs(self.y - other.y)
 
   def is_adjacent_to(self, other):
-    """Returns True if this point is one step (not counting diagonals) from other, and False otherwise"""
+    """
+    Returns True if this point is one step (not counting diagonals) from other,
+    and False otherwise
+    """
     if not self._is_valid_operand(other):
       return NotImplemented
 
-    if self.x == other.x and 1 == abs(self.y - other.y):
+    if self.x == other.x and abs(self.y - other.y) == 1:
       return True
 
-    if 1 == abs(self.x - other.x) and self.y == other.y:
+    if abs(self.x - other.x) == 1 and self.y == other.y:
       return True
 
     return False
@@ -45,9 +51,11 @@ class Position:
     return Position(self.x - 1, self.y)
 
   def get_adjacent_positions(self):
+    """Returns a list of adjacent positions."""
     return [self.north(), self.west(), self.east(), self.south()]
 
-  def _is_valid_operand(self, other):
+  @staticmethod
+  def _is_valid_operand(other):
     return hasattr(other, "x") and hasattr(other, "y")
 
   def __hash__(self):
@@ -57,7 +65,7 @@ class Position:
     return f'{self.x}, {self.y}'
 
   def __lt__(self, other):
-    if not self._is_valid_operand(other):
+    if not Position._is_valid_operand(other):
       return NotImplemented
 
     if self.y < other.y:
@@ -69,7 +77,7 @@ class Position:
     return False
 
   def __le__(self, other):
-    if not self._is_valid_operand(other):
+    if not Position._is_valid_operand(other):
       return NotImplemented
 
     if self.y <= other.y:
@@ -81,13 +89,13 @@ class Position:
     return False
 
   def __eq__(self, other):
-    if not self._is_valid_operand(other):
+    if not Position._is_valid_operand(other):
       return NotImplemented
 
     return self.x == other.x and self.y == other.y
 
   def __gt__(self, other):
-    if not self._is_valid_operand(other):
+    if not Position._is_valid_operand(other):
       return NotImplemented
 
     if self.y > other.y:
@@ -99,7 +107,7 @@ class Position:
     return False
 
   def __ge__(self, other):
-    if not self._is_valid_operand(other):
+    if not Position._is_valid_operand(other):
       return NotImplemented
 
     if self.y >= other.y:
@@ -111,7 +119,7 @@ class Position:
     return False
 
   def __ne__(self, other):
-    if not self._is_valid_operand(other):
+    if not Position._is_valid_operand(other):
       return NotImplemented
 
     return self.x != other.x or self.y != other.y
@@ -133,32 +141,32 @@ def walk_path(moves, start=Position()):
   L -- Left (West)
   R -- Right (East)
   """
-  p = start
+  position = start
   visited = list()
-  visited.append(p)
-  for m in moves:
-    direction = m[0]
-    count = int(m[1:])
+  visited.append(position)
+  for move in moves:
+    direction = move[0]
+    count = int(move[1:])
     if direction == 'U':
-      for i in range(0, count):
-        newP = p.north()
-        visited.append(newP)
-        p = newP
+      for _ in range(0, count):
+        new_position = position.north()
+        visited.append(new_position)
+        position = new_position
     elif direction == 'D':
-      for i in range(0, count):
-        newP = p.south()
-        visited.append(newP)
-        p = newP
+      for _ in range(0, count):
+        new_position = position.south()
+        visited.append(new_position)
+        position = new_position
     elif direction == 'L':
-      for i in range(0, count):
-        newP = p.west()
-        visited.append(newP)
-        p = newP
+      for _ in range(0, count):
+        new_position = position.west()
+        visited.append(new_position)
+        position = new_position
     elif direction == 'R':
-      for i in range(0, count):
-        newP = p.east()
-        visited.append(newP)
-        p = newP
+      for _ in range(0, count):
+        new_position = position.east()
+        visited.append(new_position)
+        position = new_position
     else:
       print(f'Unknown direction {direction}')
   return visited
