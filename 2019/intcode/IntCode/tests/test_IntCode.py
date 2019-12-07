@@ -47,17 +47,9 @@ def test_execute_mul():
   assert output == 2
   assert program.instruction_pointer == 4
 
-def test_execute_default_input():
-  values = [3, 0, 99]
-  program = intcode.IntCodeProgram(values)
-  output = program.execute()
-  assert program.instruction_pointer == 2
-  assert program.memory[0] == 1
-  assert output == 1
-
 def test_execute_input():
   values = [3, 0, 99]
-  program = intcode.IntCodeProgram(values, user_input=77)
+  program = intcode.IntCodeProgram(values, user_input=[77])
   output = program.execute()
   assert program.instruction_pointer == 2
   assert program.memory[0] == 77
