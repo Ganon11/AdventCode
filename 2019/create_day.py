@@ -1,11 +1,16 @@
+"""
+Scaffolds a 2019 Advent of Code day.
+"""
+
 import argparse
 import os
-import requests
 import shutil
+import requests
 
 def create_sublime_project(daystr):
-  with open(os.path.join(daystr, daystr + '.sublime-project'), 'w') as f:
-    f.write("""{
+  """Creates a skeleton sublime project."""
+  with open(os.path.join(daystr, daystr + '.sublime-project'), 'w') as file:
+    file.write("""{
   "folders":
   [
     {
@@ -55,9 +60,10 @@ def create_sublime_project(daystr):
 }""")
 
 def create_src_file(daystr):
+  """Creates a skeleton python file."""
   os.mkdir(os.path.join(daystr, 'src'))
-  with open(os.path.join(daystr, 'src', daystr + '.py'), 'w') as f:
-    f.write("""import argparse
+  with open(os.path.join(daystr, 'src', daystr + '.py'), 'w') as file:
+    file.write("""import argparse
 import os
 
 def main():
@@ -70,17 +76,19 @@ if __name__ == "__main__":
   main()""")
 
 def create_input_file(daystr, day):
+  """Fetches my input from Advent of Code."""
   os.mkdir(os.path.join(daystr, 'input'))
   url = 'https://adventofcode.com/2019/day/' + str(day) + '/input'
   cookies = dict()
-  with open('session.txt', 'r') as f:
-    cookies['session'] = f.read()
+  with open('session.txt', 'r') as file:
+    cookies['session'] = file.read()
 
-  with open(os.path.join(daystr, 'input', 'input.txt'), 'w') as f:
-    r = requests.get(url=url, cookies=cookies)
-    f.write(r.text)
+  with open(os.path.join(daystr, 'input', 'input.txt'), 'w') as file:
+    input_request = requests.get(url=url, cookies=cookies)
+    file.write(input_request.text)
 
 def main():
+  """Scaffolds a 2019 AoC day."""
   parser = argparse.ArgumentParser()
   parser.add_argument('day', type=int)
   parser.add_argument('-d', '--delete', action='store_true')
