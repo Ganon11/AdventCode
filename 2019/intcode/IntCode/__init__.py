@@ -36,16 +36,16 @@ class IntCodeProgram:
   def __init__(self, values, user_input=None):
     self.memory = values.copy()
     self.instruction_pointer = 0
+    self.input = list()
     if user_input is not None:
       if isinstance(user_input, list):
-        self.input = user_input
+        self.input.extend(user_input)
       elif isinstance(user_input, int):
-        self.input = [user_input]
+        self.input.append(user_input)
       else:
         raise Exception("Unacceptable user input type")
-    else:
-      self.input = list()
     self.output = list()
+    self.has_halted = False
 
   def set_noun(self, noun):
     """Sets the noun (memory value 1)"""
@@ -107,11 +107,12 @@ class IntCodeProgram:
 
   def _input(self):
     if len(self.input) == 0:
-      return
+      return True
     address = self.memory[self.instruction_pointer + 1]
     self.memory[address] = self.input.pop(0)
 
     self.instruction_pointer += 2
+    return False
 
   def _output(self):
     values = self._get_values(number_of_values=1)
@@ -154,26 +155,13 @@ class IntCodeProgram:
       self.memory[destination] = 0
     self.instruction_pointer += 4
 
-  def execute(self):
-    """
-    Executes the program.
-
-    The 'output' (memory[0]) of the program will be returned.
-    """
-    if self.instruction_pointer != 0:
-      warnings.warn("Program has already executed")
-      return self.memory[0]
-
-    while self.step():
-      pass
-
-    return self.memory[0]
-
   def step(self):
     """
     Executes the program one step at a time.
 
-    Returns True if the program has more steps, and False otherwise.
+    If an input instruction is processed without any available input, True is returned.
+
+    Otherwise, False is returned.
     """
     instruction = self.memory[self.instruction_pointer]
     opcode = instruction % 100
@@ -182,7 +170,8 @@ class IntCodeProgram:
     elif opcode == IntCodeProgram.MUL:
       self._mul()
     elif opcode == IntCodeProgram.INPUT:
-      self._input()
+      if self._input():
+        return True
     elif opcode == IntCodeProgram.OUTPUT:
       self._output()
     elif opcode == IntCodeProgram.JUMP_IF_TRUE:
@@ -194,11 +183,27 @@ class IntCodeProgram:
     elif opcode == IntCodeProgram.EQUALS:
       self._equals()
     elif opcode == IntCodeProgram.HALT:
-      return False
+      self.has_halted = True
     else:
       raise Exception(f'Unrecognized opcode {opcode}')
 
-    return True
+    return False
+
+  def execute(self):
+    """
+    Executes the program.
+
+    The 'output' (memory[0]) of the program will be returned.
+    """
+    if self.has_halted:
+      warnings.warn("Program has already executed")
+
+    while not self.has_halted:
+      should_return_early = self.step()
+      if should_return_early:
+        return self.memory[0]
+
+    return self.memory[0]
 
   def provide_input(self, new_input):
     """
