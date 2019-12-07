@@ -65,32 +65,12 @@ class IntCodeProgram:
     return cls([int(n) for n in text.split(',')], user_input)
 
   def _get_modes(self, number_of_modes=3):
-    modes = str(self.memory[self.instruction_pointer] // 100)
-    modes_tuple = None
-    if number_of_modes == 0:
-      modes_tuple = ()
+    modes_str = str(self.memory[self.instruction_pointer] // 100).zfill(number_of_modes)[::-1]
 
-    elif number_of_modes == 1:
-      modes_tuple = (int(modes[0]), )
-
-    elif number_of_modes == 2:
-      if len(modes) == 1:
-        modes_tuple = (int(modes[0]), IntCodeProgram.POSITION_MODE)
-      elif len(modes) == 2:
-        modes_tuple = (int(modes[1]), int(modes[0]))
-
-    elif number_of_modes == 3:
-      if len(modes) == 1:
-        modes_tuple = (int(modes[0]), IntCodeProgram.POSITION_MODE, IntCodeProgram.POSITION_MODE)
-      elif len(modes) == 2:
-        modes_tuple = (int(modes[1]), int(modes[0]), IntCodeProgram.POSITION_MODE)
-      elif len(modes) == 3:
-        modes_tuple = (int(modes[2]), int(modes[1]), int(modes[0]))
-
-    else:
-      raise Exception(f'Unrecognized number of modes {number_of_modes}')
-
-    return modes_tuple
+    modes = list()
+    for index in range(0, number_of_modes):
+      modes.append(int(modes_str[index]))
+    return modes
 
   def _get_values(self, number_of_values):
     modes = self._get_modes(number_of_modes=number_of_values)
