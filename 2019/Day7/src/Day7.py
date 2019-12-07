@@ -4,50 +4,37 @@ from itertools import permutations
 import intcode
 
 def part_1(program_text):
-  phase_setting_sequences = permutations(range(0, 5))
-
   max_thruster_signal = 0
   phase_sequence = None
-  for phase_setting_sequence in phase_setting_sequences:
-    input_1 = [phase_setting_sequence[0], 0]
-    program_1 = intcode.IntCodeProgram.from_text(program_text, user_input=input_1)
-    program_1.execute()
+  for phase_setting_sequence in permutations(range(0, 5)):
+    output = 0
+    for index in range(0, 5):
+      program = intcode.IntCodeProgram.from_text(program_text)
+      program.provide_input([phase_setting_sequence[index], output])
+      program.execute()
+      output = program.output[0]
 
-    input_2 = [phase_setting_sequence[1], program_1.output[0]]
-    program_2 = intcode.IntCodeProgram.from_text(program_text, user_input=input_2)
-    program_2.execute()
-
-    input_3 = [phase_setting_sequence[2], program_2.output[0]]
-    program_3 = intcode.IntCodeProgram.from_text(program_text, user_input=input_3)
-    program_3.execute()
-
-    input_4 = [phase_setting_sequence[3], program_3.output[0]]
-    program_4 = intcode.IntCodeProgram.from_text(program_text, user_input=input_4)
-    program_4.execute()
-
-    input_5 = [phase_setting_sequence[4], program_4.output[0]]
-    program_5 = intcode.IntCodeProgram.from_text(program_text, user_input=input_5)
-    program_5.execute()
-
-    if program_5.output[0] > max_thruster_signal:
-      max_thruster_signal = program_5.output[0]
+    if output > max_thruster_signal:
+      max_thruster_signal = output
       phase_sequence = str(phase_setting_sequence)
 
   print(f'Max Thruster Signal: {max_thruster_signal} with phase sequence {phase_sequence}')
 
 def part_2(program_text):
-  phase_setting_sequences = permutations(range(5, 10))
   max_thruster_signal = 0
   phase_sequence = None
-  for phase_setting_sequence in phase_setting_sequences:
+  for phase_setting_sequence in permutations(range(5, 10)):
     programs = list()
-    halted = set()
     for index in range(0, 5):
-      program_input = [phase_setting_sequence[index]]
+      program_input = phase_setting_sequence[index]
       programs.append(intcode.IntCodeProgram.from_text(program_text, user_input=program_input))
-    programs[0].provide_input([0])
+      if index > 0:
+        programs[index - 1].link_output(programs[index])
 
-    program_5_output = list()
+    programs[-1].link_output(programs[0])
+    programs[0].provide_input(0)
+
+    halted = set()
     while len(halted) != len(programs):
       for index in range(0, 5):
         if index in halted:
@@ -55,17 +42,8 @@ def part_2(program_text):
         if not programs[index].step():
           halted.add(index)
 
-        next_program_index = index + 1
-        if next_program_index == 5:
-          next_program_index = 0
-        if len(programs[index].output) > 0:
-          programs[next_program_index].provide_input(programs[index].output)
-          if index == 4:
-            program_5_output.extend(programs[index].output)
-          programs[index].output = list()
-
-    if program_5_output[-1] > max_thruster_signal:
-      max_thruster_signal = program_5_output[-1]
+    if programs[4].output[-1] > max_thruster_signal:
+      max_thruster_signal = programs[4].output[-1]
       phase_sequence = str(phase_setting_sequence)
 
   print(f'Max Thruster Signal: {max_thruster_signal} with phase sequence {phase_sequence}')

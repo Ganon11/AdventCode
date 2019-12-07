@@ -38,13 +38,13 @@ class IntCodeProgram:
     self.instruction_pointer = 0
     if user_input is not None:
       if isinstance(user_input, list):
-        self._user_input = user_input
+        self.input = user_input
       elif isinstance(user_input, int):
-        self._user_input = [user_input]
+        self.input = [user_input]
       else:
         raise Exception("Unacceptable user input type")
     else:
-      self._user_input = list()
+      self.input = list()
     self.output = list()
 
   def set_noun(self, noun):
@@ -63,6 +63,13 @@ class IntCodeProgram:
     The given string should be a comma-separated list of integers.
     """
     return cls([int(n) for n in text.split(',')], user_input)
+
+  def link_output(self, other):
+    """
+    Link's this program's output to other's input
+    """
+    if isinstance(other, IntCodeProgram):
+      self.output = other.input
 
   def _get_modes(self, number_of_modes=3):
     modes_str = str(self.memory[self.instruction_pointer] // 100).zfill(number_of_modes)[::-1]
@@ -99,10 +106,10 @@ class IntCodeProgram:
     self.instruction_pointer += 4
 
   def _input(self):
-    if len(self._user_input) == 0:
+    if len(self.input) == 0:
       return
     address = self.memory[self.instruction_pointer + 1]
-    self.memory[address] = self._user_input.pop(0)
+    self.memory[address] = self.input.pop(0)
 
     self.instruction_pointer += 2
 
@@ -200,9 +207,9 @@ class IntCodeProgram:
     This input can either be a single integer value, or a list of integer values.
     """
     if isinstance(new_input, list):
-      self._user_input.extend(new_input)
+      self.input.extend(new_input)
     elif isinstance(new_input, int):
-      self._user_input.append(new_input)
+      self.input.append(new_input)
     else:
       raise Exception("Unacceptable input type")
 
