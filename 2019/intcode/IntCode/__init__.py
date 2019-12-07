@@ -85,17 +85,17 @@ class IntCodeProgram:
     return values
 
   def _add(self):
-    value_a, value_b = self._get_values(2) # pylint: disable=unbalanced-tuple-unpacking
+    values = self._get_values(2)
     destination = self.memory[self.instruction_pointer + 3]
 
-    self.memory[destination] = value_a + value_b
+    self.memory[destination] = values[0] + values[1]
     self.instruction_pointer += 4
 
   def _mul(self):
-    value_a, value_b = self._get_values(2) # pylint: disable=unbalanced-tuple-unpacking
+    values = self._get_values(2)
     destination = self.memory[self.instruction_pointer + 3]
 
-    self.memory[destination] = value_a * value_b
+    self.memory[destination] = values[0] * values[1]
     self.instruction_pointer += 4
 
   def _input(self):
@@ -107,41 +107,41 @@ class IntCodeProgram:
     self.instruction_pointer += 2
 
   def _output(self):
-    value = self._get_values(number_of_values=1)[0]
-    self.output.append(value)
+    values = self._get_values(number_of_values=1)
+    self.output.append(values[0])
     self.instruction_pointer += 2
 
   def _jump_if_true(self):
-    value_a, value_b = self._get_values(2) # pylint: disable=unbalanced-tuple-unpacking
+    values = self._get_values(2)
 
-    if value_a != 0:
-      self.instruction_pointer = value_b
+    if values[0] != 0:
+      self.instruction_pointer = values[1]
     else:
       self.instruction_pointer += 3
 
   def _jump_if_false(self):
-    value_a, value_b = self._get_values(2) # pylint: disable=unbalanced-tuple-unpacking
+    values = self._get_values(2)
 
-    if value_a == 0:
-      self.instruction_pointer = value_b
+    if values[0] == 0:
+      self.instruction_pointer = values[1]
     else:
       self.instruction_pointer += 3
 
   def _less_than(self):
-    value_a, value_b = self._get_values(2) # pylint: disable=unbalanced-tuple-unpacking
+    values = self._get_values(2)
     destination = self.memory[self.instruction_pointer + 3]
 
-    if value_a < value_b:
+    if values[0] < values[1]:
       self.memory[destination] = 1
     else:
       self.memory[destination] = 0
     self.instruction_pointer += 4
 
   def _equals(self):
-    value_a, value_b = self._get_values(2) # pylint: disable=unbalanced-tuple-unpacking
+    values = self._get_values(2)
     destination = self.memory[self.instruction_pointer + 3]
 
-    if value_a == value_b:
+    if values[0] == values[1]:
       self.memory[destination] = 1
     else:
       self.memory[destination] = 0
