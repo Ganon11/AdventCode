@@ -1,6 +1,4 @@
 import argparse
-import os
-import sys
 import intcode
 
 def main():
@@ -10,17 +8,23 @@ def main():
   parser.add_argument('-r', '--replace', action='store_true')
   args = parser.parse_args()
 
-  f = open(args.filename, 'r')
-  text = f.read()
+  text = None
+  with open(args.filename, 'r') as file:
+    text = file.read()
   values = [int(n) for n in text.split(',')]
 
   if args.part == 1:
-    program = intcode.IntCodeProgram(values, useNounVerb=args.replace)
+    program = intcode.IntCodeProgram(values)
+    if args.replace:
+      program.set_noun(12)
+      program.set_verb(2)
     print(program.execute())
   elif args.part == 2:
     for noun in range(0, 99):
       for verb in range(0, 99):
-        program = intcode.IntCodeProgram(values, noun=noun, verb=verb)
+        program = intcode.IntCodeProgram(values)
+        program.set_noun(noun)
+        program.set_verb(verb)
         if program.execute() == 19690720:
           print(f'100 * {noun} + {verb} == {100 * noun + verb}')
 
