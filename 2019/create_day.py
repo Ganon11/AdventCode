@@ -72,7 +72,8 @@ def main():
   args = parser.parse_args()
 
 if __name__ == "__main__":
-  main()""")
+  main()
+""")
 
 def create_input_file(daystr, day):
   """Fetches my input from Advent of Code."""
