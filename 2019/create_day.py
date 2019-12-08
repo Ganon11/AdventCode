@@ -97,12 +97,18 @@ def main():
   daystr = 'Day' + str(args.day)
 
   if args.delete:
-    shutil.rmtree(daystr)
+    if not os.path.exists(daystr):
+      print(f'{daystr} does not exist.')
+    else:
+      shutil.rmtree(daystr)
   else:
-    os.mkdir(daystr)
-    create_sublime_project(daystr)
-    create_src_file(daystr)
-    create_input_file(daystr, args.day)
+    if os.path.exists(daystr):
+      print(f'{daystr} already exists.')
+    else:
+      os.mkdir(daystr)
+      create_sublime_project(daystr)
+      create_src_file(daystr)
+      create_input_file(daystr, args.day)
 
 if __name__ == "__main__":
   main()
