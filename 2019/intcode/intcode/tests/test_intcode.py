@@ -242,7 +242,6 @@ def test_update_relative_base(): # pylint: disable=C0116
   assert program.instruction_pointer == 10
   assert program.has_halted
   assert program._relative_base == 17 # pylint: disable=W0212
-  print(program.memory)
 
 def test_increased_available_memory(): # pylint: disable=C0116
   program = intcode.IntCodeProgram([1101, 1, 2, 17, 99])
@@ -250,7 +249,6 @@ def test_increased_available_memory(): # pylint: disable=C0116
   assert len(program.memory) == 18
   assert program.instruction_pointer == 4
   assert program.has_halted
-  print(program.memory)
 
 if __name__ == "__main__":
   test_update_relative_base()
