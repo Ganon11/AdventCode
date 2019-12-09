@@ -2,7 +2,7 @@ import argparse
 
 import intcode
 
-def main():
+def main(): #pylint: disable=C0116
   parser = argparse.ArgumentParser()
   parser.add_argument('-f', '--filename', default='../input/sample1.txt')
   parser.add_argument('-p', '--part', choices=[1, 2], default=1, type=int)
