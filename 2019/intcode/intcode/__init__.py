@@ -13,6 +13,8 @@ the concept of *parameter modes* was introduced, and six more instructions were 
 
 import warnings
 
+from defaultlist import defaultlist
+
 class IntCodeProgram:
   """
   An intcode program, represented as a list of values/instructions (memory) and
@@ -26,15 +28,16 @@ class IntCodeProgram:
   JUMP_IF_FALSE = 6
   LESS_THAN = 7
   EQUALS = 8
+  ADJUST_RELATIVE_BASE = 9
   HALT = 99
-
-  OPCODES = (ADD, MUL, INPUT, OUTPUT, JUMP_IF_TRUE, JUMP_IF_FALSE, LESS_THAN, EQUALS, HALT)
 
   POSITION_MODE = 0
   IMMEDIATE_MODE = 1
+  RELATIVE_MODE = 2
 
   def __init__(self, values, user_input=None):
-    self.memory = values.copy()
+    self.memory = defaultlist(lambda: 0)
+    self.memory.extend(values)
     self.instruction_pointer = 0
     self.input = list()
     if user_input is not None:
@@ -46,6 +49,7 @@ class IntCodeProgram:
         raise Exception("Unacceptable user input type")
     self.output = list()
     self.has_halted = False
+    self._relative_base = 0
 
   def set_noun(self, noun):
     """Sets the noun (memory value 1)"""
@@ -86,21 +90,31 @@ class IntCodeProgram:
       value = self.memory[self.instruction_pointer + index + 1]
       if modes[index] == IntCodeProgram.POSITION_MODE:
         value = self.memory[value]
+      elif modes[index] == IntCodeProgram.RELATIVE_MODE:
+        value = self.memory[self._relative_base + value]
 
       values.append(value)
 
     return values
 
+  def _get_write_destination(self, relative_position):
+    mode = self._get_modes(relative_position)[-1]
+    value = self.memory[self.instruction_pointer + relative_position]
+    if mode == IntCodeProgram.RELATIVE_MODE:
+      value += self._relative_base
+
+    return value
+
   def _add(self):
     values = self._get_values(2)
-    destination = self.memory[self.instruction_pointer + 3]
+    destination = self._get_write_destination(relative_position=3)
 
     self.memory[destination] = values[0] + values[1]
     self.instruction_pointer += 4
 
   def _mul(self):
     values = self._get_values(2)
-    destination = self.memory[self.instruction_pointer + 3]
+    destination = self._get_write_destination(relative_position=3)
 
     self.memory[destination] = values[0] * values[1]
     self.instruction_pointer += 4
@@ -108,7 +122,7 @@ class IntCodeProgram:
   def _input(self):
     if len(self.input) == 0:
       return True
-    address = self.memory[self.instruction_pointer + 1]
+    address = self._get_write_destination(relative_position=1)
     self.memory[address] = self.input.pop(0)
 
     self.instruction_pointer += 2
@@ -137,7 +151,7 @@ class IntCodeProgram:
 
   def _less_than(self):
     values = self._get_values(2)
-    destination = self.memory[self.instruction_pointer + 3]
+    destination = self._get_write_destination(relative_position=3)
 
     if values[0] < values[1]:
       self.memory[destination] = 1
@@ -147,13 +161,18 @@ class IntCodeProgram:
 
   def _equals(self):
     values = self._get_values(2)
-    destination = self.memory[self.instruction_pointer + 3]
+    destination = self._get_write_destination(relative_position=3)
 
     if values[0] == values[1]:
       self.memory[destination] = 1
     else:
       self.memory[destination] = 0
     self.instruction_pointer += 4
+
+  def _adjust_relative_base(self):
+    values = self._get_values(1)
+    self._relative_base += values[0]
+    self.instruction_pointer += 2
 
   def step(self):
     """
@@ -182,6 +201,8 @@ class IntCodeProgram:
       self._less_than()
     elif opcode == IntCodeProgram.EQUALS:
       self._equals()
+    elif opcode == IntCodeProgram.ADJUST_RELATIVE_BASE:
+      self._adjust_relative_base()
     elif opcode == IntCodeProgram.HALT:
       self.has_halted = True
     else:
