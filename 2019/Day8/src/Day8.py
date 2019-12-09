@@ -54,7 +54,7 @@ def print_image(image):
   for row in range(0, len(image)):
     for col in range(0, len(image[row])):
       if image[row][col] == 1:
-        print('*', end='')
+        print('#', end='')
       else:
         print(' ', end='')
     print('')
