@@ -83,7 +83,7 @@ class IntCodeProgram:
       modes.append(int(modes_str[index]))
     return modes
 
-  def _get_values(self, number_of_values):
+  def _get_r_values(self, number_of_values):
     modes = self._get_modes(number_of_modes=number_of_values)
     values = list()
     for index in range(0, number_of_values):
@@ -97,7 +97,7 @@ class IntCodeProgram:
 
     return values
 
-  def _get_write_destination(self, relative_position):
+  def _get_l_value(self, relative_position):
     mode = self._get_modes(relative_position)[-1]
     value = self.memory[self.instruction_pointer + relative_position]
     if mode == IntCodeProgram.RELATIVE_MODE:
@@ -106,35 +106,35 @@ class IntCodeProgram:
     return value
 
   def _add(self):
-    values = self._get_values(2)
-    destination = self._get_write_destination(relative_position=3)
+    values = self._get_r_values(2)
+    address = self._get_l_value(relative_position=3)
 
-    self.memory[destination] = values[0] + values[1]
+    self.memory[address] = values[0] + values[1]
     self.instruction_pointer += 4
 
   def _mul(self):
-    values = self._get_values(2)
-    destination = self._get_write_destination(relative_position=3)
+    values = self._get_r_values(2)
+    address = self._get_l_value(relative_position=3)
 
-    self.memory[destination] = values[0] * values[1]
+    self.memory[address] = values[0] * values[1]
     self.instruction_pointer += 4
 
   def _input(self):
     if len(self.input) == 0:
       return True
-    address = self._get_write_destination(relative_position=1)
+    address = self._get_l_value(relative_position=1)
     self.memory[address] = self.input.pop(0)
 
     self.instruction_pointer += 2
     return False
 
   def _output(self):
-    values = self._get_values(number_of_values=1)
+    values = self._get_r_values(number_of_values=1)
     self.output.append(values[0])
     self.instruction_pointer += 2
 
   def _jump_if_true(self):
-    values = self._get_values(2)
+    values = self._get_r_values(2)
 
     if values[0] != 0:
       self.instruction_pointer = values[1]
@@ -142,7 +142,7 @@ class IntCodeProgram:
       self.instruction_pointer += 3
 
   def _jump_if_false(self):
-    values = self._get_values(2)
+    values = self._get_r_values(2)
 
     if values[0] == 0:
       self.instruction_pointer = values[1]
@@ -150,27 +150,27 @@ class IntCodeProgram:
       self.instruction_pointer += 3
 
   def _less_than(self):
-    values = self._get_values(2)
-    destination = self._get_write_destination(relative_position=3)
+    values = self._get_r_values(2)
+    address = self._get_l_value(relative_position=3)
 
     if values[0] < values[1]:
-      self.memory[destination] = 1
+      self.memory[address] = 1
     else:
-      self.memory[destination] = 0
+      self.memory[address] = 0
     self.instruction_pointer += 4
 
   def _equals(self):
-    values = self._get_values(2)
-    destination = self._get_write_destination(relative_position=3)
+    values = self._get_r_values(2)
+    address = self._get_l_value(relative_position=3)
 
     if values[0] == values[1]:
-      self.memory[destination] = 1
+      self.memory[address] = 1
     else:
-      self.memory[destination] = 0
+      self.memory[address] = 0
     self.instruction_pointer += 4
 
   def _adjust_relative_base(self):
-    values = self._get_values(1)
+    values = self._get_r_values(1)
     self._relative_base += values[0]
     self.instruction_pointer += 2
 
