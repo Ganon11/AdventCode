@@ -386,5 +386,17 @@ session.txt
 
 # Input files
 input.txt
+Input.txt
+Input*.txt
+Day*Input.txt
 sample.txt
 sample*.txt
+RedditInput.txt
+
+# Output files
+output.txt
+Output.txt
+Output*.txt
+Day*Output.txt
+Guesses.txt
+StarMap.txt
