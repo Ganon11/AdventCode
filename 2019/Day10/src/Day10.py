@@ -146,12 +146,6 @@ def close_to_integer(number): # pylint: disable=C0116
   return delta < 0.0001
 
 def get_first_asteroid_in_direction(position, angle, field, rows, cols): # pylint: disable=C0116
-  # print('get_first_asteroid_in_direction:')
-  # print(f'  position {position}')
-  # print(f'  angle {angle}')
-  # print(f'  rows {rows}')
-  # print(f'  cols {cols}')
-
   x = position.x
   y = float(position.y)
 
@@ -220,16 +214,18 @@ def main(): # pylint: disable=C0116
   print(f'Best is {best} with {count} other asteroids detected')
   if args.part == 2:
     # Do part 2!
-    #run_laser(field, best, rows, cols)
-    best = Position(8, 3)
-    asteroids = [k for k, v in field.items() if field[k]]
-    angles = list(get_angles_to_asteroids(best, asteroids))
-    angles.sort()
-    print(f'Found angles {angles}')
-    for index in range(0, 10):
-      print(f'Index {index}, angle {angles[index]}')
-      asteroid = get_first_asteroid_in_direction(best, angles[index], field, rows, cols)
-      print(f'Found asteroid at {asteroid}')
+    run_laser(field, best, rows, cols)
+
+    # Below is driver code for the example given in Part 2
+    # best = Position(8, 3)
+    # asteroids = [k for k, v in field.items() if field[k]]
+    # angles = list(get_angles_to_asteroids(best, asteroids))
+    # angles.sort()
+    # print(f'Found angles {angles}')
+    # for index in range(0, 10):
+    #   print(f'Index {index}, angle {angles[index]}')
+    #   asteroid = get_first_asteroid_in_direction(best, angles[index], field, rows, cols)
+    #   print(f'Found asteroid at {asteroid}')
 
 if __name__ == "__main__":
   main()
