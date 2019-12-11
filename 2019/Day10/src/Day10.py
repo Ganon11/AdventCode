@@ -1,5 +1,6 @@
 import argparse
 import math
+import time
 
 from position import Position
 
@@ -39,10 +40,6 @@ class Angle: # pylint: disable=C0115
     if self.direction == 'L' and other.direction == 'R':
       return False
 
-    # On the right side, use > when comparing slope
-    # if self.direction == 'R':
-    #   return self.slope > other.slope
-
     return self.slope > other.slope
 
   def __eq__(self, other):
@@ -60,179 +57,195 @@ class Angle: # pylint: disable=C0115
   def __repr__(self):
     return str(self)
 
-def get_asteroid_field(filename): # pylint: disable=C0116
-  field = dict()
-  with open(filename, 'r') as file:
-    lines = [line.rstrip('\n') for line in file]
-    rows = len(lines)
-    cols = len(lines[0])
-    for row in range(0, rows):
-      for col in range(0, cols):
+class Field: # pylint: disable=C0115
+  def __init__(self, filename):
+    self.field = dict()
+    self.station = None
+    with open(filename, 'r') as file:
+      lines = [line.rstrip('\n') for line in file]
+      self.rows = len(lines)
+      self.cols = len(lines[0])
+      for row in range(0, self.rows):
+        for col in range(0, self.cols):
+          position = Position(col, row)
+          if lines[row][col] == '#':
+            self.field[position] = True
+          else:
+            self.field[position] = False
+
+  def __str__(self):
+    string = ''
+    for row in range(0, self.rows):
+      for col in range(0, self.cols):
         position = Position(col, row)
-        if lines[row][col] == '#':
-          field[position] = True
+        if self.field[position]:
+          string += '#'
         else:
-          field[position] = False
+          string += '.'
+      string += '\n'
+    return string
 
-  return(rows, cols, field)
+  def print(self, target=None): # pylint: disable=C0116
+    string = ''
+    for row in range(0, self.rows):
+      for col in range(0, self.cols):
+        position = Position(col, row)
+        if self.station is not None and self.station == position:
+          string += '*'
+        elif target is not None and target == position:
+          string += 'X'
+        elif self.field[position]:
+          string += '#'
+        else:
+          string += '.'
+      string += '\n'
+    print(string)
 
-def print_field(field, rows, cols, station=None, target=None): # pylint: disable=C0116
-  for row in range(0, rows):
-    for col in range(0, cols):
-      position = Position(col, row)
-      if station is not None and station == position:
-        print('*', end='')
-      elif target is not None and target == position:
-        print('X', end='')
-      elif field[position]:
-        print('#', end='')
-      else:
-        print('.', end='')
-    print('')
+  def in_field(self, x, y): # pylint: disable=C0116
+    if x < 0 or self.rows < x:
+      return False
+    if y < 0 or self.cols < y:
+      return False
+    return True
 
-def greatest_common_denominator(a, b): # pylint: disable=C0116,C0103
-  if b == 0:
-    return a
-  return greatest_common_denominator(b, a % b)
+  @staticmethod
+  def _get_angle_to_asteroid(position, asteroid): # pylint: disable=C0116
+    if asteroid.x == position.x:
+      if asteroid.y < position.y:
+        return Angle(special='UP')
+      return Angle(special='DOWN')
 
-def in_field(x, y, rows, cols): # pylint: disable=C0116
-  if x < 0 or rows < x:
-    return False
-  if y < 0 or cols < y:
-    return False
-  return True
+    if asteroid.y == position.y:
+      if asteroid.x < position.x:
+        return Angle(slope=0, direction='L')
+      return Angle(slope=0, direction='R')
 
-def get_angle_to_asteroid(position, asteroid): # pylint: disable=C0116
-  # print('get_angle_to_asteroid')
-  # print(f'  position {position}')
-  # print(f'  asteroid {asteroid}')
-  if asteroid.x == position.x:
-    # print(f'    up or down')
-    if asteroid.y < position.y:
-      return Angle(special='UP')
-    return Angle(special='DOWN')
+    deltay = -1 * (asteroid.y - position.y)
+    deltax = asteroid.x - position.x
+    angle = deltay / deltax
+    direction = None
+    if deltax > 0:
+      direction = 'R'
+    else:
+      direction = 'L'
 
-  if asteroid.y == position.y:
-    # print(f'    left or right')
-    if asteroid.x < position.x:
-      return Angle(slope=0, direction='L')
-    return Angle(slope=0, direction='R')
+    return Angle(slope=angle, direction=direction)
 
-  deltay = -1 * (asteroid.y - position.y)
-  deltax = asteroid.x - position.x
-  # print(f'  deltax {deltax} deltay {deltay}')
-  angle = deltay / deltax
-  direction = None
-  if deltax > 0:
-    direction = 'R'
-  else:
-    direction = 'L'
+  @staticmethod
+  def get_angles_to_asteroids(position, asteroids): # pylint: disable=C0116
+    angles = set()
+    for asteroid in asteroids:
+      if asteroid == position:
+        continue
+      angles.add(Field._get_angle_to_asteroid(position, asteroid))
+    return angles
 
-  return Angle(slope=angle, direction=direction)
+  def place_monitoring_station(self): # pylint: disable=C0116
+    asteroids = [k for k, v in self.field.items() if self.field[k]]
+    max_asteroids = 0
+    best_position = None
+    for possible_position in asteroids:
+      angles_with_visible_asteroids = Field.get_angles_to_asteroids(possible_position, asteroids)
+      score = len(angles_with_visible_asteroids)
+      if score > max_asteroids:
+        max_asteroids = score
+        best_position = possible_position
 
-def get_angles_to_asteroids(position, asteroids): # pylint: disable=C0116
-  angles = set()
-  for asteroid in asteroids:
-    if asteroid == position:
-      continue
+    self.station = best_position
+    return max_asteroids
 
-    angles.add(get_angle_to_asteroid(position, asteroid))
+  @staticmethod
+  def _close_to_integer(number): # pylint: disable=C0116
+    return abs(number - round(number)) < 0.0001
 
-  return angles
+  THRESHOLD = 0.0001
+  @staticmethod
+  def _closest_integer(number):
+    floor = math.floor(number)
+    if number - floor < Field.THRESHOLD:
+      return floor
 
-def place_monitoring_station(field): # pylint: disable=C0116
-  asteroids = [k for k, v in field.items() if field[k]]
-  max_asteroids = 0
-  best_position = None
-  for possible_position in asteroids:
-    angles_with_visible_asteroids = get_angles_to_asteroids(possible_position, asteroids)
-    score = len(angles_with_visible_asteroids)
-    if score > max_asteroids:
-      max_asteroids = score
-      best_position = possible_position
+    ceil = math.ceil(number)
+    if ceil - number < Field.THRESHOLD:
+      return ceil
 
-  return (best_position, max_asteroids)
+    return None
 
-def close_to_integer(number): # pylint: disable=C0116
-  return abs(number - round(number)) < 0.0001
+  def get_first_asteroid_in_direction(self, position, angle): # pylint: disable=C0116
+    x = position.x
+    y = float(position.y)
 
-def get_first_asteroid_in_direction(position, angle, field, rows, cols): # pylint: disable=C0116
-  # print('get_first_asteroid_in_direction')
-  # print(f'  position {position}')
-  # print(f'  angle {angle}')
-  # print(f'  rows {rows}')
-  # print(f'  cols {cols}')
-  x = position.x
-  y = float(position.y)
+    deltax = None
+    deltay = None
 
-  deltax = None
-  deltay = None
+    if angle.special == 'UP':
+      deltax = 0
+      deltay = -1
+    elif angle.special == 'DOWN':
+      deltax = 0
+      deltay = 1
+    else:
+      if angle.direction == 'R':
+        deltax = 1
+        deltay = -1 * angle.slope
+      elif angle.direction == 'L':
+        deltax = -1
+        deltay = angle.slope
 
-  if angle.special == 'UP':
-    deltax = 0
-    deltay = -1
-  elif angle.special == 'DOWN':
-    deltax = 0
-    deltay = 1
-  else:
-    if angle.direction == 'R':
-      deltax = 1
-      deltay = -1 * angle.slope
-    elif angle.direction == 'L':
-      deltax = -1
-      deltay = angle.slope
+    while True:
+      x += deltax
+      y += deltay
+      tempy = Field._closest_integer(y)
+      if tempy is None:
+        continue
 
-  # print(f'  deltax {deltax} deltay {deltay}')
-  while True:
-    x += deltax
-    y += deltay
-    # print(f'  x {x} y {y}')
-    if x < 0 or cols <= x:
-      return None
-    if y < 0 or rows <= y:
-      return None
-    if not close_to_integer(y):
-      continue
-    possible_asteroid = Position(x, round(y))
-    if field[possible_asteroid]:
-      return possible_asteroid
-  return None
+      if not self.in_field(x, tempy):
+        return None
 
-def run_laser(field, station, rows, cols): # pylint: disable=C0116
-  asteroids_destroyed = 0
-  while asteroids_destroyed < 2:
-    new_count = asteroids_destroyed
-    asteroids = [k for k, v in field.items() if field[k]]
-    angles = list(get_angles_to_asteroids(station, asteroids))
-    angles.sort()
-    for angle in angles:
-      asteroid = get_first_asteroid_in_direction(station, angle, field, rows, cols)
-      if asteroid is None:
-        print(f'Didn\'t find asteroid with station {station}, angle {angle}')
-      field[asteroid] = False
-      new_count += 1
-      if new_count == 200:
-        return asteroid
-    if new_count == asteroids_destroyed:
-      print(f'No asteroids destroyed in loop! Total: {asteroids_destroyed}')
-      return None
-    asteroids_destroyed = new_count
+      possible_asteroid = Position(x, tempy)
+      if self.field[possible_asteroid]:
+        return possible_asteroid
+    return None
+
+  def run_laser(self, target=200, debug_print=False): # pylint: disable=C0116,R0913
+    asteroids_destroyed = 0
+    while asteroids_destroyed < target:
+      new_count = asteroids_destroyed
+      asteroids = [k for k, v in self.field.items() if self.field[k]]
+      angles = list(self.get_angles_to_asteroids(self.station, asteroids))
+      angles.sort()
+      for angle in angles:
+        asteroid = self.get_first_asteroid_in_direction(self.station, angle)
+        self.field[asteroid] = False
+        new_count += 1
+        if debug_print:
+          print(new_count)
+          self.print(target=asteroid)
+          time.sleep(0.1)
+        if new_count == target:
+          return asteroid
+      if new_count == asteroids_destroyed:
+        print(f'No asteroids destroyed in loop! Total: {asteroids_destroyed}')
+        return None
+      asteroids_destroyed = new_count
 
 def main(): # pylint: disable=C0116
   parser = argparse.ArgumentParser()
   parser.add_argument('-f', '--filename', default='../input/sample1.txt')
   parser.add_argument('-p', '--part', choices=[1, 2], default=1, type=int)
+  parser.add_argument('-t', '--target', default=200, type=int)
+  parser.add_argument('-d', '--debug', action='store_true')
   args = parser.parse_args()
 
-  (rows, cols, field) = get_asteroid_field(args.filename)
+  field = Field(args.filename)
 
-  (best, count) = place_monitoring_station(field)
-  print(f'Best is {best} with {count} other asteroids detected')
+  count = field.place_monitoring_station()
+  print(f'Best is {field.station} with {count} other asteroids detected')
+  field.print()
   if args.part == 2:
     # Do part 2!
-    two_hundredth_asteroid = run_laser(field, best, rows, cols)
-    print(two_hundredth_asteroid)
-    print_field(field, rows, cols, station=best)
+    answer = field.run_laser(args.target, args.debug)
+    print(answer)
 
 if __name__ == "__main__":
   main()
