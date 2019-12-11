@@ -41,7 +41,7 @@ class HullPaintingRobot: # pylint: disable=C0115
           elif self._direction == 'LEFT':
             print('<', end='')
         elif self._field[position]:
-          print('#', end='')
+          print('█', end='')
         else:
           print(' ', end='')
       print('', flush=True)
