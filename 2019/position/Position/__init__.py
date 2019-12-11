@@ -62,7 +62,7 @@ class Position:
     return hash(str(self))
 
   def __str__(self):
-    return f'{self.x}, {self.y}'
+    return f'({self.x}, {self.y})'
 
   def __lt__(self, other):
     if not Position._is_valid_operand(other):

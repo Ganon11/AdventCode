@@ -10,11 +10,6 @@
   "build_systems":
   [
     {
-      "name": "Run Tests (Python 3.7)",
-      "cmd": ["tox", "-e", "py37"],
-      "working_dir": "${project_path}"
-    },
-    {
       "name": "Run Tests (Python 3.8)",
       "cmd": ["tox", "-e", "py38"],
       "working_dir": "${project_path}"
