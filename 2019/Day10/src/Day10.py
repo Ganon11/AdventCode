@@ -1,5 +1,6 @@
 import argparse
 import math
+import os
 import time
 
 from position import Position
@@ -58,6 +59,8 @@ class Angle: # pylint: disable=C0115
     return str(self)
 
 class Field: # pylint: disable=C0115
+  _CLEAR_SCREEN = lambda: os.system('cls' if os.name == 'nt' else 'clear')
+
   def __init__(self, filename):
     self.field = dict()
     self.station = None
@@ -86,6 +89,7 @@ class Field: # pylint: disable=C0115
     return string
 
   def print(self, target=None): # pylint: disable=C0116
+    Field._CLEAR_SCREEN()
     string = ''
     for row in range(0, self.rows):
       for col in range(0, self.cols):
