@@ -11,7 +11,7 @@ def test_comparisons_with_self():
 
 def test_comparisons():
   o = position.Position()
-  p = position.Position(1, 2)
+  p = position.Position(1, 2, 3)
   assert o < p
   assert o <= p
   assert o != p
@@ -114,3 +114,14 @@ def test_adjacency():
   assert not o.is_adjacent_to(nw)
   assert not o.is_adjacent_to(se)
   assert not o.is_adjacent_to(sw)
+
+def test_add():
+  position1 = position.Position(1, 2, 3)
+  position2 = position.Position(3, 4, 5)
+
+  result1 = position1 + position2
+  result2 = position2 + position1
+  assert result1 == result2
+  assert result1.x == 4
+  assert result1.y == 6
+  assert result1.z == 8
