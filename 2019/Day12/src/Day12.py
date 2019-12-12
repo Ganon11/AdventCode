@@ -1,4 +1,6 @@
 import argparse
+import functools
+import math
 import position
 
 class Moon:
@@ -47,6 +49,17 @@ class Moon:
   def __repr__(self):
     return str(self)
 
+  def __hash__(self):
+    return hash(str(self))
+
+  def get_x_state(self):
+    return (self.position.x, self.velocity.x)
+
+  def get_y_state(self):
+    return (self.position.y, self.velocity.y)
+
+  def get_z_state(self):
+    return (self.position.z, self.velocity.z)
 
 def get_moons(filename):
   lines = list()
@@ -67,6 +80,16 @@ def step(moons):
   for moon in moons:
     moon.move()
 
+def all_velocities_are_zero(moons):
+  for moon in moons:
+    if moon.velocity.x != 0 or moon.velocity.y != 0 or moon.velocity.z != 0:
+      return False
+
+  return True
+
+def least_common_multiple(numbers):
+  return functools.reduce(lambda x, y: int((x * y) / math.gcd(x, y)), numbers, 1)
+
 def main():
   parser = argparse.ArgumentParser()
   parser.add_argument('-f', '--filename', default='../input/sample1.txt')
@@ -82,7 +105,40 @@ def main():
     total_energy = sum(map(lambda m: m.total_energy(), moons))
     print(f'Total energy: {total_energy}')
   elif args.part == 2:
-    pass
+    x_seen = set()
+    x_seen.add(tuple(map(lambda m: m.get_x_state(), moons)))
+    x_cycle = -1
+    y_seen = set()
+    y_seen.add(tuple(map(lambda m: m.get_y_state(), moons)))
+    y_cycle = -1
+    z_seen = set()
+    z_seen.add(tuple(map(lambda m: m.get_z_state(), moons)))
+    z_cycle = -1
+    time = 1
+    step(moons)
+    while x_cycle == -1 or y_cycle == -1 or z_cycle == -1:
+      if x_cycle == -1:
+        x_state = tuple(map(lambda m: m.get_x_state(), moons))
+        if x_state in x_seen:
+          x_cycle = time
+        x_seen.add(x_state)
+
+      if y_cycle == -1:
+        y_state = tuple(map(lambda m: m.get_y_state(), moons))
+        if y_state in y_seen:
+          y_cycle = time
+        y_seen.add(y_state)
+
+      if z_cycle == -1:
+        z_state = tuple(map(lambda m: m.get_z_state(), moons))
+        if z_state in z_seen:
+          z_cycle = time
+        z_seen.add(x_state)
+
+      time += 1
+      step(moons)
+
+    print(f'xycle {x_cycle}, yycle {y_cycle}, zycle {z_cycle}, lcm is {least_common_multiple((x_cycle, y_cycle, z_cycle))}')
 
 if __name__ == "__main__":
   main()
