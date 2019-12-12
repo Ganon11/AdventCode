@@ -213,25 +213,25 @@ class Field: # pylint: disable=C0115
 
   def run_laser(self, target=200, debug_print=False): # pylint: disable=C0116,R0913
     asteroids_destroyed = 0
-    while asteroids_destroyed < target:
-      new_count = asteroids_destroyed
+    target_asteroid = None
+    while True:
       asteroids = [k for k, v in self.field.items() if self.field[k]]
       angles = list(self.get_angles_to_asteroids(self.station, asteroids))
       angles.sort()
+      if not angles:
+        print(f'No asteroids visible! Total: {asteroids_destroyed}')
+        break
       for angle in angles:
         asteroid = self.get_first_asteroid_in_direction(self.station, angle)
         self.field[asteroid] = False
-        new_count += 1
+        asteroids_destroyed += 1
         if debug_print:
-          print(new_count)
+          print(asteroids_destroyed)
           self.print(target=asteroid)
           time.sleep(0.1)
-        if new_count == target:
-          return asteroid
-      if new_count == asteroids_destroyed:
-        print(f'No asteroids destroyed in loop! Total: {asteroids_destroyed}')
-        return None
-      asteroids_destroyed = new_count
+        if asteroids_destroyed == target:
+          target_asteroid = asteroid
+    return target_asteroid
 
 def main(): # pylint: disable=C0116
   parser = argparse.ArgumentParser()
@@ -249,7 +249,18 @@ def main(): # pylint: disable=C0116
   if args.part == 2:
     # Do part 2!
     answer = field.run_laser(args.target, args.debug)
-    print(answer)
+
+    suffix = None
+    ones_digit = args.target % 10
+    if ones_digit == 1:
+      suffix = 'st'
+    elif ones_digit == 2:
+      suffix = 'nd'
+    elif ones_digit == 3:
+      suffix = 'rd'
+    else:
+      suffix = 'th'
+    print(f'{args.target}{suffix} asteroid: {answer}')
 
 if __name__ == "__main__":
   main()
