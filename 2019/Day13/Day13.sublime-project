@@ -17,8 +17,16 @@
       "cmd": ["python", "$file", "-f", "../input/input.txt", "-p", "1"]
     },
     {
+      "name": "Run Part 1 Debug",
+      "cmd": ["python", "$file", "-f", "../input/input.txt", "-p", "1", "-d"]
+    },
+    {
       "name": "Run Part 2",
       "cmd": ["python", "$file", "-f", "../input/input.txt", "-p", "2"]
+    },
+    {
+      "name": "Run Part 2 Debug",
+      "cmd": ["python", "$file", "-f", "../input/input.txt", "-p", "2", "-d"]
     }
   ]
 }
