@@ -7,29 +7,25 @@ import intcode
 from position import Position
 
 CLEAR_SCREEN = lambda: os.system('cls' if os.name == 'nt' else 'clear')
-EMPTY = ' '
-WALL = '|'
-BLOCK = '#'
-PADDLE = '_'
-BALL = 'o'
+# EMPTY = ' '
+# WALL = '│'
+# BLOCK = '█'
+# PADDLE = '_'
+# BALL = 'o'
 
-def get_tile(tile_type): # pylint: disable=C0116
-  if tile_type == 0:
-    return EMPTY
+EMPTY = 0
+WALL = 1
+BLOCK = 2
+PADDLE = 3
+BALL = 4
 
-  if tile_type == 1:
-    return WALL
-
-  if tile_type == 2:
-    return BLOCK
-
-  if tile_type == 3:
-    return PADDLE
-
-  if tile_type == 4:
-    return BALL
-
-  return None
+TILES = {
+  EMPTY: ' ',
+  # WALL = '|', # WALL is special.
+  BLOCK: '█',
+  PADDLE: '-',
+  BALL: 'o'
+}
 
 def build_screen(values, field=None, score=None, paddle_position=None, ball_position=None): # pylint: disable=C0116
   if field is None:
@@ -44,12 +40,11 @@ def build_screen(values, field=None, score=None, paddle_position=None, ball_posi
     if x == -1 and y == 0:
       score = tile_type
     else:
-      tile = get_tile(tile_type)
       position = Position(x, y)
-      field[position] = tile
-      if tile == PADDLE:
+      field[position] = tile_type
+      if tile_type == PADDLE:
         paddle_position = position
-      elif tile == BALL:
+      elif tile_type == BALL:
         ball_position = position
 
     index += 3
@@ -66,7 +61,20 @@ def print_screen(field, score): # pylint: disable=C0116
   for y in range(miny, maxy + 1):
     for x in range(minx, maxx + 1):
       position = Position(x, y)
-      print(field[position], end='')
+      tile = field[position]
+      char = ''
+      if tile == WALL:
+        if position.x == minx and position.y == miny:
+          char = '╔'
+        elif position.x == maxx and position.y == miny:
+          char = '╗'
+        elif position.y == miny:
+          char = '═'
+        else:
+          char = '║'
+      else:
+        char = TILES[tile]
+      print(char, end='')
     print('', flush=True)
 
   print(f'Current Score: {score}')
@@ -97,7 +105,10 @@ def play_game(program, debug=False): # pylint: disable=C0116
     program.execute()
     (field, score, paddle_position, ball_position) = build_screen(program.output, field, score, paddle_position, ball_position) # pylint: disable=C0301
 
-  print_screen(field, score)
+  if debug:
+    print_screen(field, score)
+  else:
+    print(f'Score: {score}')
 
 def main(): # pylint: disable=C0116
   parser = argparse.ArgumentParser()
@@ -113,7 +124,9 @@ def main(): # pylint: disable=C0116
   program = intcode.IntCodeProgram.from_text(program_text)
   if args.part == 1:
     program.execute()
-    (field, _, _, _) = build_screen(program.output)
+    (field, score, _, _) = build_screen(program.output)
+    if args.debug:
+      print_screen(field, score)
     print(f'Block count: {count_blocks(field)}')
   elif args.part == 2:
     program.memory[0] = 2 # Free play!
