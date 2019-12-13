@@ -15,21 +15,6 @@ BLOCK = 2
 PADDLE = 3
 BALL = 4
 
-TILES_TTY = {
-  EMPTY: ' ',
-  # WALL: '|', # WALL is special.
-  BLOCK: '█',
-  PADDLE: '-',
-  BALL: 'o'
-}
-
-TILES_SIMPLE = {
-  EMPTY: ' ',
-  BLOCK: '#',
-  PADDLE: '-',
-  BALL: 'o'
-}
-
 def build_screen(values, field=None, score=None, paddle_position=None, ball_position=None): # pylint: disable=C0116
   if field is None:
     field = defaultdict(lambda: EMPTY)
@@ -54,7 +39,49 @@ def build_screen(values, field=None, score=None, paddle_position=None, ball_posi
 
   return (field, score, paddle_position, ball_position)
 
-def print_screen(field, score, steps): # pylint: disable=C0116
+def get_char_tty(tile, position, minx, maxx, miny): # pylint: disable=C0116
+  if tile == WALL:
+    if position.x == minx and position.y == miny:
+      char = '╔'
+    elif position.x == maxx and position.y == miny:
+      char = '╗'
+    elif position.y == miny:
+      char = '═'
+    else:
+      char = '║'
+  else:
+    char = get_char_tty.TILES[tile]
+
+  return char
+
+get_char_tty.TILES = {
+  EMPTY: ' ',
+  BLOCK: '█',
+  PADDLE: '-',
+  BALL: 'o'
+}
+
+def get_char_simple(tile, position, minx, maxx, miny): # pylint: disable=C0116
+  if tile == WALL:
+    if (position.x == minx or position.x == maxx) and position.y == miny:
+      char = '+'
+    elif position.y == miny:
+      char = '-'
+    else:
+      char = '|'
+  else:
+    char = get_char_simple.TILES[tile]
+
+  return char
+
+get_char_simple.TILES = {
+  EMPTY: ' ',
+  BLOCK: '#',
+  PADDLE: '-',
+  BALL: 'o'
+}
+
+def print_screen(field, score, steps=None): # pylint: disable=C0116
   minx = min(field.keys(), key=lambda p: p.x).x
   maxx = max(field.keys(), key=lambda p: p.x).x
   miny = min(field.keys(), key=lambda p: p.y).y
@@ -67,33 +94,15 @@ def print_screen(field, score, steps): # pylint: disable=C0116
       tile = field[position]
       char = ''
       if sys.stdin.isatty():
-        if tile == WALL:
-          if position.x == minx and position.y == miny:
-            char = '╔'
-          elif position.x == maxx and position.y == miny:
-            char = '╗'
-          elif position.y == miny:
-            char = '═'
-          else:
-            char = '║'
-        else:
-          char = TILES_TTY[tile]
+        char = get_char_tty(tile, position, minx, maxx, miny)
       else:
-        if tile == WALL:
-          if (position.x == minx or position.x == maxx) and position.y == miny:
-            char = '+'
-          elif position.y == miny:
-            char = '-'
-          else:
-            char = '|'
-        else:
-          char = TILES_SIMPLE[tile]
-
+        char = get_char_simple(tile, position, minx, maxx, miny)
       print(char, end='')
     print('', flush=True)
 
   print(f'Current Score: {score}')
-  print(f'CUrrent Steps: {steps}')
+  if steps is not None:
+    print(f'Current Steps: {steps}')
 
 def count_blocks(field): # pylint: disable=C0116
   count = 0
