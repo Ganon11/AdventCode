@@ -2,16 +2,12 @@ import argparse
 from collections import defaultdict
 import os
 from time import sleep
+import sys
 
 import intcode
 from position import Position
 
 CLEAR_SCREEN = lambda: os.system('cls' if os.name == 'nt' else 'clear')
-# EMPTY = ' '
-# WALL = '│'
-# BLOCK = '█'
-# PADDLE = '_'
-# BALL = 'o'
 
 EMPTY = 0
 WALL = 1
@@ -19,10 +15,17 @@ BLOCK = 2
 PADDLE = 3
 BALL = 4
 
-TILES = {
+TILES_TTY = {
   EMPTY: ' ',
-  # WALL = '|', # WALL is special.
+  # WALL: '|', # WALL is special.
   BLOCK: '█',
+  PADDLE: '-',
+  BALL: 'o'
+}
+
+TILES_SIMPLE = {
+  EMPTY: ' ',
+  BLOCK: '#',
   PADDLE: '-',
   BALL: 'o'
 }
@@ -51,7 +54,7 @@ def build_screen(values, field=None, score=None, paddle_position=None, ball_posi
 
   return (field, score, paddle_position, ball_position)
 
-def print_screen(field, score): # pylint: disable=C0116
+def print_screen(field, score, steps): # pylint: disable=C0116
   minx = min(field.keys(), key=lambda p: p.x).x
   maxx = max(field.keys(), key=lambda p: p.x).x
   miny = min(field.keys(), key=lambda p: p.y).y
@@ -63,21 +66,34 @@ def print_screen(field, score): # pylint: disable=C0116
       position = Position(x, y)
       tile = field[position]
       char = ''
-      if tile == WALL:
-        if position.x == minx and position.y == miny:
-          char = '╔'
-        elif position.x == maxx and position.y == miny:
-          char = '╗'
-        elif position.y == miny:
-          char = '═'
+      if sys.stdin.isatty():
+        if tile == WALL:
+          if position.x == minx and position.y == miny:
+            char = '╔'
+          elif position.x == maxx and position.y == miny:
+            char = '╗'
+          elif position.y == miny:
+            char = '═'
+          else:
+            char = '║'
         else:
-          char = '║'
+          char = TILES_TTY[tile]
       else:
-        char = TILES[tile]
+        if tile == WALL:
+          if (position.x == minx or position.x == maxx) and position.y == miny:
+            char = '+'
+          elif position.y == miny:
+            char = '-'
+          else:
+            char = '|'
+        else:
+          char = TILES_SIMPLE[tile]
+
       print(char, end='')
     print('', flush=True)
 
   print(f'Current Score: {score}')
+  print(f'CUrrent Steps: {steps}')
 
 def count_blocks(field): # pylint: disable=C0116
   count = 0
@@ -89,10 +105,11 @@ def count_blocks(field): # pylint: disable=C0116
 def play_game(program, debug=False): # pylint: disable=C0116
   program.execute()
   (field, score, paddle_position, ball_position) = build_screen(program.output)
+  steps = 0
   while not program.has_halted:
     if debug:
       sleep(0.0166666) # 60 FPS baby
-      print_screen(field, score)
+      print_screen(field, score, steps)
 
     if paddle_position.x < ball_position.x:
       program.provide_input(1)
@@ -101,14 +118,16 @@ def play_game(program, debug=False): # pylint: disable=C0116
     else:
       program.provide_input(-1)
 
+    steps += 1
     program.output = list() # Clear the output to save time building screen
     program.execute()
     (field, score, paddle_position, ball_position) = build_screen(program.output, field, score, paddle_position, ball_position) # pylint: disable=C0301
 
   if debug:
-    print_screen(field, score)
+    print_screen(field, score, steps)
   else:
     print(f'Score: {score}')
+    print(f'Steps: {steps}')
 
 def main(): # pylint: disable=C0116
   parser = argparse.ArgumentParser()
