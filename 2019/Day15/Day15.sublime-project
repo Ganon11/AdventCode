@@ -1,0 +1,28 @@
+{
+  "folders":
+  [
+    {
+      "path": "src",
+      "name": "Source"
+    },
+    {
+      "path": "input",
+      "name": "Input files"
+    }
+  ],
+  "build_systems":
+  [
+    {
+      "name": "Explore Interactively",
+      "cmd": ["python", "$file", "-f", "../input/input.txt", "-i"]
+    },
+    {
+      "name": "Run Part 1",
+      "cmd": ["python", "$file", "-f", "../input/input.txt", "-p", "1"]
+    },
+    {
+      "name": "Run Part 2",
+      "cmd": ["python", "$file", "-f", "../input/input.txt", "-p", "2"]
+    }
+  ]
+}
