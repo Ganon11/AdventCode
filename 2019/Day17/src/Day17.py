@@ -15,36 +15,36 @@ class Field:
 
   def __init__(self, characters):
     self.field = dict()
-    x = 0
-    y = 0
+    col = 0
+    row = 0
     for character in characters:
       if character == Field.A_NEW_ROW_OF_TERRIBLE_HORROR:
-        x = 0
-        y += 1
+        col = 0
+        row += 1
         continue
 
-      position = Position(x, y)
+      position = Position(col, row)
       self.field[position] = character
 
-      x += 1
+      col += 1
 
   def draw(self):
-    maxx = max(self.field.keys(), key=lambda p: p.x).x
-    maxy = max(self.field.keys(), key=lambda p: p.y).y
+    cols = max(self.field.keys(), key=lambda p: p.x).x
+    rows = max(self.field.keys(), key=lambda p: p.y).y
 
-    for y in range(maxy + 1):
-      for x in range(maxx + 1):
-        print(chr(self.field[Position(x, y)]), end='')
+    for row in range(rows + 1):
+      for col in range(cols + 1):
+        print(chr(self.field[Position(col, row)]), end='')
       print('', flush=True)
 
   def find_intersections(self):
-    maxx = max(self.field.keys(), key=lambda p: p.x).x
-    maxy = max(self.field.keys(), key=lambda p: p.y).y
+    cols = max(self.field.keys(), key=lambda p: p.x).x
+    rows = max(self.field.keys(), key=lambda p: p.y).y
 
     intersections = list()
-    for x in range(1, maxx):
-      for y in range(1, maxy):
-        position = Position(x, y)
+    for row in range(1, rows):
+      for col in range(1, cols):
+        position = Position(col, row)
         north = position.north()
         south = position.south()
         east = position.east()
