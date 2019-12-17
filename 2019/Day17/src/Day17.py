@@ -14,12 +14,10 @@ class Field:
   A_NEW_ROW_OF_TERRIBLE_HORROR = 10 # Newline
 
   def __init__(self, characters):
-    #print('__init__')
     self.field = dict()
     x = 0
     y = 0
     for character in characters:
-      print(chr(character), end='')
       if character == Field.A_NEW_ROW_OF_TERRIBLE_HORROR:
         x += 1
         y = 0
@@ -31,7 +29,6 @@ class Field:
       y += 1
 
   def draw(self):
-    print('draw')
     maxx = max(self.field.keys(), key=lambda p: p.x).x
     maxy = max(self.field.keys(), key=lambda p: p.y).y
 
@@ -39,12 +36,6 @@ class Field:
       for y in range(maxy + 1):
         print(chr(self.field[Position(x, y)]), end='')
       print('', flush=True)
-    #for y in range(maxy + 1):
-    #  for x in range(maxx + 1):
-    #    position = Position(x, y)
-    #    #print(chr(self.field[Position(x, y)]), end='')
-    #    print(f'{position}={chr(self.field[position])}', end='')
-    #  print('', flush=True)
 
   def find_intersections(self):
     maxx = max(self.field.keys(), key=lambda p: p.x).x
