@@ -110,41 +110,26 @@ def main():
     print(f'Alignment sum: {alignment_sum}')
   elif args.part == 2:
     program.memory[0] = 2 # Free play... ?
-    program.execute()
-    draw_program_output(program.output)
-    program.output = list()
 
     # Main routine: A, B, A, B, C, C, B, A, B, C
     main_routine = ','.join(["A", "B", "A", "B", "C", "C", "B", "A", "B", "C"])
     main_ascii = translate_routine_to_ASCII(main_routine)
     program.provide_input(main_ascii)
-    program.execute()
-    draw_program_output(program.output)
-    program.output = list()
 
     #  A: L, 10, R, 10, L, 10, L, 10
     a_routine = ','.join(["L", "10", "R", "10", "L", "10", "L", "10"])
     a_ascii = translate_routine_to_ASCII(a_routine)
     program.provide_input(a_ascii)
-    program.execute()
-    draw_program_output(program.output)
-    program.output = list()
 
     #  B: R, 10, R, 12, L, 12
     b_routine = ','.join(["R", "10", "R", "12", "L", "12"])
     b_ascii = translate_routine_to_ASCII(b_routine)
     program.provide_input(b_ascii)
-    program.execute()
-    draw_program_output(program.output)
-    program.output = list()
 
     #  C: R, 12, L, 12, R, 6
     c_routine = ','.join(["R", "12", "L", "12", "R", "6"])
     c_ascii = translate_routine_to_ASCII(c_routine)
     program.provide_input(c_ascii)
-    program.execute()
-    draw_program_output(program.output)
-    program.output = list()
 
     # Continuous video feed?
     if args.interactive:
@@ -152,6 +137,8 @@ def main():
     else:
       program.provide_input(ord('n'))
     program.provide_input(Field.A_NEW_ROW_OF_TERRIBLE_HORROR)
+
+    # Finally, run the dang thing!
     program.execute()
     draw_program_output(program.output)
 
