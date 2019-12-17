@@ -19,21 +19,21 @@ class Field:
     y = 0
     for character in characters:
       if character == Field.A_NEW_ROW_OF_TERRIBLE_HORROR:
-        x += 1
-        y = 0
+        x = 0
+        y += 1
         continue
 
       position = Position(x, y)
       self.field[position] = character
 
-      y += 1
+      x += 1
 
   def draw(self):
     maxx = max(self.field.keys(), key=lambda p: p.x).x
     maxy = max(self.field.keys(), key=lambda p: p.y).y
 
-    for x in range(maxx + 1):
-      for y in range(maxy + 1):
+    for y in range(maxy + 1):
+      for x in range(maxx + 1):
         print(chr(self.field[Position(x, y)]), end='')
       print('', flush=True)
 
