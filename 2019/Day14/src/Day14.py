@@ -1,5 +1,7 @@
 import argparse
 from collections import defaultdict
+from collections import deque
+import math
 import re
 
 class ChemicalAgent: # pylint: disable=C0115
@@ -63,90 +65,73 @@ class Reaction: # pylint: disable=C0115
     return str(self)
 
 def get_reactions(filename): # pylint: disable=C0116
+  reactions = dict() # Key is product name, value is Reaction
   lines = None
   with open(filename, 'r') as file:
     lines = file.readlines()
 
-  return [Reaction.from_text(line.rstrip()) for line in lines]
+  for line in lines:
+    reaction = Reaction.from_text(line.rstrip())
+    reactions[reaction.product.name] = reaction
 
-def create(target, reactions, collection=None): # pylint: disable=C0116
-  if collection is None:
-    collection = defaultdict(lambda: 0)
+  return reactions
 
-  #print(f'Want to make {target} with {collection}')
-  # Just make the ore
-  if target == 'ORE':
-    collection['ORE'] += 1
-    return (1, collection)
+class Queue: # pylint: disable=C0115
+  def __init__(self):
+    self.elements = deque()
 
-  # Find the reaction that makes target
-  needed_reaction = None
-  for reaction in reactions:
-    if reaction.product.name == target:
-      needed_reaction = reaction
-      break
+  def empty(self): # pylint: disable=C0116
+    return len(self.elements) == 0
 
-  if needed_reaction is None:
-    raise Exception(f'No reaction found to make {target}')
+  def put(self, x): # pylint: disable=C0116
+    self.elements.append(x)
 
-  ore_required = 0
-  # Ensure there are enough materials to feed the reaction
-  for reactant in needed_reaction.reactants:
-    while collection[reactant.name] < reactant.amount:
-      (ore, collection) = create(reactant.name, reactions, collection)
-      ore_required += ore
-    collection[reactant.name] -= reactant.amount
+  def get(self): # pylint: disable=C0116
+    return self.elements.popleft()
 
-  collection[target] += needed_reaction.product.amount
+def make_fuel_queue_based(amount, recipebook): # pylint: disable=C0116
+  supply = defaultdict(int)
+  orders = Queue()
+  orders.put(ChemicalAgent('FUEL', amount))
+  ore_needed = 0
 
-  return (ore_required, collection)
-
-def find_ore_from_fuel(reactions): # pylint: disable=C0116
-  # DFS?
-  (ore_required, _) = create('FUEL', reactions)
-  return ore_required
-
-# def destroy(target, reactions, collection=None): # pylint: disable=C0116
-#   if collection is None:
-#     collection = defaultdict(lambda: 0)
-
-#   if target == 'ORE':
-#     collection['ORE'] -= 1
-#     return (1, collection)
-
-#   # Find the reaction that makes target
-#   needed_reaction = None
-#   for reaction in reactions:
-#     if reaction.product.name == target:
-#       needed_reaction = reaction
-#       break
-
-#   if needed_reaction is None:
-#     raise Exception(f'No reaction found to destroy {target}')
-
-#   ore_destroyed = 0
-#   collection[target]
-#   for reactant in needed_reaction.reactants:
-#     while collection[reactant.name] < reactant.amount:
-#       (ore, collection) = destroy(reactant.name, reactions, collection)
-#       ore_destroyed += ore
-#     collection[reactant.name] -= reactant.amount
-
-#   collection[target] += needed_reaction.product.amount
-
-def find_fuel_from_ore(reactions): # pylint: disable=C0116
-  total_ore = 0
-  total_fuel = 0
-  collection = defaultdict(lambda: 0)
-  while True:
-    (ore_required, collection) = create('FUEL', reactions, collection)
-    if total_ore + ore_required <= 1000000000000: # One TRILLION Ore!
-      total_ore += ore_required
-      total_fuel += 1
-      print(f'Made {total_fuel} fuel so far with {total_ore} ore!', flush=True)
+  while not orders.empty():
+    order = orders.get()
+    # If making ore, just make it. We have "infinite" supply.
+    if order.name == 'ORE':
+      ore_needed += order.amount
+    # If we have enough in supply to fulfill the order, just use it.
+    elif order.amount <= supply[order.name]:
+      supply[order.name] -= order.amount
+    # We have to make more to fulfill the order
     else:
-      # Can't afford more fuel
-      return total_fuel
+      amount_needed = order.amount - supply[order.name]
+      reaction = recipebook[order.name]
+      batches = math.ceil(amount_needed / reaction.product.amount)
+      for reactant in reaction.reactants:
+        orders.put(ChemicalAgent(reactant.name, reactant.amount * batches))
+      leftover = batches * reaction.product.amount - amount_needed
+      supply[order.name] = leftover
+  return ore_needed
+
+def find_fuel_from_ore(recipebook): # pylint: disable=C0116
+  upper_bound = None
+  cost_for_one_fuel = make_fuel_queue_based(1, recipebook)
+  ore_capacity = 1_000_000_000_000
+  lower_bound = ore_capacity // cost_for_one_fuel
+  while lower_bound + 1 != upper_bound:
+    if upper_bound is None:
+      guess = lower_bound * 2
+    else:
+      guess = (upper_bound + lower_bound) // 2
+
+    ore_required = make_fuel_queue_based(guess, recipebook)
+    if ore_required > ore_capacity:
+      upper_bound = guess
+    else:
+      lower_bound = guess
+
+  return lower_bound
 
 def main(): # pylint: disable=C0116
   parser = argparse.ArgumentParser()
@@ -154,13 +139,13 @@ def main(): # pylint: disable=C0116
   parser.add_argument('-p', '--part', choices=[1, 2], default=1, type=int)
   args = parser.parse_args()
 
-  reactions = get_reactions(args.filename)
+  recipebook = get_reactions(args.filename)
   if args.part == 1:
-    ore_needed = find_ore_from_fuel(reactions)
+    ore_needed = make_fuel_queue_based(1, recipebook)
     print(f'{ore_needed} ORE needed for 1 FUEL')
   elif args.part == 2:
-    fuel_made = find_fuel_from_ore(reactions)
-    print(f'{fuel_made} can be made from 1000000000000 ORE')
+    fuel_made = find_fuel_from_ore(recipebook)
+    print(f'{fuel_made} FUEL can be made from 1000000000000 ORE')
 
 if __name__ == "__main__":
   main()
