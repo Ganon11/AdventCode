@@ -244,7 +244,7 @@ class IntCodeProgram:
     return hasattr(other, "memory") and hasattr(other, "ip")
 
   def __str__(self):
-    return f'Memory: {self.memory}, IP: {self.instruction_pointer}'
+    return f'Memory: {self.memory}, IP: {self.instruction_pointer}, RB: {self._relative_base}'
 
   def __hash__(self):
     return hash(str(self))
