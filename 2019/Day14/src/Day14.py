@@ -1,8 +1,9 @@
 import argparse
 from collections import defaultdict
-from collections import deque
 import math
 import re
+
+import my_collections
 
 class ChemicalAgent: # pylint: disable=C0115
   CHEMICAL_PATTERN = re.compile('(\\d+) (\\w+)')
@@ -76,22 +77,9 @@ def get_reactions(filename): # pylint: disable=C0116
 
   return reactions
 
-class Queue: # pylint: disable=C0115
-  def __init__(self):
-    self.elements = deque()
-
-  def empty(self): # pylint: disable=C0116
-    return len(self.elements) == 0
-
-  def put(self, x): # pylint: disable=C0116
-    self.elements.append(x)
-
-  def get(self): # pylint: disable=C0116
-    return self.elements.popleft()
-
 def make_fuel_queue_based(amount, recipebook): # pylint: disable=C0116
   supply = defaultdict(int)
-  orders = Queue()
+  orders = my_collections.Queue()
   orders.put(ChemicalAgent('FUEL', amount))
   ore_needed = 0
 
