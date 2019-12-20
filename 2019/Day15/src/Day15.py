@@ -141,15 +141,33 @@ class Maze: # pylint: disable=C0115
     output = self.program.output.pop(0)
     return self._handle_program_output(output, new_position)
 
-  def explore(self): # pylint: disable=C0116
-    #self.draw()
+  def _fill_in_blanks(self): # pylint: disable=C0116
+    assert self.oxygen_system is not None
+    minx = min(self.maze.keys(), key=lambda p: p.x).x
+    maxx = max(self.maze.keys(), key=lambda p: p.x).x
+    miny = min(self.maze.keys(), key=lambda p: p.y).y
+    maxy = max(self.maze.keys(), key=lambda p: p.y).y
+
+    for x in range(minx, maxx + 1):
+      for y in range(miny, maxy + 1):
+        position = Position(x, y)
+        if self.maze[position] == Maze.UNKNOWN:
+          self.maze[position] = Maze.WALL
+
+  def _explore(self, debug_print):
+    if debug_print:
+      self.draw()
 
     for direction in range(1, 5):
       new_position = self._get_new_position(direction)
       if self.maze[new_position] == Maze.UNKNOWN:
         if self._move(direction):
-          self.explore()
+          self._explore(debug_print)
           self._move(Maze._get_opposing_movement_direction(direction))
+
+  def explore(self, debug_print): # pylint: disable=C0116
+    self._explore(debug_print)
+    self._fill_in_blanks()
 
   def calculate_shortest_path(self): # pylint: disable=C0116
     assert self.oxygen_system is not None
@@ -192,8 +210,6 @@ class Maze: # pylint: disable=C0115
 
     frontier = my_collections.Queue()
     frontier.put(self.oxygen_system)
-    #came_from = {}
-    #came_from[self.oxygen_system] = None
     cost_so_far = {}
     cost_so_far[self.oxygen_system] = 0
 
@@ -222,6 +238,7 @@ def main(): # pylint: disable=C0116,R0912
   parser.add_argument('-f', '--filename', default='../input/sample1.txt')
   parser.add_argument('-p', '--part', choices=[1, 2], default=1, type=int)
   parser.add_argument('-i', '--interactive', action='store_true')
+  parser.add_argument('-d', '--debug', action='store_true')
   args = parser.parse_args()
 
   program_text = None
@@ -232,7 +249,7 @@ def main(): # pylint: disable=C0116,R0912
   if args.interactive:
     maze.interactive_explore()
   else:
-    maze.explore()
+    maze.explore(args.debug)
     maze.draw()
     if args.part == 1:
       steps = maze.calculate_shortest_path()
