@@ -1,37 +1,10 @@
 import argparse
 from collections import defaultdict
-from collections import deque
-import heapq
 import os
 
 import intcode
+import my_collections
 from position import Position
-
-class Queue: # pylint: disable=C0115
-  def __init__(self):
-    self.elements = deque()
-
-  def empty(self): # pylint: disable=C0116
-    return len(self.elements) == 0
-
-  def put(self, x): # pylint: disable=C0116
-    self.elements.append(x)
-
-  def get(self): # pylint: disable=C0116
-    return self.elements.popleft()
-
-class PriorityQueue: # pylint: disable=C0115
-  def __init__(self):
-    self.elements = []
-
-  def empty(self): # pylint: disable=C0116
-    return len(self.elements) == 0
-
-  def put(self, item, priority): # pylint: disable=C0116
-    heapq.heappush(self.elements, (priority, item))
-
-  def get(self): # pylint: disable=C0116
-    return heapq.heappop(self.elements)[1]
 
 class Maze: # pylint: disable=C0115
   CLEAR_SCREEN = lambda: os.system('cls' if os.name == 'nt' else 'clear')
@@ -182,7 +155,7 @@ class Maze: # pylint: disable=C0115
     assert self.oxygen_system is not None
 
     start = Position(0, 0)
-    frontier = PriorityQueue()
+    frontier = my_collections.PriorityQueue()
     frontier.put(start, 0)
     came_from = {}
     cost_so_far = {}
@@ -217,7 +190,7 @@ class Maze: # pylint: disable=C0115
   def calculate_longest_path(self): # pylint: disable=C0116
     assert self.oxygen_system is not None
 
-    frontier = Queue()
+    frontier = my_collections.Queue()
     frontier.put(self.oxygen_system)
     #came_from = {}
     #came_from[self.oxygen_system] = None
