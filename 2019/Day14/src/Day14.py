@@ -1,5 +1,5 @@
 import argparse
-import math
+from collections import defaultdict
 import re
 
 class ChemicalAgent: # pylint: disable=C0115
@@ -69,74 +69,42 @@ def get_reactions(filename): # pylint: disable=C0116
 
   return [Reaction.from_text(line.rstrip()) for line in lines]
 
-def satisfy_need(reactions, element, amount_needed, collection=None): # pylint: disable=C0116,R0912
+def create(target, reactions, collection=None): # pylint: disable=C0116
   if collection is None:
-    collection = dict()
+    collection = defaultdict(lambda: 0)
 
-  # We still need more - find the reaction to make this element
-  if element == 'ORE':
-    # We can always just make ore.
-    print(f'Need is ORE, I\'m makin\' it.')
-    if element in collection:
-      collection[element] += amount_needed
-    else:
-      collection[element] = amount_needed
-    print(f'After adding ORE, collection is {collection}')
-    return collection
+  #print(f'Want to make {target} with {collection}')
+  # Just make the ore
+  if target == 'ORE':
+    collection['ORE'] += 1
+    return (1, collection)
 
-  print(f'Satisfying need {element} {amount_needed} with collection {collection}')
-
-  # We may already have some of this element in our collection - if so, we need less extra
-  extra = amount_needed
-  if element in collection:
-    if collection[element] >= amount_needed:
-      # We have what we need already
-      collection[element] -= amount_needed
-      return collection
-
-    extra -= collection[element]
-
-  print(f'After accounting for leftovers, I still need {extra} more {element}')
-
+  # Find the reaction that makes target
   needed_reaction = None
   for reaction in reactions:
-    if reaction.product.name == element:
+    if reaction.product.name == target:
       needed_reaction = reaction
       break
 
   if needed_reaction is None:
-    raise Exception(f'Cannot satisfy need for {amount_needed} {element}')
+    raise Exception(f'No reaction found to make {target}')
 
-  # Use this reaction to satisfy the immediate need
-  multiplier = math.ceil(extra / needed_reaction.product.amount)
-  print(f'I will perform {needed_reaction} {multiplier} times to satisfy need.')
+  ore_required = 0
+  # Ensure there are enough materials to feed the reaction
   for reactant in needed_reaction.reactants:
-    collection = satisfy_need(reactions, reactant.name, reactant.amount * multiplier, collection)
-    # if reactant.name in collection:
-    #   collection[reactant.name] += multiplier * reactant.amount
-    # else:
-    #   collection[reactant.name] = multiplier * reactant.amount
-    #needs[reactant.name] = multiplier * reactant.amount
+    while collection[reactant.name] < reactant.amount:
+      (ore, collection) = create(reactant.name, reactions, collection)
+      ore_required += ore
+    collection[reactant.name] -= reactant.amount
 
-  print(f'After performing reaction, my collection is {collection}')
-  # Pick another need to satisfy
-  # for need in needs:
-  #   #collection[need] -= needs[need]
-  #   collection = satisfy_need(reactions, need, needs[need], collection)
+  collection[target] += needed_reaction.product.amount
 
-  return collection
+  return (ore_required, collection)
 
 def find_ore_from_fuel(reactions): # pylint: disable=C0116
   # DFS?
-  collection = satisfy_need(reactions, 'FUEL', 1)
-  #print(collection)
-
-  #collection = satisfy_need(reactions, 'A', 20)
-
-  if 'ORE' not in collection:
-    return -1
-
-  return collection['ORE']
+  (ore_required, _) = create('FUEL', reactions)
+  return ore_required
 
 def main(): # pylint: disable=C0116
   parser = argparse.ArgumentParser()
