@@ -41,16 +41,16 @@
       "cmd": ["python", "$file", "-f", "../input/sample5.txt", "-p", "1"]
     },
     {
-      "name": "Run Sample 1 Part 2",
-      "cmd": ["python", "$file", "-f", "../input/sample1.txt", "-p", "2"]
-    },
-    {
-      "name": "Run Sample 2 Part 2",
-      "cmd": ["python", "$file", "-f", "../input/sample2.txt", "-p", "2"]
-    },
-    {
       "name": "Run Sample 3 Part 2",
       "cmd": ["python", "$file", "-f", "../input/sample3.txt", "-p", "2"]
+    },
+    {
+      "name": "Run Sample 4 Part 2",
+      "cmd": ["python", "$file", "-f", "../input/sample4.txt", "-p", "2"]
+    },
+    {
+      "name": "Run Sample 5 Part 2",
+      "cmd": ["python", "$file", "-f", "../input/sample5.txt", "-p", "2"]
     }
   ]
 }

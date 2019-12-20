@@ -106,6 +106,48 @@ def find_ore_from_fuel(reactions): # pylint: disable=C0116
   (ore_required, _) = create('FUEL', reactions)
   return ore_required
 
+# def destroy(target, reactions, collection=None): # pylint: disable=C0116
+#   if collection is None:
+#     collection = defaultdict(lambda: 0)
+
+#   if target == 'ORE':
+#     collection['ORE'] -= 1
+#     return (1, collection)
+
+#   # Find the reaction that makes target
+#   needed_reaction = None
+#   for reaction in reactions:
+#     if reaction.product.name == target:
+#       needed_reaction = reaction
+#       break
+
+#   if needed_reaction is None:
+#     raise Exception(f'No reaction found to destroy {target}')
+
+#   ore_destroyed = 0
+#   collection[target]
+#   for reactant in needed_reaction.reactants:
+#     while collection[reactant.name] < reactant.amount:
+#       (ore, collection) = destroy(reactant.name, reactions, collection)
+#       ore_destroyed += ore
+#     collection[reactant.name] -= reactant.amount
+
+#   collection[target] += needed_reaction.product.amount
+
+def find_fuel_from_ore(reactions): # pylint: disable=C0116
+  total_ore = 0
+  total_fuel = 0
+  collection = defaultdict(lambda: 0)
+  while True:
+    (ore_required, collection) = create('FUEL', reactions, collection)
+    if total_ore + ore_required <= 1000000000000: # One TRILLION Ore!
+      total_ore += ore_required
+      total_fuel += 1
+      print(f'Made {total_fuel} fuel so far with {total_ore} ore!', flush=True)
+    else:
+      # Can't afford more fuel
+      return total_fuel
+
 def main(): # pylint: disable=C0116
   parser = argparse.ArgumentParser()
   parser.add_argument('-f', '--filename', default='../input/sample1.txt')
@@ -116,6 +158,9 @@ def main(): # pylint: disable=C0116
   if args.part == 1:
     ore_needed = find_ore_from_fuel(reactions)
     print(f'{ore_needed} ORE needed for 1 FUEL')
+  elif args.part == 2:
+    fuel_made = find_fuel_from_ore(reactions)
+    print(f'{fuel_made} can be made from 1000000000000 ORE')
 
 if __name__ == "__main__":
   main()
