@@ -1,0 +1,18 @@
+{
+  "folders":
+  [
+    {
+      "name": "Source",
+      "path": ".",
+      "folder_exclude_patterns": [".eggs", ".pytest_cache", ".tox", "*.egg-info", "__pycache__"],
+    }
+  ],
+  "build_systems":
+  [
+    {
+      "name": "Run Tests (Python 3.8)",
+      "cmd": ["tox", "-e", "py38"],
+      "working_dir": "${project_path}"
+    }
+  ]
+}
