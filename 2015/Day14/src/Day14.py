@@ -71,7 +71,7 @@ def main():
   parser.add_argument('-s', '--steps', type=int)
   args = parser.parse_args()
 
-  filename = '../input/Sample.txt'
+  filename = '../input/sample.txt'
   if args.filename:
     filename = args.filename
 

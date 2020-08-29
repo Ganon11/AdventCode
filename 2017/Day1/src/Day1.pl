@@ -5,7 +5,7 @@ my $inputFile;
 if (@ARGV) {
   $inputFile = shift;
 } else {
-  $inputFile = 'Sample1.txt';
+  $inputFile = 'sample1.txt';
 }
 
 open(my $fh, '<', $inputFile) or die "Couldn't open $inputFile: $!";

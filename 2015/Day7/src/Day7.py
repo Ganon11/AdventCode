@@ -94,7 +94,7 @@ def build_circuit1(directions):
   print("Part 2: Wire a has value %d" % a_val)
 
 def main():
-  filename = '../input/Input.txt'
+  filename = '../input/input.txt'
   if len(sys.argv) > 1:
     filename = sys.argv[1]
   f = open(filename, 'r')

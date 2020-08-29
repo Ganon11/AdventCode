@@ -386,12 +386,12 @@ session.txt
 
 # Input files
 input.txt
-Input.txt
+input.txt
 Input*.txt
-Day*Input.txt
+Day*input.txt
 sample.txt
 sample*.txt
-RedditInput.txt
+Redditinput.txt
 
 # Output files
 output.txt

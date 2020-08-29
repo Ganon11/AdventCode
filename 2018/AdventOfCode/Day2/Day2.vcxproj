@@ -173,7 +173,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Input.txt" />
+    <Text Include="input.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AoCHelpers\AoCHelpers.vcxproj">

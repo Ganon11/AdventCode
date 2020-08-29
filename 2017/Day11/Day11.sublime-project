@@ -14,23 +14,23 @@
   [
     {
       "name": "Run with input",
-      "cmd": ["perl", "$file", "../input/Input.txt"]
+      "cmd": ["perl", "$file", "../input/input.txt"]
     },
     {
       "name": "Run with sample 1",
-      "cmd": ["perl", "$file", "../input/Sample1.txt"]
+      "cmd": ["perl", "$file", "../input/sample1.txt"]
     },
     {
       "name": "Run with sample 2",
-      "cmd": ["perl", "$file", "../input/Sample2.txt"]
+      "cmd": ["perl", "$file", "../input/sample2.txt"]
     },
     {
       "name": "Run with sample 3",
-      "cmd": ["perl", "$file", "../input/Sample3.txt"]
+      "cmd": ["perl", "$file", "../input/sample3.txt"]
     },
     {
       "name": "Run with sample 4",
-      "cmd": ["perl", "$file", "../input/Sample4.txt"]
+      "cmd": ["perl", "$file", "../input/sample4.txt"]
     }
   ]
 }

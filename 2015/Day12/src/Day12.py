@@ -30,7 +30,7 @@ def solve_part_2(filename):
   print("Part 2: %d" % add_to_sum.sum)
 
 def main():
-  filename = 'Sample.txt'
+  filename = 'sample.txt'
   if len(sys.argv) > 1:
     filename = sys.argv[1]
   solve_part_1(filename)

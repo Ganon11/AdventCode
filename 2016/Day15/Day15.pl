@@ -17,7 +17,7 @@ sub CapsuleWillFall {
 
 my $inputfile = shift;
 if (!defined($inputfile)) {
-  $inputfile = 'Sample.txt';
+  $inputfile = 'sample.txt';
 }
 
 my @discs;

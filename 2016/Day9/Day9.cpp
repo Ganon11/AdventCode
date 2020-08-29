@@ -72,7 +72,7 @@ int wmain(int argc, wchar_t *argv[]) {
       inputFile = argv[1];
    }
    else {
-      inputFile = L"Sample2.txt";
+      inputFile = L"sample2.txt";
    }
 
    std::wstring compressedText{ GetCompressedString(inputFile) };
