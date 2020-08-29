@@ -171,8 +171,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Input.txt" />
-    <Text Include="Sample.txt" />
+    <Text Include="input.txt" />
+    <Text Include="sample.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AoCHelpers\AoCHelpers.vcxproj">

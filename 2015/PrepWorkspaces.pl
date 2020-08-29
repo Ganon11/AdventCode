@@ -9,7 +9,7 @@ sub CreatePythonTemplateFile {
 import sys
 
 def main():
-  filename = 'Sample.txt'
+  filename = 'sample.txt'
   if len(sys.argv) > 1:
     filename = sys.argv[1]
 
@@ -31,7 +31,7 @@ sub CreateSourceDirectory {
 sub CreateInputDirectory {
   my $dir = shift;
   mkdir("$dir/input");
-  my @inputFiles = ('Input.txt', 'Sample1.txt', 'Sample2.txt', 'Sample3.txt');
+  my @inputFiles = ('input.txt', 'sample1.txt', 'sample2.txt', 'sample3.txt');
   foreach my $inputFile (@inputFiles) {
     my $path = "$dir/input/$inputFile";
     open(my $fh, '>', $path) or die "Couldn't create $inputFile: $!";
@@ -59,19 +59,19 @@ sub CreateSublimeProjectFile {
   [
     {
       "name": "Run with input",
-      "cmd": ["python", "$file", "../input/Input.txt"]
+      "cmd": ["python", "$file", "../input/input.txt"]
     },
     {
       "name": "Run with sample 1",
-      "cmd": ["python", "$file", "../input/Sample1.txt"]
+      "cmd": ["python", "$file", "../input/sample1.txt"]
     },
     {
       "name": "Run with sample 2",
-      "cmd": ["python", "$file", "../input/Sample2.txt"]
+      "cmd": ["python", "$file", "../input/sample2.txt"]
     },
     {
       "name": "Run with sample 3",
-      "cmd": ["python", "$file", "../input/Sample3.txt"]
+      "cmd": ["python", "$file", "../input/sample3.txt"]
     }
   ]
 }

@@ -35,7 +35,7 @@ sub DoLine {
 my $inputfile = shift;
 
 if (!defined($inputfile)) {
-  $inputfile = 'Sample.txt';
+  $inputfile = 'sample.txt';
 }
 
 open(my $fh, '<', $inputfile) or die "Couldn't open $inputfile: $!";

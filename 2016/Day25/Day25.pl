@@ -6,7 +6,7 @@ use Time::HiRes qw(usleep);
 
 my $inputfile = shift;
 if (!defined($inputfile)) {
-  $inputfile = 'Sample.txt';
+  $inputfile = 'sample.txt';
 }
 
 my $startvalue = 0;
