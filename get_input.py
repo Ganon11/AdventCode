@@ -20,7 +20,7 @@ def create_input_file(year, day, path=None):
 
   dirname = os.path.dirname(path)
   if dirname != '' and not os.path.exists(dirname):
-    os.mkdir(dirname)
+    os.makedirs(dirname)
 
   with open(path, 'w') as file:
     input_request = requests.get(url=url, cookies=cookies)

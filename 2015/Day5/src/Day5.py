@@ -73,7 +73,7 @@ def determine_nice_2(words):
   print("Part 2: Naughty: %d, Nice: %d" % (naughty, nice))
 
 def main():
-  filename = '../input/Input.txt'
+  filename = '../input/input.txt'
   if len(sys.argv) > 1:
     filename = sys.argv[1]
   f = open(filename, 'r')

@@ -40,7 +40,7 @@ int wmain(int argc, wchar_t *argv[]) {
       inputFile = argv[1];
    }
    else {
-      inputFile = L"Input.txt";
+      inputFile = L"input.txt";
    }
 
    InstructionList instructions = ParseInstructions(inputFile);
