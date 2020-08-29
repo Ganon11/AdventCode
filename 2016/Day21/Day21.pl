@@ -80,7 +80,7 @@ if (!defined($password)) {
 
 my $inputfile = shift;
 if (!defined($inputfile)) {
-  $inputfile = 'Sample.txt';
+  $inputfile = 'sample.txt';
 }
 
 print "Original: $password\n";

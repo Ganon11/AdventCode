@@ -23,7 +23,7 @@ sub CalculateChecksum {
 
 my $inputfile = shift;
 if (!defined($inputfile)) {
-  $inputfile = 'Sample1.txt';
+  $inputfile = 'sample1.txt';
 }
 
 open(my $fh, '<', $inputfile) or die "Could not open $inputfile: $!";

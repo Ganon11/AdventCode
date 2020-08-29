@@ -14,7 +14,7 @@
   [
     {
       "name": "Run with input",
-      "cmd": ["perl", "$file", "../input/Input.txt"]
+      "cmd": ["perl", "$file", "../input/input.txt"]
     }
   ]
 }

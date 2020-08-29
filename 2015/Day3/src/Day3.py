@@ -63,7 +63,7 @@ def do_part2(directions):
   print("Part 2: Unique: " + str(gib_present.unique) + ", Total: " + str(gib_present.total))
 
 def main():
-  filename = '../input/Input.txt'
+  filename = '../input/input.txt'
   if len(sys.argv) > 1:
     filename = sys.argv[1]
   f = open(filename, 'r')

@@ -147,7 +147,7 @@ my $inputFile;
 if (scalar(@ARGV) > 0) {
   $inputFile = shift @ARGV;
 } else {
-  $inputFile = '../input/Input.txt';
+  $inputFile = '../input/input.txt';
 }
 
 open(my $fh, "<", $inputFile) or die "Couldn't open $inputFile: $!";

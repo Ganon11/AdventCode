@@ -72,7 +72,7 @@ def find_optimal_seating_arrangement(people, edges):
   print("Optimal seating arrangement found: %s = %d" % (bestpath, pathcosts[bestpath]))
 
 def main():
-  filename = 'Sample.txt'
+  filename = 'sample.txt'
   if len(sys.argv) > 1:
     filename = sys.argv[1]
 
