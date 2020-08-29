@@ -117,7 +117,7 @@ def part2(directions):
   print("Part 2: Total brightness %d" % sum_brightness(lights))
 
 def main():
-  filename = '../input/Input.txt'
+  filename = '../input/input.txt'
   if len(sys.argv) > 1:
     filename = sys.argv[1]
   f = open(filename, 'r')

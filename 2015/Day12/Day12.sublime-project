@@ -8,21 +8,17 @@
     {
       "path": "input",
       "name": "Input files"
-    },
-    {
-      "path": ".",
-      "name": "Project"
     }
   ],
   "build_systems":
   [
     {
       "name": "Run with input",
-      "cmd": ["python", "$file", "../input/Input.txt"]
+      "cmd": ["python", "$file", "../input/input.txt"]
     },
     {
       "name": "Run with sample",
-      "cmd": ["python", "$file", "../input/Sample.txt"]
+      "cmd": ["python", "$file", "../input/sample.txt"]
     }
   ]
 }

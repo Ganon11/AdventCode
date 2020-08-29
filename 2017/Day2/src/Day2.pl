@@ -32,7 +32,7 @@ my $inputFile;
 if (scalar(@ARGV) > 0) {
   $inputFile = $ARGV[0];
 } else {
-  $inputFile = 'Sample.txt';
+  $inputFile = 'sample.txt';
 }
 
 open(my $fh, "<", $inputFile) or die "Couldn't open $inputFile: $!";

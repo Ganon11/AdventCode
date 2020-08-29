@@ -4,7 +4,7 @@ use List::Util qw(max min);
 use Data::Dumper;
 
 my $inputfile = shift;
-$inputfile = 'Sample.txt' if not defined($inputfile);
+$inputfile = 'sample.txt' if not defined($inputfile);
 open(my $fh, '<', $inputfile) or die "Couldn't open $inputfile: $!";
 my @lines = <$fh>;
 close($fh);

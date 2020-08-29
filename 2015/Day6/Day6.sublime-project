@@ -14,19 +14,19 @@
   [
     {
       "name": "Run with input",
-      "cmd": ["python", "$file", "../input/Input.txt"]
+      "cmd": ["python", "$file", "../input/input.txt"]
     },
     {
       "name": "Run with sample 1",
-      "cmd": ["python", "$file", "../input/Sample1.txt"]
+      "cmd": ["python", "$file", "../input/sample1.txt"]
     },
     {
       "name": "Run with sample 2",
-      "cmd": ["python", "$file", "../input/Sample2.txt"]
+      "cmd": ["python", "$file", "../input/sample2.txt"]
     },
     {
       "name": "Run with sample 3",
-      "cmd": ["python", "$file", "../input/Sample3.txt"]
+      "cmd": ["python", "$file", "../input/sample3.txt"]
     }
   ]
 }
