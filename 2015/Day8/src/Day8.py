@@ -45,7 +45,7 @@ def encode_strings(strings):
   print("Part 2: Difference: %d" % total_diff)
 
 def main():
-  filename = '../input/Input.txt'
+  filename = '../input/input.txt'
   if len(sys.argv) > 1:
     filename = sys.argv[1]
   f = open(filename, 'r')

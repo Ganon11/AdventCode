@@ -14,67 +14,67 @@
   [
     {
       "name": "Run with input",
-      "cmd": ["perl", "$file", "../input/Input.txt"]
+      "cmd": ["perl", "$file", "../input/input.txt"]
     },
     {
       "name": "Run with sample 1",
-      "cmd": ["perl", "$file", "../input/Sample1.txt"]
+      "cmd": ["perl", "$file", "../input/sample1.txt"]
     },
     {
       "name": "Run with sample 2",
-      "cmd": ["perl", "$file", "../input/Sample2.txt"]
+      "cmd": ["perl", "$file", "../input/sample2.txt"]
     },
     {
       "name": "Run with sample 3",
-      "cmd": ["perl", "$file", "../input/Sample3.txt"]
+      "cmd": ["perl", "$file", "../input/sample3.txt"]
     },
     {
       "name": "Run with sample 4",
-      "cmd": ["perl", "$file", "../input/Sample4.txt"]
+      "cmd": ["perl", "$file", "../input/sample4.txt"]
     },
     {
       "name": "Run with sample 5",
-      "cmd": ["perl", "$file", "../input/Sample5.txt"]
+      "cmd": ["perl", "$file", "../input/sample5.txt"]
     },
     {
       "name": "Run with sample 6",
-      "cmd": ["perl", "$file", "../input/Sample6.txt"]
+      "cmd": ["perl", "$file", "../input/sample6.txt"]
     },
     {
       "name": "Run with sample 7",
-      "cmd": ["perl", "$file", "../input/Sample7.txt"]
+      "cmd": ["perl", "$file", "../input/sample7.txt"]
     },
     {
       "name": "Run with sample 8",
-      "cmd": ["perl", "$file", "../input/Sample8.txt"]
+      "cmd": ["perl", "$file", "../input/sample8.txt"]
     },
     {
       "name": "Run with sample 9",
-      "cmd": ["perl", "$file", "../input/Sample9.txt"]
+      "cmd": ["perl", "$file", "../input/sample9.txt"]
     },
     {
       "name": "Run with sample 10",
-      "cmd": ["perl", "$file", "../input/Sample10.txt"]
+      "cmd": ["perl", "$file", "../input/sample10.txt"]
     },
     {
       "name": "Run with sample 11",
-      "cmd": ["perl", "$file", "../input/Sample11.txt"]
+      "cmd": ["perl", "$file", "../input/sample11.txt"]
     },
     {
       "name": "Run with sample 12",
-      "cmd": ["perl", "$file", "../input/Sample12.txt"]
+      "cmd": ["perl", "$file", "../input/sample12.txt"]
     },
     {
       "name": "Run with sample 13",
-      "cmd": ["perl", "$file", "../input/Sample13.txt"]
+      "cmd": ["perl", "$file", "../input/sample13.txt"]
     },
     {
       "name": "Run with sample 14",
-      "cmd": ["perl", "$file", "../input/Sample14.txt"]
+      "cmd": ["perl", "$file", "../input/sample14.txt"]
     },
     {
       "name": "Run with sample 15",
-      "cmd": ["perl", "$file", "../input/Sample15.txt"]
+      "cmd": ["perl", "$file", "../input/sample15.txt"]
     }
   ]
 }

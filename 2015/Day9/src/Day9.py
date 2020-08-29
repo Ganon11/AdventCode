@@ -77,7 +77,7 @@ def main(filename):
   print("Worst path found: %s = %d" % (worstpath, pathcosts[worstpath]))
 
 if __name__ == "__main__":
-  filename = '../input/Input.txt'
+  filename = '../input/input.txt'
   if len(sys.argv) > 1:
     filename = sys.argv[1]
   main(filename)

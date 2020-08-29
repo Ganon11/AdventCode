@@ -7,7 +7,7 @@ FOR /l %%d IN (1, 1, 25) DO (
     IF %%d EQU 14 (
       SET _command_to_run=Day%%d\Win32\Release\Day%%d.exe
     ) ELSE (
-      SET _command_to_run=Day%%d\Win32\Release\Day%%d.exe -filename Day%%d\Input.txt
+      SET _command_to_run=Day%%d\Win32\Release\Day%%d.exe -filename Day%%d\input.txt
     )
     !_command_to_run!
   )

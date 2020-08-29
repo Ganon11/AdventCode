@@ -14,11 +14,11 @@
   [
     {
       "name": "Run with input",
-      "cmd": ["perl", "$file", "../input/Input.txt"]
+      "cmd": ["perl", "$file", "../input/input.txt"]
     },
     {
       "name": "Run with sample",
-      "cmd": ["perl", "$file", "../input/Sample.txt"]
+      "cmd": ["perl", "$file", "../input/sample.txt"]
     }
   ]
 }

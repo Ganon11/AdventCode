@@ -2,7 +2,7 @@ use strict;
 use warnings;
 
 my @nodes;
-open(my $fh, '<', 'Input.txt');
+open(my $fh, '<', 'input.txt');
 foreach my $line (<$fh>) {
   $line =~ s/\R//g;
   if ($line =~ m/^\/dev\/grid\/node-x(\d+)-y(\d+)\s+(\d+)T\s+(\d+)T\s+(\d+)T\s+(\d+)%$/) {
