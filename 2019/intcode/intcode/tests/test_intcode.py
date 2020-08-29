@@ -250,7 +250,7 @@ def test_increased_available_memory(): # pylint: disable=C0116
   assert program.instruction_pointer == 4
   assert program.has_halted
 
-def test_reddit(): # pylint: disable=C-116
+def test_reddit(): # pylint: disable=C0116
   program = intcode.IntCodeProgram([109, 1, 203, 2, 204, 2, 99])
   program.provide_input(77)
   program.execute()

@@ -11,7 +11,8 @@ class Position:
 
   def distance(self, other=None):
     """
-    Returns the Manhattan Distance (change in X plus change in Y plus change in Z) from this point to other.
+    Returns the Manhattan Distance (change in X plus change in Y plus change in Z) from this point
+    to other.
 
     If other is not provided, the origin (0, 0, 0) is used.
     """
