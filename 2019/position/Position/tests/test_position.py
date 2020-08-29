@@ -2,12 +2,12 @@ import position
 
 def test_comparisons_with_self():
   o = position.Position()
-  assert o == o
-  assert o <= o
-  assert o >= o
-  assert not o < o
-  assert not o > o
-  assert not o != o
+  assert o == o # pylint: disable=R0124
+  assert o <= o # pylint: disable=R0124
+  assert o >= o # pylint: disable=R0124
+  assert not o < o # pylint: disable=R0124,C0113
+  assert not o > o # pylint: disable=R0124,C0113
+  assert not o != o # pylint: disable=R0124,C0113
 
 def test_comparisons():
   o = position.Position()
@@ -15,9 +15,9 @@ def test_comparisons():
   assert o < p
   assert o <= p
   assert o != p
-  assert not o > p
-  assert not o >= p
-  assert not o == p
+  assert not o > p # pylint: disable=R0124,C0113
+  assert not o >= p # pylint: disable=R0124,C0113
+  assert not o == p # pylint: disable=R0124,C0113
 
 def test_default_constructor():
   o = position.Position()
