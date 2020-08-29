@@ -6,7 +6,7 @@ import argparse
 import os
 import requests
 
-def create_input_file(year, day, path):
+def create_input_file(year, day, path=None):
   """Fetches my input from Advent of Code."""
   daystr = 'Day' + str(day)
   url = 'https://adventofcode.com/' + str(year) + '/day/' + str(day) + '/input'
@@ -34,7 +34,11 @@ def main():
   parser.add_argument('--path', '-p', type=str)
   args = parser.parse_args()
 
-  create_input_file(args.year, args.day, args.path)
+  if args.day is None:
+    for day in range(25):
+      create_input_file(args.year, day + 1)
+  else:
+    create_input_file(args.year, args.day, args.path)
 
 if __name__ == "__main__":
   main()
