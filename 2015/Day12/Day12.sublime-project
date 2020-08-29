@@ -8,10 +8,6 @@
     {
       "path": "input",
       "name": "Input files"
-    },
-    {
-      "path": ".",
-      "name": "Project"
     }
   ],
   "build_systems":
