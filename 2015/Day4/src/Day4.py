@@ -17,7 +17,8 @@ def check_for_prefix(secret_key, prefix, hint=1):
 def main():
   secret_key = 'yzbqklnj'
   if len(sys.argv) > 1:
-    secret_key = sys.argv[1]
+    with open(sys.argv[1], 'r') as f:
+      secret_key = f.read()
 
   hint = check_for_prefix(secret_key, '00000')
   check_for_prefix(secret_key, '000000', hint)

@@ -178,7 +178,7 @@ sub Move {
 
 my $inputfile = shift;
 if (!defined($inputfile)) {
-  $inputfile = 'Input.txt';
+  $inputfile = 'input.txt';
 }
 
 open(my $fh, '<', $inputfile) or die "Couldn't open input file $inputfile: $!";

@@ -76,7 +76,7 @@ sub PrintScreen {
 
 my $inputfile = shift;
 if (!defined($inputfile)) {
-  $inputfile = 'Sample.txt';
+  $inputfile = 'sample.txt';
 }
 
 my @screen;
