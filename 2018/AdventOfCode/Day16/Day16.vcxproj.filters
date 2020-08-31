@@ -28,10 +28,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Input.txt">
+    <Text Include="input.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="Sample.txt">
+    <Text Include="sample.txt">
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>

@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
   name="position-Ganon11",
-  version="1.0.0",
+  version="2.0.0",
   author="Ganon11",
   author_email="stark3@gmail.com",
   description="A library for tracking positions on a 2D coordinate system",

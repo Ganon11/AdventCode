@@ -13,7 +13,7 @@ my $inputFile;
 if (scalar(@ARGV) > 0) {
   $inputFile = shift @ARGV;
 } else {
-  $inputFile = '../input/Input.txt';
+  $inputFile = '../input/input.txt';
 }
 
 open(my $fh, "<", $inputFile) or die "Couldn't open $inputFile: $!";
@@ -37,7 +37,7 @@ sub CreateSourceDirectory {
 sub CreateInputDirectory {
   my $dir = shift;
   mkdir("$dir/input");
-  my @inputFiles = ('Input.txt', 'Sample1.txt', 'Sample2.txt', 'Sample3.txt');
+  my @inputFiles = ('input.txt', 'sample1.txt', 'sample2.txt', 'sample3.txt');
   foreach my $inputFile (@inputFiles) {
     my $path = "$dir/input/$inputFile";
     open(my $fh, '>', $path) or die "Couldn't create $inputFile: $!";
@@ -65,19 +65,19 @@ sub CreateSublimeProjectFile {
   [
     {
       "name": "Run with input",
-      "cmd": ["perl", "$file", "../input/Input.txt"]
+      "cmd": ["perl", "$file", "../input/input.txt"]
     },
     {
       "name": "Run with sample 1",
-      "cmd": ["perl", "$file", "../input/Sample1.txt"]
+      "cmd": ["perl", "$file", "../input/sample1.txt"]
     },
     {
       "name": "Run with sample 2",
-      "cmd": ["perl", "$file", "../input/Sample2.txt"]
+      "cmd": ["perl", "$file", "../input/sample2.txt"]
     },
     {
       "name": "Run with sample 3",
-      "cmd": ["perl", "$file", "../input/Sample3.txt"]
+      "cmd": ["perl", "$file", "../input/sample3.txt"]
     }
   ]
 }

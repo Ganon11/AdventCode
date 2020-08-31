@@ -153,10 +153,10 @@ def get_grid(filename):
 
 def main():
   parser = argparse.ArgumentParser()
-  parser.add_argument('-f', '--filename', type=str, default='Sample.txt')
+  parser.add_argument('-f', '--filename', type=str, default='sample.txt')
   args = parser.parse_args()
 
-  grid = get_grid(args.filename or 'Sample.txt')
+  grid = get_grid(args.filename or 'sample.txt')
   print(grid)
   (path, cost) = grid.find_best_permutation()
   print("Path: %s, cost %d" % (path, cost))

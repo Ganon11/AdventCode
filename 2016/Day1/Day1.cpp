@@ -41,7 +41,7 @@ int wmain(int argc, wchar_t *argv[]) {
       inputFile = argv[1];
    }
    else {
-      inputFile = L"Day1Input.txt";
+      inputFile = L"Day1input.txt";
    }
 
    auto instructions = ParseInstructions(inputFile);

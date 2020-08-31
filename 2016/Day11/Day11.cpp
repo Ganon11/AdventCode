@@ -115,7 +115,7 @@ int wmain(int argc, wchar_t *argv[]) {
       inputFile = argv[1];
    }
    else {
-      inputFile = L"Sample.txt";
+      inputFile = L"sample.txt";
    }
 
    //FloorState initialFloors = ConstructFloors(inputFile);
