@@ -12,12 +12,156 @@ def test_comparisons_with_self():
 def test_comparisons():
   o = position.Position()
   p = position.Position(1, 2, 3)
+
   assert o < p
+  assert p > o
+
   assert o <= p
+  assert p >= o
+
   assert o != p
+  assert p != o
+
   assert not o > p # pylint: disable=R0124,C0113
+  assert not p < o # pylint: disable=R0124,C0113
+
   assert not o >= p # pylint: disable=R0124,C0113
+  assert not p <= o # pylint: disable=R0124,C0113
+
   assert not o == p # pylint: disable=R0124,C0113
+  assert not p == o # pylint: disable=R0124,C0113
+
+def test_x_comparisons():
+  o = position.Position(0, 0, 0)
+  p = position.Position(1, 0, 0)
+
+  assert o < p
+  assert p > o
+
+  assert o <= p
+  assert p >= o
+
+  assert o != p
+  assert p != o
+
+  assert not o > p # pylint: disable=R0124,C0113
+  assert not p < o # pylint: disable=R0124,C0113
+
+  assert not o >= p # pylint: disable=R0124,C0113
+  assert not p <= o # pylint: disable=R0124,C0113
+
+  assert not o == p # pylint: disable=R0124,C0113
+  assert not p == o # pylint: disable=R0124,C0113
+
+def test_y_comparisons():
+  o = position.Position(0, 0, 0)
+  p = position.Position(0, 1, 0)
+
+  assert o < p
+  assert p > o
+
+  assert o <= p
+  assert p >= o
+
+  assert o != p
+  assert p != o
+
+  assert not o > p # pylint: disable=R0124,C0113
+  assert not p < o # pylint: disable=R0124,C0113
+
+  assert not o >= p # pylint: disable=R0124,C0113
+  assert not p <= o # pylint: disable=R0124,C0113
+
+  assert not o == p # pylint: disable=R0124,C0113
+  assert not p == o # pylint: disable=R0124,C0113
+
+def test_z_comparisons():
+  o = position.Position(0, 0, 0)
+  p = position.Position(0, 0, 1)
+
+  assert o < p
+  assert p > o
+
+  assert o <= p
+  assert p >= o
+
+  assert o != p
+  assert p != o
+
+  assert not o > p # pylint: disable=R0124,C0113
+  assert not p < o # pylint: disable=R0124,C0113
+
+  assert not o >= p # pylint: disable=R0124,C0113
+  assert not p <= o # pylint: disable=R0124,C0113
+
+  assert not o == p # pylint: disable=R0124,C0113
+  assert not p == o # pylint: disable=R0124,C0113
+
+def test_z_trumps_x_in_comparisons():
+  o = position.Position(0, 0, 0)
+  p = position.Position(-1, 0, 1)
+
+  assert o < p
+  assert p > o
+
+  assert o <= p
+  assert p >= o
+
+  assert o != p
+  assert p != o
+
+  assert not o > p # pylint: disable=R0124,C0113
+  assert not p < o # pylint: disable=R0124,C0113
+
+  assert not o >= p # pylint: disable=R0124,C0113
+  assert not p <= o # pylint: disable=R0124,C0113
+
+  assert not o == p # pylint: disable=R0124,C0113
+  assert not p == o # pylint: disable=R0124,C0113
+
+def test_y_trumps_x_in_comparisons():
+  o = position.Position(0, 0, 0)
+  p = position.Position(0, -1, 1)
+
+  assert o < p
+  assert p > o
+
+  assert o <= p
+  assert p >= o
+
+  assert o != p
+  assert p != o
+
+  assert not o > p # pylint: disable=R0124,C0113
+  assert not p < o # pylint: disable=R0124,C0113
+
+  assert not o >= p # pylint: disable=R0124,C0113
+  assert not p <= o # pylint: disable=R0124,C0113
+
+  assert not o == p # pylint: disable=R0124,C0113
+  assert not p == o # pylint: disable=R0124,C0113
+
+def test_z_trumps_y_in_comparisons():
+  o = position.Position(0, 0, 0)
+  p = position.Position(-1, 1, 0)
+
+  assert o < p
+  assert p > o
+
+  assert o <= p
+  assert p >= o
+
+  assert o != p
+  assert p != o
+
+  assert not o > p # pylint: disable=R0124,C0113
+  assert not p < o # pylint: disable=R0124,C0113
+
+  assert not o >= p # pylint: disable=R0124,C0113
+  assert not p <= o # pylint: disable=R0124,C0113
+
+  assert not o == p # pylint: disable=R0124,C0113
+  assert not p == o # pylint: disable=R0124,C0113
 
 def test_default_constructor():
   o = position.Position()
@@ -128,6 +272,20 @@ def test_north_west():
   wn = o.west().north()
   assert nw == wn
 
+def test_north_up():
+  o = position.Position()
+  nu = o.north().up()
+  assert nu.x == 0 and nu.y == 1 and nu.z == 1
+  un = o.up().north()
+  assert nu == un
+
+def test_north_down():
+  o = position.Position()
+  nd = o.north().down()
+  assert nd.x == 0 and nd.y == 1 and nd.z == -1
+  dn = o.down().north()
+  assert nd == dn
+
 def test_south_east():
   o = position.Position()
   se = o.south().east()
@@ -141,6 +299,48 @@ def test_south_west():
   assert sw.x == -1 and sw.y == -1 and sw.z == 0
   ws = o.west().south()
   assert sw == ws
+
+def test_south_up():
+  o = position.Position()
+  su = o.south().up()
+  assert su.x == 0 and su.y == -1 and su.z == 1
+  us = o.up().south()
+  assert su == us
+
+def test_south_down():
+  o = position.Position()
+  sd = o.south().down()
+  assert sd.x == 0 and sd.y == -1 and sd.z == -1
+  ds = o.down().south()
+  assert sd == ds
+
+def test_east_up():
+  o = position.Position()
+  eu = o.east().up()
+  assert eu.x == 1 and eu.y == 0 and eu.z == 1
+  ue = o.up().east()
+  assert eu == ue
+
+def test_east_down():
+  o = position.Position()
+  ed = o.east().down()
+  assert ed.x == 1 and ed.y == 0 and ed.z == -1
+  de = o.down().east()
+  assert ed == de
+
+def test_west_up():
+  o = position.Position()
+  wu = o.west().up()
+  assert wu.x == -1 and wu.y == 0 and wu.z == 1
+  uw = o.up().west()
+  assert wu == uw
+
+def test_west_down():
+  o = position.Position()
+  wd = o.west().down()
+  assert wd.x == -1 and wd.y == 0 and wd.z == -1
+  dw = o.down().west()
+  assert wd == dw
 
 def test_adjacency():
   o = position.Position()
