@@ -1,5 +1,5 @@
 """
-Scaffolds a 2019 Advent of Code day.
+Scaffolds an Advent of Code day.
 """
 
 import argparse
@@ -7,9 +7,9 @@ import os
 import shutil
 import requests
 
-def create_sublime_project(daystr):
+def create_sublime_project(basedir, daystr):
   """Creates a skeleton sublime project."""
-  with open(os.path.join(daystr, daystr + '.sublime-project'), 'w') as file:
+  with open(os.path.join(basedir, daystr + '.sublime-project'), 'w') as file:
     file.write("""{
   "folders":
   [
@@ -59,10 +59,10 @@ def create_sublime_project(daystr):
   ]
 }""")
 
-def create_src_file(daystr):
+def create_src_file(basedir, daystr):
   """Creates a skeleton python file."""
-  os.mkdir(os.path.join(daystr, 'src'))
-  with open(os.path.join(daystr, 'src', daystr + '.py'), 'w') as file:
+  os.mkdir(os.path.join(basedir, 'src'))
+  with open(os.path.join(basedir, 'src', daystr + '.py'), 'w') as file:
     file.write("""import argparse
 
 def main():
@@ -75,40 +75,43 @@ if __name__ == "__main__":
   main()
 """)
 
-def create_input_file(daystr, day):
+def create_input_file(basedir, day, year):
   """Fetches my input from Advent of Code."""
-  os.mkdir(os.path.join(daystr, 'input'))
-  url = 'https://adventofcode.com/2019/day/' + str(day) + '/input'
+  os.mkdir(os.path.join(basedir, 'input'))
+  url = 'https://adventofcode.com/' + str(year) + '/day/' + str(day) + '/input'
   cookies = dict()
   with open('session.txt', 'r') as file:
     cookies['session'] = file.read()
 
-  with open(os.path.join(daystr, 'input', 'input.txt'), 'w') as file:
+  with open(os.path.join(basedir, 'input', 'input.txt'), 'w') as file:
     input_request = requests.get(url=url, cookies=cookies)
     file.write(input_request.text)
 
 def main():
-  """Scaffolds a 2019 AoC day."""
+  """Scaffolds an AoC day."""
   parser = argparse.ArgumentParser()
   parser.add_argument('day', type=int)
   parser.add_argument('-d', '--delete', action='store_true')
+  parser.add_argument('year', type=int)
   args = parser.parse_args()
 
+  yearstr = str(args.year)
   daystr = 'Day' + str(args.day)
+  basedir = os.path.join(yearstr, daystr)
 
   if args.delete:
-    if not os.path.exists(daystr):
-      print(f'{daystr} does not exist.')
+    if not os.path.exists(basedir):
+      print(f'{basedir} does not exist.')
     else:
-      shutil.rmtree(daystr)
+      shutil.rmtree(basedir)
   else:
-    if os.path.exists(daystr):
-      print(f'{daystr} already exists.')
+    if os.path.exists(basedir):
+      print(f'{basedir} already exists.')
     else:
-      os.mkdir(daystr)
-      create_sublime_project(daystr)
-      create_src_file(daystr)
-      create_input_file(daystr, args.day)
+      os.mkdir(basedir)
+      create_sublime_project(basedir, daystr)
+      create_src_file(basedir, daystr)
+      create_input_file(basedir, args.day, args.year)
 
 if __name__ == "__main__":
   main()
