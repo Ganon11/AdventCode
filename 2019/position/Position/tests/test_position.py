@@ -386,3 +386,30 @@ def test_add():
   assert result1.x == 4
   assert result1.y == 6
   assert result1.z == 8
+
+def test_real_distance_from_origin():
+  position1 = position.Position(1, 0, 0)
+  position2 = position.Position(0, 1, 0)
+  position3 = position.Position(0, 0, 1)
+
+  distance1 = position1.real_distance()
+  assert distance1 == 1
+
+  distance2 = position2.real_distance()
+  assert distance2 == 1
+
+  distance3 = position3.real_distance()
+  assert distance3 == 1
+
+  position4 = position.Position(3, 4, 0)
+  distance4 = position4.real_distance()
+  assert distance4 == 5
+
+def test_real_distance_from_two_points():
+  position1 = position.Position(1, 2, 3)
+  position2 = position.Position(4, -2, 3)
+  distance1 = position1.real_distance(position2)
+  distance2 = position2.real_distance(position1)
+
+  assert distance1 == distance2
+  assert distance1 == 5
