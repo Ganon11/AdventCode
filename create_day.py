@@ -33,6 +33,14 @@ def create_sublime_project(basedir, daystr):
       "cmd": ["python", "$file", "-f", "../input/input.txt", "-p", "2"]
     },
     {
+      "name": "Ruby Run Part 1",
+      "cmd": ["ruby", "$file", "-f", "../input/input.txt", "-p", "1"]
+    },
+    {
+      "name": "Ruby Run Part 2",
+      "cmd": ["ruby", "$file", "-f", "../input/input.txt", "-p", "2"]
+    },
+    {
       "name": "Run Sample 1 Part 1",
       "cmd": ["python", "$file", "-f", "../input/sample1.txt", "-p", "1"]
     },
@@ -56,12 +64,40 @@ def create_sublime_project(basedir, daystr):
       "name": "Run Sample 3 Part 2",
       "cmd": ["python", "$file", "-f", "../input/sample3.txt", "-p", "2"]
     }
+    {
+      "name": "Ruby Run Sample 1 Part 1",
+      "cmd": ["ruby", "$file", "-f", "../input/sample1.txt", "-p", "1"]
+    },
+    {
+      "name": "Ruby Run Sample 2 Part 1",
+      "cmd": ["ruby", "$file", "-f", "../input/sample2.txt", "-p", "1"]
+    },
+    {
+      "name": "Ruby Run Sample 3 Part 1",
+      "cmd": ["ruby", "$file", "-f", "../input/sample3.txt", "-p", "1"]
+    },
+    {
+      "name": "Ruby Run Sample 1 Part 2",
+      "cmd": ["ruby", "$file", "-f", "../input/sample1.txt", "-p", "2"]
+    },
+    {
+      "name": "Ruby Run Sample 2 Part 2",
+      "cmd": ["ruby", "$file", "-f", "../input/sample2.txt", "-p", "2"]
+    },
+    {
+      "name": "Ruby Run Sample 3 Part 2",
+      "cmd": ["ruby", "$file", "-f", "../input/sample3.txt", "-p", "2"]
+    }
   ]
 }""")
 
-def create_src_file(basedir, daystr):
-  """Creates a skeleton python file."""
+def create_src_dir(basedir, daystr):
   os.mkdir(os.path.join(basedir, 'src'))
+  create_python_src_file(basedir, daystr)
+  create_ruby_src_file(basedir, daystr)
+
+def create_python_src_file(basedir, daystr):
+  """Creates a skeleton python file."""
   with open(os.path.join(basedir, 'src', daystr + '.py'), 'w') as file:
     file.write("""import argparse
 
@@ -73,6 +109,37 @@ def main():
 
 if __name__ == "__main__":
   main()
+""")
+
+def create_ruby_src_file(basedir, daystr):
+  """Creates a skeleton python file."""
+  with open(os.path.join(basedir, 'src', daystr + '.rb'), 'w') as file:
+    file.write("""#!/usr/bin/ruby
+
+require 'optparse'
+
+options = {
+  :part => 1,
+  :filename => "../input/sample.txt"
+}
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: Day1.rb [options]"
+
+  opts.on("-p PART", "--part=PART", Integer, "Part 1 or 2") do |p|
+    options[:part] = p
+  end
+
+  opts.on("-f FILENAME", "--filename=FILENAME", String, "Which filename to use?") do |f|
+    options[:filename] = f
+  end
+end.parse!
+
+if options[:part] == 1
+  # do part 1
+elsif options[:part] == 2
+  # do part 2
+end
 """)
 
 def create_input_file(basedir, day, year):
@@ -110,7 +177,7 @@ def main():
     else:
       os.mkdir(basedir)
       create_sublime_project(basedir, daystr)
-      create_src_file(basedir, daystr)
+      create_src_dir(basedir, daystr)
       create_input_file(basedir, args.day, args.year)
 
 if __name__ == "__main__":
