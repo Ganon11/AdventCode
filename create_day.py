@@ -114,26 +114,20 @@ if __name__ == "__main__":
 def create_ruby_src_file(basedir, daystr):
   """Creates a skeleton python file."""
   with open(os.path.join(basedir, 'src', daystr + '.rb'), 'w') as file:
-    file.write("""#!/usr/bin/ruby
+    file.write(f"""#!/usr/bin/ruby
 
 require 'optparse'
 
-options = {
+options = {{
   :part => 1,
   :filename => "../input/sample.txt"
-}
+}}
 
 OptionParser.new do |opts|
-  opts.banner = "Usage: Day1.rb [options]"
-
-  opts.on("-p PART", "--part=PART", Integer, "Part 1 or 2") do |p|
-    options[:part] = p
-  end
-
-  opts.on("-f FILENAME", "--filename=FILENAME", String, "Which filename to use?") do |f|
-    options[:filename] = f
-  end
-end.parse!
+  opts.banner = "Usage: {daystr}.rb [options]"
+  opts.on("-p PART", "--part=PART", Integer, "Part 1 or 2")
+  opts.on("-f FILENAME", "--filename=FILENAME", String, "Which filename to use?")
+end.parse!(into: options)
 
 if options[:part] == 1
   # do part 1
