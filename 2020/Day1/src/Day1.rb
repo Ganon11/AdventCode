@@ -1,56 +1,18 @@
 #!/usr/bin/ruby
 
 require 'optparse'
+require 'set'
 
-def part1(expenses)
-  i1 = 0
-  while i1 < (expenses.length - 1) do
-    e1 = expenses[i1].to_i
-
-    i2 = i1 + 1
-    while i2 < expenses.length do
-      e2 = expenses[i2].to_i
-
-      if e1 + e2 == 2020
-        return e1 * e2
-      end
-
-      i2 += 1
-    end
-
-    i1 += 1
-  end
-
-  return -1
+def find_combination_totaling_target(expenses, n, target)
+  return expenses.map(&:to_i).combination(n).find { |combo| combo.reduce(&:+) == target }.reduce(&:*)
 end
 
-def part2(expenses)
-  i1 = 0
-  while i1 < (expenses.length - 2) do
-    e1 = expenses[i1].to_i
+def part1(expenses, target)
+  return find_combination_totaling_target(expenses, 2, target)
+end
 
-    i2 = i1 + 1
-    while i2 < (expenses.length - 1) do
-      e2 = expenses[i2].to_i
-
-      i3 = i2 + 1
-      while i3 < expenses.length do
-        e3 = expenses[i3].to_i
-
-        if e1 + e2 + e3 == 2020
-          return e1 * e2 * e3
-        end
-
-        i3 += 1
-      end
-
-      i2 += 1
-    end
-
-    i1 += 1
-  end
-
-  return -1
+def part2(expenses, target)
+  return find_combination_totaling_target(expenses, 3, target)
 end
 
 options = {
@@ -66,10 +28,11 @@ end.parse!(into: options)
 
 expenses = IO.readlines(options[:filename])
 checksum = -1
+target = 2020
 if options[:part] == 1
-  checksum = part1(expenses)
+  checksum = part1(expenses, target)
 elsif options[:part] == 2
-  checksum = part2(expenses)
+  checksum = part2(expenses, target)
 end
 
 if checksum != -1
