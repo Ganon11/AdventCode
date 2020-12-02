@@ -63,7 +63,7 @@ def create_sublime_project(basedir, daystr):
     {
       "name": "Run Sample 3 Part 2",
       "cmd": ["python", "$file", "-f", "../input/sample3.txt", "-p", "2"]
-    }
+    },
     {
       "name": "Ruby Run Sample 1 Part 1",
       "cmd": ["ruby", "$file", "-f", "../input/sample1.txt", "-p", "1"]
