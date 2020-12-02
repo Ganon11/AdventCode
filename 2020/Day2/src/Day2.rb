@@ -4,7 +4,6 @@ require 'optparse'
 
 class Password
   def initialize(line)
-    @count = -1
     data = line.match(/(?<digit1>\d+)-(?<digit2>\d+) (?<ch>.): (?<pass>.+)/)
     if data
       @password = data[:pass]
@@ -40,12 +39,8 @@ class Password
   end
 
   def is_valid_part_1?
-    if @count == -1
-      @count = 0
-      @password.chars.each {|c| @count += 1 if c == @character}
-    end
-
-    if (@digit1 <= @count) and (@count <= @digit2)
+    count = @password.chars.count {|c| c == @character}
+    if (@digit1 <= count) and (count <= @digit2)
       return true
     end
 
@@ -69,21 +64,15 @@ class Password
 end
 
 def part1(ps_and_ps)
-  count = 0
-  ps_and_ps.each do |p|
-    count += 1 if p.is_valid_part_1?
+  return ps_and_ps.count do |p|
+    p.is_valid_part_1?
   end
-
-  return count
 end
 
 def part2(ps_and_ps)
-  count = 0
-  ps_and_ps.each do |p|
-    count += 1 if p.is_valid_part_2?
+  return ps_and_ps.count do |p|
+    p.is_valid_part_2?
   end
-
-  return count
 end
 
 options = {
@@ -104,10 +93,8 @@ IO.readlines(options[:filename]).each do |line|
 end
 
 if options[:part] == 1
-  # do part 1
   count = part1(@passwords_and_policies)
 elsif options[:part] == 2
-  # do part 2
   count = part2(@passwords_and_policies)
 end
 
