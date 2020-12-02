@@ -29,52 +29,20 @@
       "cmd": ["ruby", "$file", "-f", "../input/input.txt", "-p", "2"]
     },
     {
-      "name": "Run Sample 1 Part 1",
-      "cmd": ["python", "$file", "-f", "../input/sample1.txt", "-p", "1"]
+      "name": "Run Sample Part 1",
+      "cmd": ["python", "$file", "-f", "../input/sample.txt", "-p", "1"]
     },
     {
-      "name": "Run Sample 2 Part 1",
-      "cmd": ["python", "$file", "-f", "../input/sample2.txt", "-p", "1"]
+      "name": "Run Sample Part 2",
+      "cmd": ["python", "$file", "-f", "../input/sample.txt", "-p", "2"]
     },
     {
-      "name": "Run Sample 3 Part 1",
-      "cmd": ["python", "$file", "-f", "../input/sample3.txt", "-p", "1"]
+      "name": "Ruby Run Sample Part 1",
+      "cmd": ["ruby", "$file", "-f", "../input/sample.txt", "-p", "1"]
     },
     {
-      "name": "Run Sample 1 Part 2",
-      "cmd": ["python", "$file", "-f", "../input/sample1.txt", "-p", "2"]
-    },
-    {
-      "name": "Run Sample 2 Part 2",
-      "cmd": ["python", "$file", "-f", "../input/sample2.txt", "-p", "2"]
-    },
-    {
-      "name": "Run Sample 3 Part 2",
-      "cmd": ["python", "$file", "-f", "../input/sample3.txt", "-p", "2"]
-    }
-    {
-      "name": "Ruby Run Sample 1 Part 1",
-      "cmd": ["ruby", "$file", "-f", "../input/sample1.txt", "-p", "1"]
-    },
-    {
-      "name": "Ruby Run Sample 2 Part 1",
-      "cmd": ["ruby", "$file", "-f", "../input/sample2.txt", "-p", "1"]
-    },
-    {
-      "name": "Ruby Run Sample 3 Part 1",
-      "cmd": ["ruby", "$file", "-f", "../input/sample3.txt", "-p", "1"]
-    },
-    {
-      "name": "Ruby Run Sample 1 Part 2",
-      "cmd": ["ruby", "$file", "-f", "../input/sample1.txt", "-p", "2"]
-    },
-    {
-      "name": "Ruby Run Sample 2 Part 2",
-      "cmd": ["ruby", "$file", "-f", "../input/sample2.txt", "-p", "2"]
-    },
-    {
-      "name": "Ruby Run Sample 3 Part 2",
-      "cmd": ["ruby", "$file", "-f", "../input/sample3.txt", "-p", "2"]
+      "name": "Ruby Run Sample Part 2",
+      "cmd": ["ruby", "$file", "-f", "../input/sample.txt", "-p", "2"]
     }
   ]
 }
