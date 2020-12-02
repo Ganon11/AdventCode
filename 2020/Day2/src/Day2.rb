@@ -48,18 +48,8 @@ class Password
   end
 
   def is_valid_part_2?
-    char1 = @password.chars[@digit1 - 1]
-    char2 = @password.chars[@digit2 - 1]
-
-    if char1 == @character and char2 == @character
-      return false
-    elsif char1 == @character
-      return true
-    elsif char2 == @character
-      return true
-    else
-      return false
-    end
+    return (@password.chars[@digit1 - 1] == @character) ^
+      (@password.chars[@digit2 - 1] == @character)
   end
 end
 
