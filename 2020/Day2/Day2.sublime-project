@@ -21,20 +21,20 @@
       "cmd": ["python", "$file", "-f", "../input/input.txt", "-p", "2"]
     },
     {
-      "name": "Run Sample Part 1",
-      "cmd": ["python", "$file", "-f", "../input/sample.txt", "-p", "1"]
-    },
-    {
-      "name": "Run Sample Part 2",
-      "cmd": ["python", "$file", "-f", "../input/sample.txt", "-p", "2"]
-    },
-    {
       "name": "Ruby Run Part 1",
       "cmd": ["ruby", "$file", "-f", "../input/input.txt", "-p", "1"]
     },
     {
       "name": "Ruby Run Part 2",
       "cmd": ["ruby", "$file", "-f", "../input/input.txt", "-p", "2"]
+    },
+    {
+      "name": "Run Sample Part 1",
+      "cmd": ["python", "$file", "-f", "../input/sample.txt", "-p", "1"]
+    },
+    {
+      "name": "Run Sample Part 2",
+      "cmd": ["python", "$file", "-f", "../input/sample.txt", "-p", "2"]
     },
     {
       "name": "Ruby Run Sample Part 1",
