@@ -1,5 +1,6 @@
 """Represents simple points in 3D space."""
 
+import math
 import re
 
 class Position:
@@ -27,6 +28,22 @@ class Position:
       return NotImplemented
 
     return abs(self.x - other.x) + abs(self.y - other.y) + abs(self.z - other.z)
+
+  def real_distance(self, other=None):
+    """
+    Returns the real distance from this point to other. If other is not provided, the origin is
+    used.
+    """
+    if other is None:
+      other = Position()
+
+    if not self._is_valid_operand(other):
+      return NotImplemented
+
+    delta_x = abs(self.x - other.x)
+    delta_y = abs(self.y - other.y)
+    delta_z = abs(self.z - other.z)
+    return math.sqrt(delta_x ** 2 + delta_y ** 2 + delta_z ** 2)
 
   def is_adjacent_to(self, other):
     """
