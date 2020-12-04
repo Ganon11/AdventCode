@@ -7,7 +7,7 @@ import os
 import shutil
 import requests
 
-def create_sublime_project(basedir, daystr):
+def create_sublime_project(basedir, daystr, args):
   """Creates a skeleton sublime project."""
   with open(os.path.join(basedir, daystr + '.sublime-project'), 'w') as file:
     file.write("""{
@@ -23,78 +23,87 @@ def create_sublime_project(basedir, daystr):
     }
   ],
   "build_systems":
-  [
+  [""")
+    if args.python:
+      file.write("""
     {
-      "name": "Run Part 1",
+      "name": "Run Python Part 1",
       "cmd": ["python", "$file", "-f", "../input/input.txt", "-p", "1"]
     },
     {
-      "name": "Run Part 2",
+      "name": "Run Python Part 2",
       "cmd": ["python", "$file", "-f", "../input/input.txt", "-p", "2"]
     },
     {
-      "name": "Ruby Run Part 1",
-      "cmd": ["ruby", "$file", "-f", "../input/input.txt", "-p", "1"]
-    },
-    {
-      "name": "Ruby Run Part 2",
-      "cmd": ["ruby", "$file", "-f", "../input/input.txt", "-p", "2"]
-    },
-    {
-      "name": "Run Sample 1 Part 1",
+      "name": "Run Python Sample 1 Part 1",
       "cmd": ["python", "$file", "-f", "../input/sample1.txt", "-p", "1"]
     },
     {
-      "name": "Run Sample 2 Part 1",
+      "name": "Run Python Sample 2 Part 1",
       "cmd": ["python", "$file", "-f", "../input/sample2.txt", "-p", "1"]
     },
     {
-      "name": "Run Sample 3 Part 1",
+      "name": "Run Python Sample 3 Part 1",
       "cmd": ["python", "$file", "-f", "../input/sample3.txt", "-p", "1"]
     },
     {
-      "name": "Run Sample 1 Part 2",
+      "name": "Run Python Sample 1 Part 2",
       "cmd": ["python", "$file", "-f", "../input/sample1.txt", "-p", "2"]
     },
     {
-      "name": "Run Sample 2 Part 2",
+      "name": "Run Python Sample 2 Part 2",
       "cmd": ["python", "$file", "-f", "../input/sample2.txt", "-p", "2"]
     },
     {
-      "name": "Run Sample 3 Part 2",
+      "name": "Run Python Sample 3 Part 2",
       "cmd": ["python", "$file", "-f", "../input/sample3.txt", "-p", "2"]
+    },""")
+    if args.ruby:
+      file.write("""
+    {
+      "name": "Run Ruby Part 1",
+      "cmd": ["ruby", "$file", "-f", "../input/input.txt", "-p", "1"]
     },
     {
-      "name": "Ruby Run Sample 1 Part 1",
+      "name": "Run Ruby Part 2",
+      "cmd": ["ruby", "$file", "-f", "../input/input.txt", "-p", "2"]
+    },
+    {
+      "name": "Run Ruby Sample 1 Part 1",
       "cmd": ["ruby", "$file", "-f", "../input/sample1.txt", "-p", "1"]
     },
     {
-      "name": "Ruby Run Sample 2 Part 1",
+      "name": "Run Ruby Sample 2 Part 1",
       "cmd": ["ruby", "$file", "-f", "../input/sample2.txt", "-p", "1"]
     },
     {
-      "name": "Ruby Run Sample 3 Part 1",
+      "name": "Run Ruby Sample 3 Part 1",
       "cmd": ["ruby", "$file", "-f", "../input/sample3.txt", "-p", "1"]
     },
     {
-      "name": "Ruby Run Sample 1 Part 2",
+      "name": "Run Ruby Sample 1 Part 2",
       "cmd": ["ruby", "$file", "-f", "../input/sample1.txt", "-p", "2"]
     },
     {
-      "name": "Ruby Run Sample 2 Part 2",
+      "name": "Run Ruby Sample 2 Part 2",
       "cmd": ["ruby", "$file", "-f", "../input/sample2.txt", "-p", "2"]
     },
     {
-      "name": "Ruby Run Sample 3 Part 2",
+      "name": "Run Ruby Sample 3 Part 2",
       "cmd": ["ruby", "$file", "-f", "../input/sample3.txt", "-p", "2"]
-    }
-  ]
-}""")
+    },""")
 
-def create_src_dir(basedir, daystr):
+    file.write("""
+  ]
+}
+""")
+
+def create_src_dir(basedir, daystr, args):
   os.mkdir(os.path.join(basedir, 'src'))
-  create_python_src_file(basedir, daystr)
-  create_ruby_src_file(basedir, daystr)
+  if args.python:
+    create_python_src_file(basedir, daystr)
+  if args.ruby:
+    create_ruby_src_file(basedir, daystr)
 
 def create_python_src_file(basedir, daystr):
   """Creates a skeleton python file."""
@@ -154,6 +163,8 @@ def main():
   parser.add_argument('day', type=int)
   parser.add_argument('-d', '--delete', action='store_true')
   parser.add_argument('year', type=int)
+  parser.add_argument('-r', '--ruby', action='store_true')
+  parser.add_argument('-p', '--python', action='store_true')
   args = parser.parse_args()
 
   yearstr = str(args.year)
@@ -170,8 +181,8 @@ def main():
       print(f'{basedir} already exists.')
     else:
       os.mkdir(basedir)
-      create_sublime_project(basedir, daystr)
-      create_src_dir(basedir, daystr)
+      create_sublime_project(basedir, daystr, args)
+      create_src_dir(basedir, daystr, args)
       create_input_file(basedir, args.day, args.year)
 
 if __name__ == "__main__":
