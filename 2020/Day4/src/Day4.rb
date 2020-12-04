@@ -2,6 +2,20 @@
 
 require 'optparse'
 
+REQUIRED_FIELDS = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"]
+
+def is_basically_valid?(passport)
+  return REQUIRED_FIELDS.all? do |f|
+    passport.key?(f)
+  end
+end
+
+def part1(passports)
+  return passports.count do |p|
+    is_basically_valid?(p)
+  end
+end
+
 VALID_EYE_COLORS = ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"]
 
 def validate_kvp?(key, value)
@@ -42,24 +56,6 @@ def validate_kvp?(key, value)
   when "cid"
     return true
 
-  end
-end
-
-def is_basically_valid?(passport)
-  keys = passport.keys
-  if keys.length == 8
-    return true
-  elsif keys.length == 7 and not keys.include?("cid")
-    return true
-  else
-    return false
-  end
-
-end
-
-def part1(passports)
-  return passports.count do |p|
-    is_basically_valid?(p)
   end
 end
 
