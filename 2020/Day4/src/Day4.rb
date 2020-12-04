@@ -2,32 +2,16 @@
 
 require 'optparse'
 
+VALID_EYE_COLORS = ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"]
+
 def validate_kvp?(key, value)
   case key
   when "byr"
-    year = value.to_i
-    if year < 1920 or 2002 < year
-      return false
-    end
-
-    return true
-
+    return value.to_i.between?(1920, 2002)
   when "iyr"
-    year = value.to_i
-    if year < 2010 or 2020 < year
-      return false
-    end
-
-    return true
-
+    return value.to_i.between?(2010, 2020)
   when "eyr"
-    year = value.to_i
-    if year < 2020 or year > 2030
-      return false
-    end
-
-    return true
-
+    return value.to_i.between?(2020, 2030)
   when "hgt"
     data = value.match(/(?<number>\d+)(?<unit>in|cm)/)
     if not data
@@ -41,33 +25,19 @@ def validate_kvp?(key, value)
     end
 
     if unit == 'in'
-      if number < 59 or 76 < number
-        return false
-      end
+      return number.between?(59, 76)
     else
-      if number < 150 or 193 < number
-        return false
-      end
+      return number.between?(150, 193)
     end
-
-    return true
 
   when "hcl"
-    if not value.match(/#[0-9a-f]{6}/)
-      return false
-    end
-
-    return true
+    return value.match(/#[0-9a-f]{6}/)
 
   when "ecl"
-    return ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"].include?(value)
+    return VALID_EYE_COLORS.include?(value)
 
   when "pid"
-    if value.length != 9 or not value.match(/\d{9}/)
-      return false
-    end
-
-    return true
+    return value.match(/\A\d{9}\z/)
 
   when "cid"
     return true
