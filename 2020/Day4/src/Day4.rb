@@ -66,7 +66,7 @@ end
 def part2(passports)
   return passports.count do |p|
     is_basically_valid?(p) and
-      p.keys.all? {|k| validate_kvp?(k, p[k])}
+      p.all? {|k, v| validate_kvp?(k, v)}
   end
 end
 
