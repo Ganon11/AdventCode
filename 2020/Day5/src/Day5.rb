@@ -2,13 +2,10 @@
 
 require 'optparse'
 
-def get_row(line)
-  rowchars = line.chars.slice(0, 7)
-  min = 0
-  max = 127
-  rowchars.each do |c|
+def binary_search_range(chars, min, max)
+  chars.each do |c|
     avg = (min + max) / 2
-    if c == 'F'
+    if c == 'F' or c == 'L'
       max = avg
     else
       min = avg + 1
@@ -16,35 +13,25 @@ def get_row(line)
   end
 
   if min != max
-    puts "Didn't find row"
+    puts "Didn't find middle"
     return -1
   end
 
   return min
 end
 
-def get_col(line)
-  colchars = line.chars.slice(7, 3)
-  min = 0
-  max = 7
-  colchars.each do |c|
-    avg = (min + max) / 2
-    if c == 'L'
-      max = avg
-    else
-      min = avg + 1
-    end
-  end
-
-  if min != max
-    return -1
-  end
-
-  return min
+def get_row(pass)
+  return binary_search_range(pass.chars.slice(0, 7), 0, 127)
 end
 
-def get_id(r, c)
-  return (r * 8) + c
+def get_col(pass)
+  return binary_search_range(pass.chars.slice(7, 3), 0, 7)
+end
+
+def get_id(pass)
+  row = get_row(pass)
+  col = get_col(pass)
+  return (row * 8) + col
 end
 
 options = {
@@ -59,7 +46,7 @@ OptionParser.new do |opts|
 end.parse!(into: options)
 
 ids = IO.readlines(options[:filename])
-  .map {|pass| get_id(get_row(pass.strip), get_col(pass.strip)) }
+  .map {|pass| get_id(pass) }
   .sort!
 
 if options[:part] == 1
