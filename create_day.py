@@ -7,7 +7,7 @@ import os
 import shutil
 import requests
 
-def create_sublime_project(basedir, daystr, args):
+def create_sublime_project(basedir, daystr, write_python, write_ruby, sample_count):
   """Creates a skeleton sublime project."""
   with open(os.path.join(basedir, daystr + '.sublime-project'), 'w') as file:
     file.write("""{
@@ -24,7 +24,7 @@ def create_sublime_project(basedir, daystr, args):
   ],
   "build_systems":
   [""")
-    if args.python:
+    if write_python:
       file.write("""
     {
       "name": "Run Python Part 1",
@@ -33,32 +33,32 @@ def create_sublime_project(basedir, daystr, args):
     {
       "name": "Run Python Part 2",
       "cmd": ["python", "$file", "-f", "../input/input.txt", "-p", "2"]
-    },
-    {
-      "name": "Run Python Sample 1 Part 1",
-      "cmd": ["python", "$file", "-f", "../input/sample1.txt", "-p", "1"]
-    },
-    {
-      "name": "Run Python Sample 2 Part 1",
-      "cmd": ["python", "$file", "-f", "../input/sample2.txt", "-p", "1"]
-    },
-    {
-      "name": "Run Python Sample 3 Part 1",
-      "cmd": ["python", "$file", "-f", "../input/sample3.txt", "-p", "1"]
-    },
-    {
-      "name": "Run Python Sample 1 Part 2",
-      "cmd": ["python", "$file", "-f", "../input/sample1.txt", "-p", "2"]
-    },
-    {
-      "name": "Run Python Sample 2 Part 2",
-      "cmd": ["python", "$file", "-f", "../input/sample2.txt", "-p", "2"]
-    },
-    {
-      "name": "Run Python Sample 3 Part 2",
-      "cmd": ["python", "$file", "-f", "../input/sample3.txt", "-p", "2"]
     },""")
-    if args.ruby:
+      if sample_count == 1:
+        file.write("""
+      {
+        "name": "Run Python Sample Part 1",
+        "cmd": ["python", "$file", "-f", "../input/sample.txt", "-p", "1"]
+      },
+      {
+        "name": "Run Python Sample Part 2",
+        "cmd": ["python", "$file", "-f", "../input/sample.txt", "-p", "2"]
+      },""")
+      else:
+        for i in range(sample_count):
+          message = (
+            "\n"
+            "    {\n"
+            f"      \"name\": \"Run Python Sample {i + 1} Part 1\",\n"
+            f"      \"cmd\": [\"python\", \"$file\", \"-f\", \"../input/sample{i + 1}.txt\", \"-p\", \"1\"]\n"
+            "    },\n"
+            "    {\n"
+            f"      \"name\": \"Run Python Sample {i + 1} Part 2\",\n"
+            f"      \"cmd\": [\"python\", \"$file\", \"-f\", \"../input/sample{i + 1}.txt\", \"-p\", \"2\"]\n"
+            "    },"
+          )
+          file.write(message)
+    if write_ruby:
       file.write("""
     {
       "name": "Run Ruby Part 1",
@@ -67,83 +67,97 @@ def create_sublime_project(basedir, daystr, args):
     {
       "name": "Run Ruby Part 2",
       "cmd": ["ruby", "$file", "-f", "../input/input.txt", "-p", "2"]
-    },
-    {
-      "name": "Run Ruby Sample 1 Part 1",
-      "cmd": ["ruby", "$file", "-f", "../input/sample1.txt", "-p", "1"]
-    },
-    {
-      "name": "Run Ruby Sample 2 Part 1",
-      "cmd": ["ruby", "$file", "-f", "../input/sample2.txt", "-p", "1"]
-    },
-    {
-      "name": "Run Ruby Sample 3 Part 1",
-      "cmd": ["ruby", "$file", "-f", "../input/sample3.txt", "-p", "1"]
-    },
-    {
-      "name": "Run Ruby Sample 1 Part 2",
-      "cmd": ["ruby", "$file", "-f", "../input/sample1.txt", "-p", "2"]
-    },
-    {
-      "name": "Run Ruby Sample 2 Part 2",
-      "cmd": ["ruby", "$file", "-f", "../input/sample2.txt", "-p", "2"]
-    },
-    {
-      "name": "Run Ruby Sample 3 Part 2",
-      "cmd": ["ruby", "$file", "-f", "../input/sample3.txt", "-p", "2"]
     },""")
+      if sample_count == 1:
+        file.write("""
+      {
+        "name": "Run Ruby Sample Part 1",
+        "cmd": ["ruby", "$file", "-f", "../input/sample.txt", "-p", "1"]
+      },
+      {
+        "name": "Run Ruby Sample Part 2",
+        "cmd": ["ruby", "$file", "-f", "../input/sample.txt", "-p", "2"]
+      },""")
+      else:
+        for i in range(sample_count):
+          message = (
+            "\n"
+            "    {\n"
+            f"      \"name\": \"Run Ruby Sample {i + 1} Part 1\",\n"
+            f"      \"cmd\": [\"ruby\", \"$file\", \"-f\", \"../input/sample{i + 1}.txt\", \"-p\", \"1\"]\n"
+            "    },\n"
+            "    {\n"
+            f"      \"name\": \"Run Ruby Sample {i + 1} Part 2\",\n"
+            f"      \"cmd\": [\"ruby\", \"$file\", \"-f\", \"../input/sample{i + 1}.txt\", \"-p\", \"2\"]\n"
+            "    },"
+          )
+          file.write(message)
 
     file.write("""
   ]
 }
 """)
 
-def create_src_dir(basedir, daystr, args):
+def create_src_dir(basedir, daystr, write_python, write_ruby, sample_count):
   os.mkdir(os.path.join(basedir, 'src'))
-  if args.python:
-    create_python_src_file(basedir, daystr)
-  if args.ruby:
-    create_ruby_src_file(basedir, daystr)
+  if write_python:
+    create_python_src_file(basedir, daystr, sample_count)
+  if write_ruby:
+    create_ruby_src_file(basedir, daystr, sample_count)
 
-def create_python_src_file(basedir, daystr):
+def create_python_src_file(basedir, daystr, sample_count):
   """Creates a skeleton python file."""
+  filename = ''
+  if sample_count == 1:
+    filename = '../input/sample.txt'
+  else:
+    filename = '../input/sample1.txt'
   with open(os.path.join(basedir, 'src', daystr + '.py'), 'w') as file:
-    file.write("""import argparse
+    message = (
+      "import argparse\n"
+      "\n"
+      "def main():\n"
+      "  parser = argparse.ArgumentParser()\n"
+      f"  parser.add_argument('-f', '--filename', default='{filename}')\n"
+      "  parser.add_argument('-p', '--part', choices=[1, 2], default=1, type=int)\n"
+      "  args = parser.parse_args()\n"
+      "\n"
+      "if __name__ == \"__main__\":\n"
+      "  main()\n"
+    )
+    file.write(message)
 
-def main():
-  parser = argparse.ArgumentParser()
-  parser.add_argument('-f', '--filename', default='../input/sample1.txt')
-  parser.add_argument('-p', '--part', choices=[1, 2], default=1, type=int)
-  args = parser.parse_args()
-
-if __name__ == "__main__":
-  main()
-""")
-
-def create_ruby_src_file(basedir, daystr):
+def create_ruby_src_file(basedir, daystr, sample_count):
   """Creates a skeleton python file."""
+  filename = ''
+  if sample_count == 1:
+    filename = '../input/sample.txt'
+  else:
+    filename = '../input/sample1.txt'
   with open(os.path.join(basedir, 'src', daystr + '.rb'), 'w') as file:
-    file.write(f"""#!/usr/bin/ruby
-
-require 'optparse'
-
-options = {{
-  :part => 1,
-  :filename => "../input/sample.txt"
-}}
-
-OptionParser.new do |opts|
-  opts.banner = "Usage: {daystr}.rb [options]"
-  opts.on("-p PART", "--part=PART", Integer, "Part 1 or 2")
-  opts.on("-f FILENAME", "--filename=FILENAME", String, "Which filename to use?")
-end.parse!(into: options)
-
-if options[:part] == 1
-  # do part 1
-elsif options[:part] == 2
-  # do part 2
-end
-""")
+    message = (
+      "#!/usr/bin/ruby\n"
+      "\n"
+      "require 'optparse'\n"
+      "\n"
+      "options = {{\n"
+      "  :part => 1,\n"
+      f"  :filename => \"{filename}\"\n"
+      "}}\n"
+      "\n"
+      "OptionParser.new do |opts|\n"
+      "  opts.banner = \"Usage: {daystr}.rb [options]\"\n"
+      "  opts.on(\"-p PART\", \"--part=PART\", Integer, \"Part 1 or 2\")\n"
+      "  opts.on(\"-f FILENAME\", \"--filename=FILENAME\", String, \"Which filename to use?\")\n"
+      "end.parse!(into: options)\n"
+      "\n"
+      "if options[:part] == 1\n"
+      "  # do part 1\n"
+      "elsif options[:part] == 2\n"
+      "  # do part 2\n"
+      "end\n"
+    )
+    file.write(message)
 
 def create_input_file(basedir, day, year):
   """Fetches my input from Advent of Code."""
@@ -157,6 +171,15 @@ def create_input_file(basedir, day, year):
     input_request = requests.get(url=url, cookies=cookies)
     file.write(input_request.text)
 
+def create_sample_files(basedir, count):
+  if count == 1:
+    with open(os.path.join(basedir, 'input', 'sample.txt'), 'w') as file:
+      file.write('Fill in sample here!')
+  else:
+    for i in range(count):
+      with open(os.path.join(basedir, 'input', f'sample{i + 1}.txt'), 'w') as file:
+        file.write('Fill in sample here!')
+
 def main():
   """Scaffolds an AoC day."""
   parser = argparse.ArgumentParser()
@@ -165,6 +188,7 @@ def main():
   parser.add_argument('year', type=int)
   parser.add_argument('-r', '--ruby', action='store_true')
   parser.add_argument('-p', '--python', action='store_true')
+  parser.add_argument('-s', '--samples', default=1, type=int)
   args = parser.parse_args()
 
   yearstr = str(args.year)
@@ -181,9 +205,10 @@ def main():
       print(f'{basedir} already exists.')
     else:
       os.mkdir(basedir)
-      create_sublime_project(basedir, daystr, args)
-      create_src_dir(basedir, daystr, args)
+      create_sublime_project(basedir, daystr, args.python, args.ruby, args.samples)
+      create_src_dir(basedir, daystr, args.python, args.ruby, args.samples)
       create_input_file(basedir, args.day, args.year)
+      create_sample_files(basedir, args.samples)
 
 if __name__ == "__main__":
   main()
