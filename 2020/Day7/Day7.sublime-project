@@ -1,0 +1,36 @@
+{
+  "folders":
+  [
+    {
+      "path": "src",
+      "name": "Source"
+    },
+    {
+      "path": "input",
+      "name": "Input files"
+    }
+  ],
+  "build_systems":
+  [
+    {
+      "name": "Run Ruby Part 1",
+      "cmd": ["ruby", "$file", "-f", "../input/input.txt", "-p", "1"]
+    },
+    {
+      "name": "Run Ruby Part 2",
+      "cmd": ["ruby", "$file", "-f", "../input/input.txt", "-p", "2"]
+    },
+    {
+      "name": "Run Ruby Sample 1 Part 1",
+      "cmd": ["ruby", "$file", "-f", "../input/sample.txt", "-p", "1"]
+    },
+    {
+      "name": "Run Ruby Sample 1 Part 2",
+      "cmd": ["ruby", "$file", "-f", "../input/sample.txt", "-p", "2"]
+    },
+    {
+      "name": "Run Ruby Sample 2 Part 2",
+      "cmd": ["ruby", "$file", "-f", "../input/sample2.txt", "-p", "2"]
+    },
+  ]
+}
