@@ -36,14 +36,14 @@ def create_sublime_project(basedir, daystr, write_python, write_ruby, sample_cou
     },""")
       if sample_count == 1:
         file.write("""
-      {
-        "name": "Run Python Sample Part 1",
-        "cmd": ["python", "$file", "-f", "../input/sample.txt", "-p", "1"]
-      },
-      {
-        "name": "Run Python Sample Part 2",
-        "cmd": ["python", "$file", "-f", "../input/sample.txt", "-p", "2"]
-      },""")
+    {
+      "name": "Run Python Sample Part 1",
+      "cmd": ["python", "$file", "-f", "../input/sample.txt", "-p", "1"]
+    },
+    {
+      "name": "Run Python Sample Part 2",
+      "cmd": ["python", "$file", "-f", "../input/sample.txt", "-p", "2"]
+    },""")
       else:
         for i in range(sample_count):
           message = (
@@ -70,14 +70,14 @@ def create_sublime_project(basedir, daystr, write_python, write_ruby, sample_cou
     },""")
       if sample_count == 1:
         file.write("""
-      {
-        "name": "Run Ruby Sample Part 1",
-        "cmd": ["ruby", "$file", "-f", "../input/sample.txt", "-p", "1"]
-      },
-      {
-        "name": "Run Ruby Sample Part 2",
-        "cmd": ["ruby", "$file", "-f", "../input/sample.txt", "-p", "2"]
-      },""")
+    {
+      "name": "Run Ruby Sample Part 1",
+      "cmd": ["ruby", "$file", "-f", "../input/sample.txt", "-p", "1"]
+    },
+    {
+      "name": "Run Ruby Sample Part 2",
+      "cmd": ["ruby", "$file", "-f", "../input/sample.txt", "-p", "2"]
+    },""")
       else:
         for i in range(sample_count):
           message = (
