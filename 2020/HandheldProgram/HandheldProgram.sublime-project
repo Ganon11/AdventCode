@@ -1,0 +1,12 @@
+{
+  "folders":
+  [
+    {
+      "path": ".",
+      "name": "Source"
+    },
+  ],
+  "build_systems":
+  [
+  ]
+}
