@@ -14,8 +14,30 @@ module HandheldProgram
       end
     end
 
-    def commands
-      @commands
+    def accumulator
+      @accumulator
+    end
+
+    def program_size
+      @commands.length
+    end
+
+    def command(index)
+      if index < 0 or @commands.length <= index
+        puts "Index out of bounds"
+        return nil
+      end
+
+      return @commands[index]
+    end
+
+    def set_command(index, instruction)
+      if index < 0 or @commands.length <= index
+        puts "Index out of bounds"
+        return nil
+      end
+
+      @commands[index] = instruction
     end
 
     def execute
@@ -45,32 +67,6 @@ module HandheldProgram
           break
         end
       end
-    end
-
-    def accumulator
-      @accumulator
-    end
-
-    def program_size
-      @commands.length
-    end
-
-    def command(index)
-      if index < 0 or @commands.length <= index
-        puts "Index out of bounds"
-        return nil
-      end
-
-      return @commands[index]
-    end
-
-    def set_command(index, instruction)
-      if index < 0 or @commands.length <= index
-        puts "Index out of bounds"
-        return nil
-      end
-
-      @commands[index] = instruction
     end
   end
 end
