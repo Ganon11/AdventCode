@@ -1,6 +1,8 @@
+require_relative 'lib/HandheldProgram/version'
+
 Gem::Specification.new do |s|
   s.name = "HandheldProgram"
-  s.version = "0.0.0"
+  s.version = HandheldProgram::VERSION
   s.date = "2020-12-08"
   s.summary = "An instruction set for handheld programs"
   s.description = "See Advent of Code"
