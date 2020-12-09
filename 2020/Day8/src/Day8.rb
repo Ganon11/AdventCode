@@ -18,20 +18,20 @@ end.parse!(into: options)
 lines = IO.readlines(options[:filename])
 
 if options[:part] == 1
-  program = HandheldProgram.new(lines)
+  program = HandheldProgram::Program.new(lines)
   program.execute
   puts program.accumulator
 elsif options[:part] == 2
   lines.each_with_index do |line, index|
-    program = HandheldProgram.new(lines)
+    program = HandheldProgram::Program.new(lines)
     instruction = program.command(index)
     new_instruction = nil
     if instruction.command == "acc"
       next
     elsif instruction.command == "jmp"
-      new_instruction = HandheldProgramInstruction.new("nop", instruction.number)
+      new_instruction = HandheldProgram::Instruction.new("nop", instruction.number)
     elsif instruction.command == "nop"
-      new_instruction = HandheldProgramInstruction.new("jmp", instruction.number)
+      new_instruction = HandheldProgram::Instruction.new("jmp", instruction.number)
     end
 
     program.set_command(index, new_instruction)
