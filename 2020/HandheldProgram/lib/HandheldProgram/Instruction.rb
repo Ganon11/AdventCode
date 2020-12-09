@@ -2,17 +2,23 @@
 
 module HandheldProgram
   class Instruction
-    def initialize(command, number)
-      @command = command
-      @number = number
+    def initialize(instruction, value)
+      case instruction
+      when "acc", "jmp", "nop"
+        @instruction = instruction
+      else
+        raise ArgumentError.new("Unrecognized instruction")
+      end
+
+      @value = value
     end
 
-    def command
-      @command
+    def instruction
+      @instruction
     end
 
-    def number
-      @number
+    def value
+      @value
     end
   end
 end
