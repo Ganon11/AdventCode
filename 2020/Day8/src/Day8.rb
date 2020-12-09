@@ -2,7 +2,7 @@
 
 require 'optparse'
 
-require 'HandheldProgram'
+require 'handheld_program'
 
 options = {
   :part => 1,
@@ -24,22 +24,22 @@ if options[:part] == 1
 elsif options[:part] == 2
   lines.each_with_index do |line, index|
     program = HandheldProgram::Program.new(lines)
-    instruction = program.command(index)
+    i = program.instruction(index)
     new_instruction = nil
-    if instruction.command == "acc"
+    if i.instruction == "acc"
       next
-    elsif instruction.command == "jmp"
-      new_instruction = HandheldProgram::Instruction.new("nop", instruction.number)
-    elsif instruction.command == "nop"
-      new_instruction = HandheldProgram::Instruction.new("jmp", instruction.number)
+    elsif i.instruction == "jmp"
+      new_instruction = HandheldProgram::Instruction.new("nop", i.value)
+    elsif i.instruction == "nop"
+      new_instruction = HandheldProgram::Instruction.new("jmp", i.value)
     end
 
-    program.set_command(index, new_instruction)
+    program.set_instruction(index, new_instruction)
     if program.execute
       puts "Fixed program, acc #{program.accumulator}"
       break
     end
 
-    program.set_command(index, instruction)
+    program.set_instruction(index, i)
   end
 end
