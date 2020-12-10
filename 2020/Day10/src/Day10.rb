@@ -33,16 +33,10 @@ def part2(adapters)
   dynamic = {0 => 1}
   adapters.each_with_index do |adapter, index|
     sum = 0
-    if dynamic.key?(adapter - 1)
-      sum += dynamic[adapter - 1]
-    end
-
-    if dynamic.key?(adapter - 2)
-      sum += dynamic[adapter - 2]
-    end
-
-    if dynamic.key?(adapter - 3)
-      sum += dynamic[adapter - 3]
+    (1..3).each do |diff|
+      if dynamic.key?(adapter - diff)
+        sum += dynamic[adapter - diff]
+      end
     end
 
     dynamic[adapter] = sum
@@ -62,7 +56,9 @@ OptionParser.new do |opts|
   opts.on("-f FILENAME", "--filename=FILENAME", String, "Which filename to use?")
 end.parse!(into: options)
 
-adapters = IO.readlines(options[:filename]).map{|line| line.strip.to_i}.sort
+adapters = IO.readlines(options[:filename])
+  .map{|line| line.strip.to_i}
+  .sort
 
 if options[:part] == 1
   puts part1(adapters)
