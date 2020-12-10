@@ -11,31 +11,8 @@ def part1(values, size)
       next
     end
 
-    sum_found = false
-    i1 = 0
-    while i1 < (seen.length - 1)
-      v1 = seen[i1]
-      i2 = i1 + 1
-      embedded_sum_found = false
-      while i2 < seen.length
-        v2 = seen[i2]
-        if v1 + v2 == value
-          sum_found = true
-          embedded_sum_found = true
-          break
-        end
-
-        i2 += 1
-      end
-
-      if embedded_sum_found
-        break
-      end
-
-      i1 += 1
-    end
-
-    if not sum_found
+    combos = seen.combination(2).to_a
+    if not combos.any? {|n| n.sum == value}
       invalid_value = value
       break
     end
