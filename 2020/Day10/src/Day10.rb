@@ -31,7 +31,7 @@ def part2(adapters)
   target = adapters[-1] + 3
   adapters.push(target)
   dynamic = {0 => 1}
-  adapters.each_with_index do |adapter, index|
+  adapters.each do |adapter|
     sum = 0
     (1..3).each do |diff|
       if dynamic.key?(adapter - diff)
