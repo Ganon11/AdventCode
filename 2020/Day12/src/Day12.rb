@@ -35,9 +35,9 @@ class Ferry
     when 'W'
       @x -= value
     when 'L'
-      _rotate(:COUNTERCLOCKWISE, value)
+      rotate(:COUNTERCLOCKWISE, value)
     when 'R'
-      _rotate(:CLOCKWISE, value)
+      rotate(:CLOCKWISE, value)
     when 'F'
       case @facing
       when :NORTH
@@ -52,7 +52,7 @@ class Ferry
     end
   end
 
-  def _rotate(direction, degrees)
+  def rotate(direction, degrees)
     case degrees
     when 90
       case direction
@@ -125,10 +125,6 @@ class Ferry
     end
   end
 
-  def print_position
-    puts "Ferry (#{@x}, #{@y})"
-  end
-
   def distance_from_origin
     @x.abs + @y.abs
   end
@@ -165,15 +161,14 @@ class FerryWithWaypoint < Ferry
         @waypoint_y *= -1
       when 270
         tmp = @waypoint_y
-        @waypoint_y = -1 * @waypoint_x
+        @waypoint_y = -@waypoint_x
         @waypoint_x = tmp
       end
     when 'R'
-      # (10, 4) -> (4, -10)
       case value
       when 90
         tmp = @waypoint_y
-        @waypoint_y = -1 * @waypoint_x
+        @waypoint_y = -@waypoint_x
         @waypoint_x = tmp
       when 180
         @waypoint_x *= -1
@@ -190,10 +185,6 @@ class FerryWithWaypoint < Ferry
       end
     end
   end
-
-  def print_waypoint
-    puts "Waypoint (#{@waypoint_x}, #{@waypoint_y})"
-  end
 end
 
 def part1(lines)
@@ -209,8 +200,6 @@ def part2(lines)
   ferry = FerryWithWaypoint.new
   lines.each do |line|
     ferry.follow_instruction(line)
-    #ferry.print_position
-    #ferry.print_waypoint
   end
 
   return ferry.distance_from_origin
