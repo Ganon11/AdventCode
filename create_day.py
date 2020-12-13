@@ -146,7 +146,7 @@ def create_ruby_src_file(basedir, daystr, sample_count):
       "}\n"
       "\n"
       "OptionParser.new do |opts|\n"
-      "  opts.banner = \"Usage: {daystr}.rb [options]\"\n"
+      f"  opts.banner = \"Usage: {daystr}.rb [options]\"\n"
       "  opts.on(\"-p PART\", \"--part=PART\", Integer, \"Part 1 or 2\")\n"
       "  opts.on(\"-f FILENAME\", \"--filename=FILENAME\", String, \"Which filename to use?\")\n"
       "end.parse!(into: options)\n"
