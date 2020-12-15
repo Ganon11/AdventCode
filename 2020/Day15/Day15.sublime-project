@@ -1,0 +1,80 @@
+{
+  "folders":
+  [
+    {
+      "path": "src",
+      "name": "Source"
+    },
+    {
+      "path": "input",
+      "name": "Input files"
+    }
+  ],
+  "build_systems":
+  [
+    {
+      "name": "Run Ruby Part 1",
+      "cmd": ["ruby", "$file", "-f", "../input/input.txt", "-p", "1"]
+    },
+    {
+      "name": "Run Ruby Part 2",
+      "cmd": ["ruby", "$file", "-f", "../input/input.txt", "-p", "2"]
+    },
+    {
+      "name": "Run Ruby Sample 1 Part 1",
+      "cmd": ["ruby", "$file", "-f", "../input/sample1.txt", "-p", "1"]
+    },
+    {
+      "name": "Run Ruby Sample 1 Part 2",
+      "cmd": ["ruby", "$file", "-f", "../input/sample1.txt", "-p", "2"]
+    },
+    {
+      "name": "Run Ruby Sample 2 Part 1",
+      "cmd": ["ruby", "$file", "-f", "../input/sample2.txt", "-p", "1"]
+    },
+    {
+      "name": "Run Ruby Sample 2 Part 2",
+      "cmd": ["ruby", "$file", "-f", "../input/sample2.txt", "-p", "2"]
+    },
+    {
+      "name": "Run Ruby Sample 3 Part 1",
+      "cmd": ["ruby", "$file", "-f", "../input/sample3.txt", "-p", "1"]
+    },
+    {
+      "name": "Run Ruby Sample 3 Part 2",
+      "cmd": ["ruby", "$file", "-f", "../input/sample3.txt", "-p", "2"]
+    },
+    {
+      "name": "Run Ruby Sample 4 Part 1",
+      "cmd": ["ruby", "$file", "-f", "../input/sample4.txt", "-p", "1"]
+    },
+    {
+      "name": "Run Ruby Sample 4 Part 2",
+      "cmd": ["ruby", "$file", "-f", "../input/sample4.txt", "-p", "2"]
+    },
+    {
+      "name": "Run Ruby Sample 5 Part 1",
+      "cmd": ["ruby", "$file", "-f", "../input/sample5.txt", "-p", "1"]
+    },
+    {
+      "name": "Run Ruby Sample 5 Part 2",
+      "cmd": ["ruby", "$file", "-f", "../input/sample5.txt", "-p", "2"]
+    },
+    {
+      "name": "Run Ruby Sample 6 Part 1",
+      "cmd": ["ruby", "$file", "-f", "../input/sample6.txt", "-p", "1"]
+    },
+    {
+      "name": "Run Ruby Sample 6 Part 2",
+      "cmd": ["ruby", "$file", "-f", "../input/sample6.txt", "-p", "2"]
+    },
+    {
+      "name": "Run Ruby Sample 7 Part 1",
+      "cmd": ["ruby", "$file", "-f", "../input/sample7.txt", "-p", "1"]
+    },
+    {
+      "name": "Run Ruby Sample 7 Part 2",
+      "cmd": ["ruby", "$file", "-f", "../input/sample7.txt", "-p", "2"]
+    },
+  ]
+}
