@@ -8,31 +8,22 @@ def memory_game(numbers, target)
   last_spoken = nil
   while turn < target
     if turn < numbers.length
-      #puts "Initial turn"
       last_spoken = numbers[turn]
-      if last_seen_indexes.key?(last_spoken)
-        last_seen_indexes[last_spoken].push(turn)
-      else
-        last_seen_indexes[last_spoken] = [turn]
-      end
     else
-      #puts "Real turn"
       indexes = last_seen_indexes[last_spoken]
-      #puts "Indexes where #{last_spoken} was seen: #{indexes}"
       if indexes.length == 1
         last_spoken = 0
       else
         last_spoken = indexes[-1] - indexes[-2]
       end
-
-      if last_seen_indexes.key?(last_spoken)
-        last_seen_indexes[last_spoken].push(turn)
-      else
-        last_seen_indexes[last_spoken] = [turn]
-      end
     end
 
-    #puts "Turn #{turn + 1} number is #{last_spoken}"
+    if last_seen_indexes.key?(last_spoken)
+      last_seen_indexes[last_spoken].push(turn)
+    else
+      last_seen_indexes[last_spoken] = [turn]
+    end
+
     turn += 1
   end
 
