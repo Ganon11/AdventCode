@@ -26,7 +26,7 @@
     },
     {
       "name": "Run Ruby Sample Part 2",
-      "cmd": ["ruby", "$file", "-f", "../input/sample.txt", "-p", "2"]
+      "cmd": ["ruby", "$file", "-f", "../input/sample2.txt", "-p", "2"]
     },
   ]
 }
