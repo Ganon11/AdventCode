@@ -29,9 +29,9 @@ end
 
 class Ticket
   def initialize(line, fields)
-    values = line.split(',').map {|v| v.to_i}
+    @values = line.split(',').map {|v| v.to_i}
     @invalid = nil
-    values.each do |value|
+    @values.each do |value|
       if not fields.any? {|f| f.valid?(value)}
         @invalid = value
         break
@@ -46,17 +46,46 @@ class Ticket
   def invalid_value
     return @invalid
   end
+
+  def value_valid?(index, field)
+    return field.valid?(@values[index])
+  end
+
+  def value(index)
+    return @values[index]
+  end
 end
 
-def part1(tickets)
-  sum = 0
-  tickets.each do |t|
-    if not t.valid?
-      sum += t.invalid_value
+def part2(my_ticket, tickets, fields)
+  # Find indices where fields are valid
+  field_valid_indices = {}
+  fields.each do |f|
+    field_valid_indices[f.name] = []
+    fields.each_index do |i|
+      if tickets.all? {|t| t.value_valid?(i, f)}
+        field_valid_indices[f.name].push(i)
+      end
     end
   end
 
-  return sum
+  # Fortunately, there's one field that only fits in one index. Find it, assign it, and remove that
+  # index from other fields. Again, fortunately this process repeats until all fields have been
+  # assigned.
+  field_indices = {}
+  while field_valid_indices.any? {|key, value| value.count > 1}
+    k = field_valid_indices.keys.find {|key| field_valid_indices[key].count == 1}
+    field_indices[k] = field_valid_indices[k][0]
+    field_valid_indices.delete(k)
+    field_valid_indices.each do |key, value|
+      value.delete(field_indices[k])
+      field_valid_indices[key] = value
+    end
+  end
+
+  return field_indices.keys
+    .select{|k| k.start_with?('departure')}
+    .map{|k| my_ticket.value(field_indices[k])}
+    .inject(&:*)
 end
 
 options = {
@@ -96,12 +125,10 @@ File.open(options[:filename], 'r') do |fh|
   end
 end
 
-# fields.each do |f|
-#   puts "Field #{f.name}, values #{f.valid}"
-# end
+valid, invalid = nearby_tickets.partition {|t| t.valid?}
 
 if options[:part] == 1
-  puts part1(nearby_tickets)
+  puts invalid.map{|t| t.invalid_value}.sum
 elsif options[:part] == 2
-  # do part 2
+  puts part2(my_ticket, valid, fields)
 end
