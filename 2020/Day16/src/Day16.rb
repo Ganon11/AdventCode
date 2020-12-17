@@ -14,16 +14,11 @@ class Field
   end
 
   def valid?(value)
-    #puts "Checking #{value} against "
     return @valid.include?(value)
   end
 
   def name
     @name
-  end
-
-  def valid
-    @valid
   end
 end
 
@@ -39,16 +34,8 @@ class Ticket
     end
   end
 
-  def valid?
-    return @invalid.nil?
-  end
-
   def invalid_value
     return @invalid
-  end
-
-  def value_valid?(index, field)
-    return field.valid?(@values[index])
   end
 
   def value(index)
@@ -62,7 +49,7 @@ def part2(my_ticket, tickets, fields)
   fields.each do |f|
     field_valid_indices[f.name] = []
     fields.each_index do |i|
-      if tickets.all? {|t| t.value_valid?(i, f)}
+      if tickets.all? {|t| f.valid?(t.value(i))}
         field_valid_indices[f.name].push(i)
       end
     end
@@ -105,7 +92,7 @@ fields = data[0].split("\n").map{|l| Field::new(l)}
 my_ticket = Ticket::new(data[1].split("\n")[1], fields)
 nearby_tickets = data[2].split("\n").drop(1).map{|l| Ticket::new(l, fields)}
 
-valid, invalid = nearby_tickets.partition {|t| t.valid?}
+valid, invalid = nearby_tickets.partition {|t| t.invalid_value.nil?}
 
 if options[:part] == 1
   puts invalid.map{|t| t.invalid_value}.sum
