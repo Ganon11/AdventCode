@@ -72,14 +72,15 @@ def part2(my_ticket, tickets, fields)
   # index from other fields. Again, fortunately this process repeats until all fields have been
   # assigned.
   field_indices = {}
-  while field_valid_indices.any? {|key, value| value.count > 1}
-    k = field_valid_indices.keys.find {|key| field_valid_indices[key].count == 1}
+  k = field_valid_indices.keys.find {|key| field_valid_indices[key].count == 1}
+  while not k.nil?
     field_indices[k] = field_valid_indices[k][0]
     field_valid_indices.delete(k)
     field_valid_indices.each do |key, value|
       value.delete(field_indices[k])
-      field_valid_indices[key] = value
     end
+
+    k = field_valid_indices.keys.find {|key| field_valid_indices[key].count == 1}
   end
 
   return field_indices.keys
@@ -99,31 +100,10 @@ OptionParser.new do |opts|
   opts.on("-f FILENAME", "--filename=FILENAME", String, "Which filename to use?")
 end.parse!(into: options)
 
-fields = []
-my_ticket = nil
-nearby_tickets = []
-File.open(options[:filename], 'r') do |fh|
-  line = fh.readline
-  while line != ''
-    fields.push(Field::new(line))
-    line = fh.readline.chomp
-  end
-
-  line = fh.readline.chomp
-  line = fh.readline.chomp
-  my_ticket = Ticket::new(line, fields)
-
-  line = fh.readline.chomp
-  line = fh.readline.chomp
-  line = fh.readline.chomp
-  while line != ''
-    nearby_tickets.push(Ticket::new(line, fields))
-    if fh.eof?
-      break
-    end
-    line = fh.readline.chomp
-  end
-end
+data = IO.read(options[:filename]).split("\n\n")
+fields = data[0].split("\n").map{|l| Field::new(l)}
+my_ticket = Ticket::new(data[1].split("\n")[1], fields)
+nearby_tickets = data[2].split("\n").drop(1).map{|l| Ticket::new(l, fields)}
 
 valid, invalid = nearby_tickets.partition {|t| t.valid?}
 
