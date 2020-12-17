@@ -219,7 +219,7 @@ elsif options[:part] == 2
   field = FourDimensionalConwayField::new(lines)
 end
 
-(1..6).each do
+6.times do
   field.step
 end
 
