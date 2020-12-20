@@ -5,7 +5,7 @@ require 'optparse'
 $rules = {}
 $pattern_cache = {}
 
-def get_pattern(rule_id, depth = 0, max_depth = 14)
+def get_pattern(rule_id, depth = 0, max_depth = 11)
   if depth >= max_depth
     return ''
   end
@@ -54,12 +54,9 @@ rule_strings.split("\n").each do |line|
   $rules[id.to_i] = rule
 end
 
-if options[:part] == 1
-  puts words.split("\n").count{|w| w.match(get_pattern_zero)}
-elsif options[:part] == 2
-  # do part 2
+if options[:part] == 2
   $rules[8] = "42 | 42 8"
   $rules[11] = "42 31 | 42 11 31"
-  $pattern_cache = {}
-  puts words.split("\n").count{|w| w.match(get_pattern_zero)}
 end
+
+puts words.split("\n").count{|w| w.match(get_pattern_zero)}
