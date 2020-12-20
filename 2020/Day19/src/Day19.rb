@@ -5,11 +5,7 @@ require 'optparse'
 $rules = {}
 $pattern_cache = {}
 
-def get_pattern(rule_id, depth = 0, max_depth = 11)
-  if depth >= max_depth
-    return ''
-  end
-
+def get_pattern(rule_id)
   if $pattern_cache.key?(rule_id)
     return $pattern_cache[rule_id]
   end
@@ -23,7 +19,7 @@ def get_pattern(rule_id, depth = 0, max_depth = 11)
     elsif token == "\"b\""
       pattern += "b"
     else
-      pattern += get_pattern(token.to_i, depth + 1, max_depth)
+      pattern += get_pattern(token.to_i)
     end
   end
   pattern += ')'
@@ -56,7 +52,8 @@ end
 
 if options[:part] == 2
   $rules[8] = "42 | 42 8"
-  $rules[11] = "42 31 | 42 11 31"
+  $rules[11] = "42 31 | 42 42 31 31 | 42 42 31 31 | 42 42 42 31 31 31 | 42 42 42 42 31 31 31 31"
+  $pattern_cache[8] = "#{get_pattern(42)}+"
 end
 
 puts words.split("\n").count{|w| w.match(get_pattern_zero)}
