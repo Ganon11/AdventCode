@@ -90,6 +90,8 @@ def play_game(player1, player2)
   end
 end
 
+$NEW_GAME_NUMBER = 1
+
 def play_recursive_round(player1, player2, round, game)
   #puts "-- Round #{round} (Game #{game}) --"
   #puts "Player 1's deck: #{player1.deck.join(", ")}"
@@ -106,7 +108,7 @@ def play_recursive_round(player1, player2, round, game)
     cloned_player1.keep_cards(card1)
     cloned_player2 = player2.clone
     cloned_player2.keep_cards(card2)
-    winner = play_recursive_game(cloned_player1, cloned_player2, game + 1)
+    winner = play_recursive_game(cloned_player1, cloned_player2, $NEW_GAME_NUMBER)
     #puts "...anyway, back to game #{game}."
     if winner == 1
       #puts "Player 1 wins round #{round} of game #{game}!"
@@ -128,6 +130,7 @@ end
 
 def play_recursive_game(player1, player2, game=1)
   #puts "=== Game #{game} ==="
+  $NEW_GAME_NUMBER += 1
   seen = Set[]
   current_state = "#{player1.serialize},#{player2.serialize}"
   round = 1
