@@ -4,37 +4,35 @@ require 'optparse'
 require 'set'
 
 def get_hex_coordinates(direction)
-  index = 0
+  i = 0
   x = 0
   y = 0
   z = 0
-  while index < direction.length
-    if direction[index] == 'e'
+  while i < direction.length
+    if direction[i] == 'e'
       x += 1
       y -= 1
-      index += 1
-    elsif direction[index] == 'w'
+      i += 1
+    elsif direction[i] == 'w'
       x -= 1
       y += 1
-      index += 1
-    else
-      if direction[index] == 's' and direction[index + 1] == 'e'
-        y -= 1
-        z += 1
-        index += 2
-      elsif direction[index] == 's' and direction[index + 1] == 'w'
-        x -= 1
-        z += 1
-        index += 2
-      elsif direction[index] == 'n' and direction[index + 1] == 'e'
-        x += 1
-        z -= 1
-        index += 2
-      elsif direction[index] == 'n' and direction[index + 1] == 'w'
-        y += 1
-        z -= 1
-        index += 2
-      end
+      i += 1
+    elsif direction[i] == 's' and direction[i + 1] == 'e'
+      y -= 1
+      z += 1
+      i += 2
+    elsif direction[i] == 's' and direction[i + 1] == 'w'
+      x -= 1
+      z += 1
+      i += 2
+    elsif direction[i] == 'n' and direction[i + 1] == 'e'
+      x += 1
+      z -= 1
+      i += 2
+    elsif direction[i] == 'n' and direction[i + 1] == 'w'
+      y += 1
+      z -= 1
+      i += 2
     end
   end
 
@@ -63,15 +61,12 @@ def get_initial_grid(directions)
 end
 
 def get_neighbors(hex)
-  x = hex[0]
-  y = hex[1]
-  z = hex[2]
-  n1 = [x + 1, y - 1, z]
-  n2 = [x, y - 1, z + 1]
-  n3 = [x - 1, y, z + 1]
-  n4 = [x - 1, y + 1, z]
-  n5 = [x, y + 1, z - 1]
-  n6 = [x + 1, y, z - 1]
+  n1 = [hex[0] + 1, hex[1] - 1, hex[2]]
+  n2 = [hex[0], hex[1] - 1, hex[2] + 1]
+  n3 = [hex[0] - 1, hex[1], hex[2] + 1]
+  n4 = [hex[0] - 1, hex[1] + 1, hex[2]]
+  n5 = [hex[0], hex[1] + 1, hex[2] - 1]
+  n6 = [hex[0] + 1, hex[1], hex[2] - 1]
 
   return [n1, n2, n3, n4, n5, n6]
 end
