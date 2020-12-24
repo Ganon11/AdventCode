@@ -40,23 +40,13 @@ def get_hex_coordinates(direction)
 end
 
 def get_initial_grid(directions)
-  grid = {}
+  grid = Set[]
   directions.each do |direction|
     x, y, z = get_hex_coordinates(direction)
     key = [x, y, z]
-    if not grid.key?(key)
-      grid[key] = 1
-    elsif grid[key] == 0
-      grid[key] = 1
-    else
-      grid[key] = 0
-    end
+    grid.delete(key) unless grid.add?(key)
   end
 
-  white_hexes = grid.keys.filter{|k| grid[k] == 0}
-  white_hexes.each do |k|
-    grid.delete(k)
-  end
   return grid
 end
 
@@ -74,7 +64,7 @@ end
 def count_active_neighbors(grid, hex)
   sum = 0
   get_neighbors(hex).each do |n|
-    if grid.key?(n) and grid[n] == 1
+    if grid.include?(n)
       sum += 1
     end
   end
@@ -83,10 +73,10 @@ def count_active_neighbors(grid, hex)
 end
 
 def play_round(grid)
-  new_grid = {}
+  new_grid = Set[]
 
   hexes_to_check = Set[]
-  grid.keys.each do |hex|
+  grid.each do |hex|
     hexes_to_check.add(hex)
     get_neighbors(hex).each do |n|
       hexes_to_check.add(n)
@@ -95,24 +85,11 @@ def play_round(grid)
 
   hexes_to_check.each do |hex|
     count = count_active_neighbors(grid, hex)
-    if not grid.key?(hex) or grid[hex] == 0
-      if count == 2
-        new_grid[hex] = 1
-      else
-        new_grid[hex] = 0
-      end
-    else
-      if count == 1 or count == 2
-        new_grid[hex] = 1
-      else
-        new_grid[hex] = 0
-      end
+    if grid.include?(hex) and (count == 1 or count == 2)
+      new_grid.add(hex)
+    elsif count == 2
+      new_grid.add(hex)
     end
-  end
-
-  white_hexes = new_grid.keys.filter{|k| new_grid[k] == 0}
-  white_hexes.each do |k|
-    new_grid.delete(k)
   end
 
   return new_grid
@@ -132,11 +109,10 @@ end.parse!(into: options)
 directions = IO.readlines(options[:filename]).map{|l| l.strip}
 grid = get_initial_grid(directions)
 
-if options[:part] == 1
-  puts grid.values.sum
-elsif options[:part] == 2
+if options[:part] == 2
   100.times do
     grid = play_round(grid)
   end
-  puts grid.values.sum
 end
+
+puts grid.size
