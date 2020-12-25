@@ -137,7 +137,7 @@ class Tile
     end
   end
 
-  def get_innards
+  def grid
     copy = []
     (0..@grid.length - 1).each do |r|
       row = []
@@ -148,29 +148,31 @@ class Tile
     end
 
     if @state == :UP
-      # do nothing
+      return copy
     elsif @state == :RIGHT
-      copy = copy.transpose.map(&:reverse)
+      return copy.transpose.map(&:reverse)
     elsif @state == :LEFT
-      copy = copy.transpose.map(&:reverse).transpose.map(&:reverse).transpose.map(&:reverse)
+      return copy.transpose.map(&:reverse).transpose.map(&:reverse).transpose.map(&:reverse)
     elsif @state == :DOWN
-      copy = copy.transpose.map(&:reverse).transpose.map(&:reverse)
+      return copy.transpose.map(&:reverse).transpose.map(&:reverse)
     elsif @state == :UP_FLIPPED
-      copy = copy.map(&:reverse)
+      return copy.map(&:reverse)
     elsif @state == :RIGHT_FLIPPED
-      copy = copy.map(&:reverse).transpose.map(&:reverse)
+      return copy.map(&:reverse).transpose.map(&:reverse)
     elsif @state == :LEFT_FLIPPED
-      copy = copy.map(&:reverse).transpose.map(&:reverse).transpose.map(&:reverse).transpose.map(&:reverse)
+      return copy.map(&:reverse).transpose.map(&:reverse).transpose.map(&:reverse).transpose.map(&:reverse)
     elsif @state == :DOWN_FLIPPED
-      copy = copy.map(&:reverse).transpose.map(&:reverse).transpose.map(&:reverse)
+      return copy.map(&:reverse).transpose.map(&:reverse).transpose.map(&:reverse)
     end
 
-    innards = copy[1..-2]
-    copy.each_with_index do |row, index|
-      if index == 0 or index = copy.length - 1
-        next
-      end
-      innards[index] = copy[row][1..-2]
+    return nil
+  end
+
+  def innards
+    aligned_grid = self.grid
+    innards = aligned_grid[1..-2]
+    (0..innards.length - 1).each do |i|
+      innards[i] = innards[i][1..-2]
     end
 
     return innards
@@ -193,13 +195,14 @@ def dump_puzzle_to_grid(puzzle, grid_size)
   grid = {}
   max_row = -1
   max_col = -1
-  (0..grid_size-1).each do |r|
-    (0..grid_size-1).each do |c|
-      innards = puzzle[r][c].get_innards
-      innards.each_with_index do |_, r2|
-        innards[r2].each_with_index do |value, c2|
+  puzzle.each_with_index do |row, r|
+    row.each_with_index do |tile, c|
+      innards = tile.innards
+      innards.each_with_index do |innard_row, r2|
+        innard_row.each_with_index do |value, c2|
           actual_row = (r * innards.length) + r2
-          actual_column = (c * innards[r2].length) + c2
+          actual_column = (c * innard_row.length) + c2
+          #puts "Puzzle #{r},#{c} cell #{r2},#{c2} going to actual position #{actual_row}, #{actual_column}"
           grid["#{actual_row},#{actual_column}"] = value
           if actual_row > max_row
             max_row = actual_row
@@ -212,6 +215,8 @@ def dump_puzzle_to_grid(puzzle, grid_size)
       end
     end
   end
+
+  puts grid.keys.length
 
   actual_grid = []
   (0..max_row).each do |r|
@@ -414,33 +419,43 @@ end
 grid = dump_puzzle_to_grid(puzzle, grid_size)
 #print_grid(grid)
 
-
 shape = [
-  '                  # ',
-  '#    ##    ##    ###',
-  ' #  #  #  #  #  #   '
+   '                  # ',
+   '#    ##    ##    ###',
+   ' #  #  #  #  #  #   '
+].map{ |line| line.chars.map{ |c| c == '#' ? 1 : 0}}
+
+possible_grids = [
+  grid,
+  rotate_grid(grid),
+  rotate_grid(rotate_grid(grid)),
+  rotate_grid(rotate_grid(rotate_grid(grid))),
+  grid.map(&:reverse),
+  rotate_grid(grid.map(&:reverse)),
+  rotate_grid(rotate_grid(grid.map(&:reverse))),
+  rotate_grid(rotate_grid(rotate_grid(grid.map(&:reverse))))
 ]
 
-shape = shape.map{ |line| line.chars.map{ |c| c == '#' ? 1 : 0}}
-
-grid = grid.map(&:reverse)
-grid = rotate_grid(grid)
-grid = rotate_grid(grid)
-grid = rotate_grid(grid)
-positions = find_shape(grid, shape)
-
-positions.each do |p|
-  mask_shape(grid, shape, p[0], p[1])
+shape_counts = []
+possible_grids.each do |g|
+  positions = find_shape(g, shape)
+  shape_counts.push(positions.length)
 end
 
-print_grid(grid)
+puts shape_counts
 
-sum = 0
-grid.each do |row|
-  sum += row.count {|v| v == 1}
-end
-
-puts sum
 # positions.each do |p|
-#   puts "#{p[0]},#{p[1]}"
+#   mask_shape(grid, shape, p[0], p[1])
 # end
+
+# print_grid(grid)
+
+# sum = 0
+# grid.each do |row|
+#   sum += row.count {|v| v == 1}
+# end
+
+# puts sum
+# # positions.each do |p|
+# #   puts "#{p[0]},#{p[1]}"
+# # end
