@@ -13,20 +13,12 @@
   "build_systems":
   [
     {
-      "name": "Run Ruby Part 1",
-      "cmd": ["ruby", "$file", "-f", "../input/input.txt", "-p", "1"]
+      "name": "Run Ruby",
+      "cmd": ["ruby", "$file", "-f", "../input/input.txt"]
     },
     {
-      "name": "Run Ruby Part 2",
-      "cmd": ["ruby", "$file", "-f", "../input/input.txt", "-p", "2"]
-    },
-    {
-      "name": "Run Ruby Sample Part 1",
-      "cmd": ["ruby", "$file", "-f", "../input/sample.txt", "-p", "1"]
-    },
-    {
-      "name": "Run Ruby Sample Part 2",
-      "cmd": ["ruby", "$file", "-f", "../input/sample.txt", "-p", "2"]
-    },
+      "name": "Run Ruby Sample",
+      "cmd": ["ruby", "$file", "-f", "../input/sample.txt"]
+    }
   ]
 }
