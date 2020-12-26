@@ -5,7 +5,6 @@ require 'set'
 
 class Tile
   attr_reader :id
-  attr_reader :cols
   attr_reader :state
 
   def initialize(tile_string)
@@ -17,152 +16,179 @@ class Tile
       puts "Bad parse"
     end
 
-    @grid = []
-    @top = []
-    @bottom = []
-    @left = []
-    @right = []
+    @grid = Array.new(10) { Array.new(10) { 0 }}
+    top = []
+    bottom = []
+    left = []
+    right = []
     lines.drop(1).each_with_index do |row, r|
       row.strip!
-      gridrow = []
       row.chars.each_with_index do |ch, c|
         value = ch == '#' ? 1 : 0
-        gridrow.push(value)
+        @grid[r][c] = value
 
         if r == 0
-          @top.push(value)
+          top.push(value)
         elsif r == lines.length - 2
-          @bottom.push(value)
+          bottom.push(value)
         end
 
         if c == 0
-          @left.push(value)
+          left.push(value)
         elsif c == lines.length - 2
-          @right.push(value)
+          right.push(value)
         end
       end
-      @grid.push(gridrow)
     end
 
-    @state = nil
+    @top = top.join("").to_i(base=2)
+    @bottom = bottom.join("").to_i(base=2)
+    @left = left.join("").to_i(base=2)
+    @right = right.join("").to_i(base=2)
+    @top_flipped = top.reverse.join("").to_i(base=2)
+    @bottom_flipped = bottom.reverse.join("").to_i(base=2)
+    @left_flipped = left.reverse.join("").to_i(base=2)
+    @right_flipped = right.reverse.join("").to_i(base=2)
+
+    @state = :UP
   end
 
   def edges
-    [@top, @bottom, @left, @right, @top.reverse, @bottom.reverse, @left.reverse, @right.reverse]
+    [@top, @left, @bottom, @right, @top_flipped, @left_flipped, @bottom_flipped, @right_flipped]
   end
 
   def align_top_left_corner(corner_edges)
-    alignment_found = false
-    [:UP, :RIGHT, :LEFT, :DOWN, :UP_FLIPPED, :RIGHT_FLIPPED, :LEFT_FLIPPED, :DOWN_FLIPPED].each do |alignment|
+    [:UP, :RIGHT, :DOWN, :LEFT, :UP_FLIPPED, :RIGHT_FLIPPED, :DOWN_FLIPPED, :LEFT_FLIPPED].each do |alignment|
       @state = alignment
-      if corner_edges.include?(get_edge(:LEFT).join("")) and corner_edges.include?(get_edge(:UP).join(""))
-        alignment_found = true
-        break
+      if corner_edges.include?(get_edge(:LEFT)) and corner_edges.include?(get_edge(:UP))
+        return true
       end
     end
 
-    alignment_found
+    return false
   end
 
   def align_edge(direction, edge)
-    alignment_found = false
-    [:UP, :RIGHT, :LEFT, :DOWN, :UP_FLIPPED, :RIGHT_FLIPPED, :LEFT_FLIPPED, :DOWN_FLIPPED].each do |alignment|
+    [:UP, :RIGHT, :DOWN, :LEFT, :UP_FLIPPED, :RIGHT_FLIPPED, :DOWN_FLIPPED, :LEFT_FLIPPED].each do |alignment|
       @state = alignment
-      if get_edge(direction) == edge
-        alignment_found = true
+      our_edge = get_edge(direction)
+      if our_edge == edge
+        return true
         break
       end
     end
 
-    alignment_found
+    return false
   end
 
   def get_edge(direction)
     if @state == :UP
-      case direction
-      when :UP then @top
-      when :RIGHT then @right
-      when :LEFT then @left
-      when :DOWN then @bottom
+      if direction == :UP
+        @top
+      elsif direction == :RIGHT
+        @right
+      elsif direction == :DOWN
+        @bottom
+      elsif direction == :LEFT
+        @left
       end
     elsif @state == :RIGHT
-      case direction
-      when :UP then @left
-      when :RIGHT then @top
-      when :LEFT then @bottom
-      when :DOWN then @right
-      end
-    elsif @state == :LEFT
-      case direction
-      when :UP then @right
-      when :RIGHT then @bottom
-      when :LEFT then @top
-      when :DOWN then @left
+      if direction == :UP
+        @left_flipped
+      elsif direction == :RIGHT
+        @top
+      elsif direction == :DOWN
+        @right_flipped
+      elsif direction == :LEFT
+        @bottom
       end
     elsif @state == :DOWN
-      case direction
-      when :UP then @bottom
-      when :RIGHT then @left
-      when :LEFT then @right
-      when :DOWN then @top
+      if direction == :UP
+        @bottom_flipped
+      elsif direction == :RIGHT
+        @left_flipped
+      elsif direction == :DOWN
+        @top_flipped
+      elsif direction == :LEFT
+        @right_flipped
+      end
+    elsif @state == :LEFT
+      if direction == :UP
+        @right
+      elsif direction == :RIGHT
+        @bottom_flipped
+      elsif direction == :DOWN
+        @left
+      elsif direction == :LEFT
+        @top_flipped
       end
     elsif @state == :UP_FLIPPED
-      case direction
-      when :UP then @top.reverse
-      when :RIGHT then @right.reverse
-      when :LEFT then @left.reverse
-      when :DOWN then @bottom.reverse
+      if direction == :UP
+        @top_flipped
+      elsif direction == :RIGHT
+        @left
+      elsif direction == :DOWN
+        @bottom_flipped
+      elsif direction == :LEFT
+        @right
       end
     elsif @state == :RIGHT_FLIPPED
-      case direction
-      when :UP then @left.reverse
-      when :RIGHT then @top.reverse
-      when :LEFT then @bottom.reverse
-      when :DOWN then @right.reverse
-      end
-    elsif @state == :LEFT_FLIPPED
-      case direction
-      when :UP then @right.reverse
-      when :RIGHT then @bottom.reverse
-      when :LEFT then @top.reverse
-      when :DOWN then @left.reverse
+      if direction == :UP
+        @right_flipped
+      elsif direction == :RIGHT
+        @top_flipped
+      elsif direction == :DOWN
+        @left_flipped
+      elsif direction == :LEFT
+        @bottom_flipped
       end
     elsif @state == :DOWN_FLIPPED
-      case direction
-      when :UP then @bottom.reverse
-      when :RIGHT then @left.reverse
-      when :LEFT then @right.reverse
-      when :DOWN then @top.reverse
+      if direction == :UP
+        @bottom
+      elsif direction == :RIGHT
+        @right_flipped
+      elsif direction == :DOWN
+        @top
+      elsif direction == :LEFT
+        @left_flipped
+      end
+    elsif @state == :LEFT_FLIPPED
+      if direction == :UP
+        @left
+      elsif direction == :RIGHT
+        @bottom
+      elsif direction == :DOWN
+        @right
+      elsif direction == :LEFT
+        @top
       end
     end
   end
 
   def grid
-    copy = []
-    (0..@grid.length - 1).each do |r|
-      row = []
-      (0..@grid[r].length - 1).each do |c|
-        row.push(@grid[r][c])
+    copy = Array.new(@grid.length) { Array.new(@grid[0].length) { 0 } }
+    @grid.each_with_index do |row, r|
+      row.each_with_index do |v, c|
+        copy[r][c] = v
       end
-      copy.push(row)
     end
 
     if @state == :UP
       return copy
     elsif @state == :RIGHT
       return copy.transpose.map(&:reverse)
-    elsif @state == :LEFT
-      return copy.transpose.map(&:reverse).transpose.map(&:reverse).transpose.map(&:reverse)
     elsif @state == :DOWN
       return copy.transpose.map(&:reverse).transpose.map(&:reverse)
+    elsif @state == :LEFT
+      return copy.transpose.map(&:reverse).transpose.map(&:reverse).transpose.map(&:reverse)
     elsif @state == :UP_FLIPPED
       return copy.map(&:reverse)
     elsif @state == :RIGHT_FLIPPED
       return copy.map(&:reverse).transpose.map(&:reverse)
-    elsif @state == :LEFT_FLIPPED
-      return copy.map(&:reverse).transpose.map(&:reverse).transpose.map(&:reverse).transpose.map(&:reverse)
     elsif @state == :DOWN_FLIPPED
       return copy.map(&:reverse).transpose.map(&:reverse).transpose.map(&:reverse)
+    elsif @state == :LEFT_FLIPPED
+      return copy.map(&:reverse).transpose.map(&:reverse).transpose.map(&:reverse).transpose.map(&:reverse)
     end
 
     return nil
@@ -192,42 +218,21 @@ def print_puzzle_alignments(puzzle)
 end
 
 def dump_puzzle_to_grid(puzzle, grid_size)
-  grid = {}
-  max_row = -1
-  max_col = -1
+  grid = Array.new(grid_size * 8) { Array.new(grid_size * 8) { 0 }}
   puzzle.each_with_index do |row, r|
     row.each_with_index do |tile, c|
       innards = tile.innards
       innards.each_with_index do |innard_row, r2|
         innard_row.each_with_index do |value, c2|
-          actual_row = (r * innards.length) + r2
-          actual_column = (c * innard_row.length) + c2
-          #puts "Puzzle #{r},#{c} cell #{r2},#{c2} going to actual position #{actual_row}, #{actual_column}"
-          grid["#{actual_row},#{actual_column}"] = value
-          if actual_row > max_row
-            max_row = actual_row
-          end
-
-          if actual_column > max_col
-            max_col = actual_column
-          end
+          actual_row = (r * 8) + r2
+          actual_column = (c * 8) + c2
+          grid[actual_row][actual_column] = value
         end
       end
     end
   end
 
-  puts grid.keys.length
-
-  actual_grid = []
-  (0..max_row).each do |r|
-    row = []
-    (0..max_col).each do |c|
-      row.push(grid["#{r},#{c}"])
-    end
-    actual_grid.push(row)
-  end
-
-  return actual_grid
+  return grid
 end
 
 def print_grid(grid)
@@ -306,7 +311,7 @@ OptionParser.new do |opts|
   opts.on("-f FILENAME", "--filename=FILENAME", String, "Which filename to use?")
 end.parse!(into: options)
 
-tiles = IO.read(options[:filename]).split("\n\n").map{|str| Tile::new(str)}
+tiles = IO.read(options[:filename]).split("\n\n").map{|str| Tile.new(str)}
 tile_map = {}
 tiles.each do |t|
   tile_map[t.id] = t
@@ -317,11 +322,10 @@ grid_size = Math.sqrt(tiles.length).to_i
 edge_to_tiles = {}
 tiles.each do |tile|
   tile.edges.each do |edge|
-    edge_str = edge.join("")
-    if edge_to_tiles.key?(edge_str)
-      edge_to_tiles[edge_str].push(tile.id)
+    if edge_to_tiles.key?(edge)
+      edge_to_tiles[edge].push(tile.id)
     else
-      edge_to_tiles[edge_str] = [tile.id]
+      edge_to_tiles[edge] = [tile.id]
     end
   end
 end
@@ -339,85 +343,46 @@ edge_to_tiles.keys.each do |edge|
 end
 
 corners = tile_unique_edge_count.select{|tile, count| count == 4}.keys
-#puts "Corners:"
-#puts corners
 
 if options[:part] == 1
   puts corners.reduce(&:*)
 end
 
-edges = tile_unique_edge_count.select{|tile, count| count == 2}.keys
-#puts "Edges:"
-#puts edges
+puzzle = Array.new(grid_size) { Array.new(grid_size) { nil }}
 
-middles = tile_map.reject{ |k| corners.include?(k) or edges.include?(k) }.keys
-#puts "Middles:"
-#puts middles
-
-puzzle = []
-grid_size.times do |r|
-  row = []
-  grid_size.times do |c|
-    row.push(nil)
-  end
-  puzzle.push(row)
-end
-
-# Pick a corner
 puzzle[0][0] = tile_map[corners[0]]
-assigned_tile_ids = Set[corners[0]]
-(0..grid_size-1).each do |r|
-  (0..grid_size-1).each do |c|
-    if not puzzle[r][c].nil?
+assigned_tile_ids = Set[puzzle[0][0].id]
+corner_edges = edge_to_tiles.keys.filter{|e| edge_to_tiles[e].size == 1}
+puzzle[0][0].align_top_left_corner(corner_edges)
+
+puzzle.each_with_index do |row, r|
+  row.each_with_index do |tile, c|
+    if not tile.nil?
       next
     end
 
-    tile_to_match = nil
+    edge_to_match = nil
+    direction_to_match = nil
     if r == 0
       tile_to_match = puzzle[r][c - 1]
+      edge_to_match = tile_to_match.get_edge(:RIGHT)
+      direction_to_match = :LEFT
     else
       tile_to_match = puzzle[r - 1][c]
+      edge_to_match = tile_to_match.get_edge(:DOWN)
+      direction_to_match = :UP
     end
 
-    new_tile_id = nil
-    if (r == 0 or r == (grid_size - 1)) and (c == 0 or c == (grid_size - 1))
-      # We're picking from corners
-      new_tile_id = corners.find{|t| not assigned_tile_ids.member?(t) and tile_map[t].edges.any?{|te| tile_to_match.edges.any?{|me| te == me}}}
-    elsif (r == 0 or r == (grid_size - 1)) or (c == 0 or c == (grid_size - 1))
-      # We're picking from edges
-      new_tile_id = edges.find{|t| not assigned_tile_ids.member?(t) and tile_map[t].edges.any?{|te| tile_to_match.edges.any?{|me| te == me}}}
-    else
-      # We're picking from middles
-      new_tile_id = middles.find{|t| not assigned_tile_ids.member?(t) and tile_map[t].edges.any?{|te| tile_to_match.edges.any?{|me| te == me}}}
-    end
-
-    puzzle[r][c] = tile_map[new_tile_id]
-    assigned_tile_ids.add(new_tile_id)
-  end
-end
-
-#print_puzzle_ids(puzzle)
-
-corner_edges = edge_to_tiles.keys.filter{|e| edge_to_tiles[e].size == 1}
-#puts corner_edges
-
-puzzle[0][0].align_top_left_corner(corner_edges)
-#puts puzzle[0][0].state
-(0..grid_size-1).each do |r|
-  (0..grid_size-1).each do |c|
-    if r == 0
-      tile_to_match = puzzle[r][c - 1]
-      puzzle[r][c].align_edge(:LEFT, tile_to_match.get_edge(:RIGHT))
-    else
-      tile_to_match = puzzle[r - 1][c]
-      puzzle[r][c].align_edge(:UP, tile_to_match.get_edge(:DOWN))
+    new_tile = tiles.find {|t| not assigned_tile_ids.member?(t.id) and t.edges.include?(edge_to_match)}
+    puzzle[r][c] = new_tile
+    assigned_tile_ids.add(new_tile.id)
+    if not new_tile.align_edge(direction_to_match, edge_to_match)
+      puts "Error aligning."
     end
   end
 end
 
-#print_puzzle_alignments(puzzle)
 grid = dump_puzzle_to_grid(puzzle, grid_size)
-#print_grid(grid)
 
 shape = [
    '                  # ',
@@ -436,26 +401,27 @@ possible_grids = [
   rotate_grid(rotate_grid(rotate_grid(grid.map(&:reverse))))
 ]
 
-shape_counts = []
 possible_grids.each do |g|
   positions = find_shape(g, shape)
-  shape_counts.push(positions.length)
+  if positions.length == 0
+    next
+  end
+
+  puts "The grid..."
+  print_grid(grid)
+
+  positions.each do |p|
+    mask_shape(grid, shape, p[0], p[1])
+  end
+
+  puts "Thar be monsters!"
+  print_grid(grid)
+
+  sum = 0
+  grid.each do |row|
+    sum += row.count {|v| v == 1}
+  end
+
+  puts sum
 end
 
-puts shape_counts
-
-# positions.each do |p|
-#   mask_shape(grid, shape, p[0], p[1])
-# end
-
-# print_grid(grid)
-
-# sum = 0
-# grid.each do |row|
-#   sum += row.count {|v| v == 1}
-# end
-
-# puts sum
-# # positions.each do |p|
-# #   puts "#{p[0]},#{p[1]}"
-# # end
