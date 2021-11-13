@@ -218,6 +218,24 @@ def print_puzzle_alignments(puzzle)
 end
 
 def dump_puzzle_to_grid(puzzle, grid_size)
+  grid = Array.new(grid_size * 10) { Array.new(grid_size * 10) { 0 }}
+  puzzle.each_with_index do |row, r|
+    row.each_with_index do |tile, c|
+      innards = tile.grid
+      innards.each_with_index do |innard_row, r2|
+        innard_row.each_with_index do |value, c2|
+          actual_row = (r * 10) + r2
+          actual_column = (c * 10) + c2
+          grid[actual_row][actual_column] = value
+        end
+      end
+    end
+  end
+
+  return grid
+end
+
+def dump_innards_to_grid(puzzle, grid_size)
   grid = Array.new(grid_size * 8) { Array.new(grid_size * 8) { 0 }}
   puzzle.each_with_index do |row, r|
     row.each_with_index do |tile, c|
@@ -383,6 +401,8 @@ puzzle.each_with_index do |row, r|
 end
 
 grid = dump_puzzle_to_grid(puzzle, grid_size)
+print_grid(grid)
+grid = dump_innards_to_grid(puzzle, grid_size)
 
 shape = [
    '                  # ',
@@ -407,19 +427,32 @@ possible_grids.each do |g|
     next
   end
 
-  puts "The grid..."
-  print_grid(grid)
+  #puts "The grid..."
+  #print_grid(grid)
+
+  sum = 0
+  grid.each do |row|
+    #puts row.join(",")
+    row_count = row.count {|v| v == 1}
+    #puts row_count
+    sum += row_count
+  end
+
+  puts sum
 
   positions.each do |p|
     mask_shape(grid, shape, p[0], p[1])
   end
 
-  puts "Thar be monsters!"
-  print_grid(grid)
+  #puts "Thar be monsters!"
+  #print_grid(grid)
 
   sum = 0
   grid.each do |row|
-    sum += row.count {|v| v == 1}
+    #puts row.join(",")
+    row_count = row.count {|v| v == 1}
+    #puts row_count
+    sum += row_count
   end
 
   puts sum
