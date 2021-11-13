@@ -59,19 +59,25 @@ def count_active_neighbors(grid, hex)
   return get_neighbors(hex).count {|n| grid.include?(n)}
 end
 
-def play_round(grid)
-  new_grid = Set[]
-
-  hexes_to_check = Set[]
-  grid.each do |hex|
-    hexes_to_check.add(hex)
-    hexes_to_check.merge(get_neighbors(hex))
-  end
-
-  hexes_to_check.each do |hex|
+def check_hex(grid, hex, new_grid, checked)
+  if not checked.member?(hex)
     count = count_active_neighbors(grid, hex)
     if count == 2 or (grid.include?(hex) and count == 1)
       new_grid.add(hex)
+    end
+    checked.add(hex)
+  end
+end
+
+def play_round(grid)
+  new_grid = Set[]
+
+  checked_hexes = Set[]
+  grid.each do |hex|
+    check_hex(grid, hex, new_grid, checked_hexes)
+
+    get_neighbors(hex).each do |n|
+      check_hex(grid, n, new_grid, checked_hexes)
     end
   end
 
