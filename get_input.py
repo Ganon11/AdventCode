@@ -13,7 +13,7 @@ def create_input_file(year, day, path=None):
 
   cookies = dict()
   with open('session.txt', 'r') as file:
-    cookies['session'] = file.read()
+    cookies['session'] = file.read().strip()
 
   if path is None:
     path = os.path.join(str(year), daystr, 'input', 'input.txt')
