@@ -1,0 +1,32 @@
+{
+  "folders":
+  [
+    {
+      "path": "src",
+      "name": "Source"
+    },
+    {
+      "path": "input",
+      "name": "Input files"
+    }
+  ],
+  "build_systems":
+  [
+    {
+      "name": "Run Part 1",
+      "cmd": ["py", "-3", "$file", "-f", "../input/input.txt", "-p", "1"]
+    },
+    {
+      "name": "Run Part 2",
+      "cmd": ["py", "-3", "$file", "-f", "../input/input.txt", "-p", "2"]
+    },
+    {
+      "name": "Run Sample Part 1",
+      "cmd": ["py", "-3", "$file", "-f", "../input/sample.txt", "-p", "1"]
+    },
+    {
+      "name": "Run Sample Part 2",
+      "cmd": ["py", "-3", "$file", "-f", "../input/sample.txt", "-p", "2"]
+    }
+  ]
+}
