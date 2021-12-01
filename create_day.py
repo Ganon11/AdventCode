@@ -28,21 +28,21 @@ def create_sublime_project(basedir, daystr, write_python, write_ruby, sample_cou
       file.write("""
     {
       "name": "Run Python Part 1",
-      "cmd": ["python", "$file", "-f", "../input/input.txt", "-p", "1"]
+      "cmd": ["py", "-3", "$file", "-f", "../input/input.txt", "-p", "1"]
     },
     {
       "name": "Run Python Part 2",
-      "cmd": ["python", "$file", "-f", "../input/input.txt", "-p", "2"]
+      "cmd": ["py", "-3", "$file", "-f", "../input/input.txt", "-p", "2"]
     },""")
       if sample_count == 1:
         file.write("""
     {
       "name": "Run Python Sample Part 1",
-      "cmd": ["python", "$file", "-f", "../input/sample.txt", "-p", "1"]
+      "cmd": ["py", "-3", "$file", "-f", "../input/sample.txt", "-p", "1"]
     },
     {
       "name": "Run Python Sample Part 2",
-      "cmd": ["python", "$file", "-f", "../input/sample.txt", "-p", "2"]
+      "cmd": ["py", "-3", "$file", "-f", "../input/sample.txt", "-p", "2"]
     },""")
       else:
         for i in range(sample_count):
@@ -50,11 +50,11 @@ def create_sublime_project(basedir, daystr, write_python, write_ruby, sample_cou
             "\n"
             "    {\n"
             f"      \"name\": \"Run Python Sample {i + 1} Part 1\",\n"
-            f"      \"cmd\": [\"python\", \"$file\", \"-f\", \"../input/sample{i + 1}.txt\", \"-p\", \"1\"]\n"
+            f"      \"cmd\": [\"py\", \"-3\", \"$file\", \"-f\", \"../input/sample{i + 1}.txt\", \"-p\", \"1\"]\n"
             "    },\n"
             "    {\n"
             f"      \"name\": \"Run Python Sample {i + 1} Part 2\",\n"
-            f"      \"cmd\": [\"python\", \"$file\", \"-f\", \"../input/sample{i + 1}.txt\", \"-p\", \"2\"]\n"
+            f"      \"cmd\": [\"py\", \"-3\", \"$file\", \"-f\", \"../input/sample{i + 1}.txt\", \"-p\", \"2\"]\n"
             "    },"
           )
           file.write(message)
@@ -165,7 +165,7 @@ def create_input_file(basedir, day, year):
   url = 'https://adventofcode.com/' + str(year) + '/day/' + str(day) + '/input'
   cookies = dict()
   with open('session.txt', 'r') as file:
-    cookies['session'] = file.read()
+    cookies['session'] = file.read().strip()
 
   with open(os.path.join(basedir, 'input', 'input.txt'), 'w') as file:
     input_request = requests.get(url=url, cookies=cookies)
