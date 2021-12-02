@@ -23,17 +23,19 @@ def check_increments(depths):
 
   return total
 
-def check_sliding_window(depths):
+def check_sliding_window(depths, window):
   num_depths = len(depths)
 
-  if num_depths <= 3:
+  if num_depths <= window:
     return 0
 
-  old_sum = depths[0] + depths[1] + depths[2]
-  index = 3
+  old_sum = sum(depths[:window])
+  index = window
   total = 0
   while index < num_depths:
-    new_sum = depths[index - 2] + depths[index - 1] + depths[index]
+    start = index - window + 1
+    end = index + 1
+    new_sum = sum(depths[start:end])
     if new_sum > old_sum:
       total = total + 1
 
@@ -46,13 +48,14 @@ def main():
   parser = argparse.ArgumentParser()
   parser.add_argument('-f', '--filename', default='../input/sample.txt')
   parser.add_argument('-p', '--part', choices=[1, 2], default=1, type=int)
+  parser.add_argument('-w', '--window', default=3, type=int)
   args = parser.parse_args()
 
   depths = get_depths(args.filename)
   if args.part == 1:
     deeper = check_increments(depths)
   else:
-    deeper = check_sliding_window(depths)
+    deeper = check_sliding_window(depths, args.window)
 
   print(f'Got deeper {deeper} times.')
 
