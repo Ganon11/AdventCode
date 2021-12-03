@@ -17,29 +17,24 @@ def get_bitcounts(diagnostics):
         bitcounts[index] += 1
   return bitcounts
 
-def get_gamma_rate(diagnostics):
+def get_simple_rate(diagnostics, condition):
   bitlen = len(diagnostics[0])
   bitcounts = get_bitcounts(diagnostics)
 
   bits = ['0' for x in range(bitlen)]
   count = len(diagnostics)
   for index in range(bitlen):
-    if bitcounts[index] >= (count / 2):
+    if condition(bitcounts[index], count / 2):
       bits[index] = '1'
   return int(''.join(bits), 2)
+
+def get_gamma_rate(diagnostics):
+  return get_simple_rate(diagnostics, lambda a,b: a >= b)
 
 def get_epsilon_rate(diagnostics):
-  bitlen = len(diagnostics[0])
-  bitcounts = get_bitcounts(diagnostics)
+  return get_simple_rate(diagnostics, lambda a,b: a <= b)
 
-  bits = ['0' for x in range(bitlen)]
-  count = len(diagnostics)
-  for index in range(bitlen):
-    if bitcounts[index] <= (count / 2):
-      bits[index] = '1'
-  return int(''.join(bits), 2)
-
-def get_oxygen_generator_rating(diagnostics):
+def get_complex_rate(diagnostics, defaultbit, otherbit):
   bitlen = len(diagnostics[0])
   candidates = diagnostics.copy()
   for index in range(bitlen):
@@ -48,9 +43,9 @@ def get_oxygen_generator_rating(diagnostics):
       return int(candidates[0], 2)
 
     bitcounts = get_bitcounts(candidates)
-    most_common_bit = '1'
+    most_common_bit = defaultbit
     if bitcounts[index] < (count / 2):
-      most_common_bit = '0'
+      most_common_bit = otherbit
     candidates = list(filter(lambda candidate: candidate[index] == most_common_bit, candidates))
 
   if len(candidates) == 1:
@@ -58,24 +53,11 @@ def get_oxygen_generator_rating(diagnostics):
 
   return 0
 
+def get_oxygen_generator_rating(diagnostics):
+  return get_complex_rate(diagnostics, '1', '0')
+
 def get_co2_scrubber_rating(diagnostics):
-  bitlen = len(diagnostics[0])
-  candidates = diagnostics.copy()
-  for index in range(bitlen):
-    count = len(candidates)
-    if count == 1:
-      return int(candidates[0], 2)
-
-    bitcounts = get_bitcounts(candidates)
-    least_common_bit = '0'
-    if bitcounts[index] < (count / 2):
-      least_common_bit = '1'
-    candidates = list(filter(lambda candidate: candidate[index] == least_common_bit, candidates))
-
-  if len(candidates) == 1:
-    return int(candidates[0], 2)
-
-  return 0
+  return get_complex_rate(diagnostics, '0', '1')
 
 def main():
   parser = argparse.ArgumentParser()
@@ -90,7 +72,9 @@ def main():
     print(f'Power consumption: {gamma * epsilon}')
   else:
     o2 = get_oxygen_generator_rating(diagnostics)
+    print(o2)
     co2 = get_co2_scrubber_rating(diagnostics)
+    print(co2)
     print(f'Life support: {o2 * co2}')
 
 if __name__ == "__main__":
