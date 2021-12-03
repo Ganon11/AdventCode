@@ -72,9 +72,7 @@ def main():
     print(f'Power consumption: {gamma * epsilon}')
   else:
     o2 = get_oxygen_generator_rating(diagnostics)
-    print(o2)
     co2 = get_co2_scrubber_rating(diagnostics)
-    print(co2)
     print(f'Life support: {o2 * co2}')
 
 if __name__ == "__main__":
