@@ -43,10 +43,10 @@ def get_complex_rate(diagnostics, defaultbit, otherbit):
       return int(candidates[0], 2)
 
     bitcounts = get_bitcounts(candidates)
-    most_common_bit = defaultbit
+    new_bit = defaultbit
     if bitcounts[index] < (count / 2):
-      most_common_bit = otherbit
-    candidates = list(filter(lambda candidate: candidate[index] == most_common_bit, candidates))
+      new_bit = otherbit
+    candidates = list(filter(lambda candidate: candidate[index] == new_bit, candidates))
 
   if len(candidates) == 1:
     return int(candidates[0], 2)
