@@ -34,30 +34,27 @@ def get_gamma_rate(diagnostics):
 def get_epsilon_rate(diagnostics):
   return get_simple_rate(diagnostics, lambda a,b: a <= b)
 
-def get_complex_rate(diagnostics, defaultbit, otherbit):
+def get_complex_rate(diagnostics, condition):
   bitlen = len(diagnostics[0])
   candidates = diagnostics.copy()
   for index in range(bitlen):
     count = len(candidates)
     if count == 1:
-      return int(candidates[0], 2)
+      break
 
     bitcounts = get_bitcounts(candidates)
-    new_bit = defaultbit
-    if bitcounts[index] < (count / 2):
-      new_bit = otherbit
+    new_bit = '1'
+    if condition(bitcounts[index], count / 2):
+      new_bit = '0'
     candidates = list(filter(lambda candidate: candidate[index] == new_bit, candidates))
 
-  if len(candidates) == 1:
-    return int(candidates[0], 2)
-
-  return 0
+  return int(candidates[0], 2)
 
 def get_oxygen_generator_rating(diagnostics):
-  return get_complex_rate(diagnostics, '1', '0')
+  return get_complex_rate(diagnostics, lambda a,b: a < b)
 
 def get_co2_scrubber_rating(diagnostics):
-  return get_complex_rate(diagnostics, '0', '1')
+  return get_complex_rate(diagnostics, lambda a,b: a >= b)
 
 def main():
   parser = argparse.ArgumentParser()
