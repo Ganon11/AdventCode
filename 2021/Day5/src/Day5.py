@@ -11,33 +11,10 @@ class SimpleLine:
     if not match:
       raise 'Invalid format'
 
-    x1 = int(match.group(1))
-    y1 = int(match.group(2))
-    x2 = int(match.group(3))
-    y2 = int(match.group(4))
-
-    if x1 == x2:
-      if y1 <= y2:
-        self.x1 = x1
-        self.y1 = y1
-        self.x2 = x2
-        self.y2 = y2
-      else:
-        self.x1 = x2
-        self.y1 = y2
-        self.x2 = x1
-        self.y2 = y1
-    else:
-      if x1 <= x2:
-        self.x1 = x1
-        self.y1 = y1
-        self.x2 = x2
-        self.y2 = y2
-      else:
-        self.x1 = x2
-        self.y1 = y2
-        self.x2 = x1
-        self.y2 = y1
+    self.x1 = int(match.group(1))
+    self.y1 = int(match.group(2))
+    self.x2 = int(match.group(3))
+    self.y2 = int(match.group(4))
 
   def is_horizontal(self):
     '''Determines if this line is horizontal'''
@@ -64,22 +41,28 @@ def get_intersections(lines, ignore_diagonal=True):
   for line in lines:
     if line.is_horizontal():
       y = line.y1
-      for x in range(line.x1, line.x2 + 1):
+      for x in range(min(line.x1, line.x2), max(line.x1, line.x2) + 1):
         board[f'{x},{y}'] += 1
     elif line.is_vertical():
       x = line.x1
-      for y in range(line.y1, line.y2 + 1):
+      for y in range(min(line.y1, line.y2), max(line.y1, line.y2) + 1):
         board[f'{x},{y}'] += 1
     else:
       if ignore_diagonal:
         continue
-      # All diagonal lines are oriented from lower X to higher X
+
+      count_points = abs(line.x1 - line.x2) + 1
       x = line.x1
       y = line.y1
-      while x <= line.x2:
+      for _ in range(count_points):
         board[f'{x},{y}'] += 1
-        x += 1
-        if y <= line.y2:
+
+        if x < line.x2:
+          x += 1
+        else:
+          x -= 1
+
+        if y < line.y2:
           y += 1
         else:
           y -= 1
