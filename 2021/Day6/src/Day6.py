@@ -1,5 +1,4 @@
 import argparse
-from collections import defaultdict
 
 def read_fish(filename):
   '''Reads the initial state of fish from the given file.'''
@@ -7,22 +6,22 @@ def read_fish(filename):
   with open(filename, 'r') as fh:
     fish_strs = fh.readline().strip().split(',')
 
-  fish_dict = defaultdict(int)
+  fish_list = [0, 0, 0, 0, 0, 0, 0, 0, 0]
   for fish in map(int, fish_strs):
-    fish_dict[fish] += 1
+    fish_list[fish] += 1
 
-  return fish_dict
+  return fish_list
 
 def simulate_day(fish):
   '''Simulates a single day of fish population growth'''
   # fish can only be between 0 and 8
   fish_to_add = 0
-  for number in sorted(fish):
-    if number == 0:
-      fish_to_add = fish[number]
+  for index, fish_count in enumerate(fish):
+    if index == 0:
+      fish_to_add = fish_count
     else:
-      fish[number - 1] = fish[number]
-    fish[number] = 0
+      fish[index - 1] = fish[index]
+    fish[index] = 0
 
   if fish_to_add > 0:
     fish[8] = fish_to_add
@@ -30,24 +29,12 @@ def simulate_day(fish):
 
   return fish
 
-def count_fish(fish):
-  '''Counts the number of fish in the sea'''
-  total = 0
-  for number in sorted(fish):
-    #print(f'\t{fish[number]} of {number}')
-    total += fish[number]
-  #print(f'Total fish: {total}')
-  return total
-
 def simulate_days(fish, days):
   '''Simulates growth of the fish for a number of days'''
-  total = count_fish(fish)
-
   for _ in range(days):
     fish = simulate_day(fish)
-    total = count_fish(fish)
 
-  return total
+  return sum(fish)
 
 def main():
   '''There's always another fish in the sea.'''
