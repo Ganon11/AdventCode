@@ -2,15 +2,6 @@ import argparse
 import re
 from collections import defaultdict
 
-class SimplePosition:
-  '''A simple x,y coordinate'''
-  def __init__(self, x, y):
-    self.x = x
-    self.y = y
-
-  def __str__(self):
-    return f'{self.x},{self.y}'
-
 class SimpleLine:
   '''A simple line between two coordinates'''
   _LINE_PATTERN = re.compile(r'(\d+),(\d+) -> (\d+),(\d+)', re.IGNORECASE)
@@ -27,29 +18,37 @@ class SimpleLine:
 
     if x1 == x2:
       if y1 <= y2:
-        self.start = SimplePosition(x1, y1)
-        self.end = SimplePosition(x2, y2)
+        self.x1 = x1
+        self.y1 = y1
+        self.x2 = x2
+        self.y2 = y2
       else:
-        self.start = SimplePosition(x2, y2)
-        self.end = SimplePosition(x1, y1)
+        self.x1 = x2
+        self.y1 = y2
+        self.x2 = x1
+        self.y2 = y1
     else:
       if x1 <= x2:
-        self.start = SimplePosition(x1, y1)
-        self.end = SimplePosition(x2, y2)
+        self.x1 = x1
+        self.y1 = y1
+        self.x2 = x2
+        self.y2 = y2
       else:
-        self.start = SimplePosition(x2, y2)
-        self.end = SimplePosition(x1, y1)
+        self.x1 = x2
+        self.y1 = y2
+        self.x2 = x1
+        self.y2 = y1
 
   def is_horizontal(self):
     '''Determines if this line is horizontal'''
-    return self.start.y == self.end.y
+    return self.y1 == self.y2
 
   def is_vertical(self):
     '''Determines if this line is vertical'''
-    return self.start.x == self.end.x
+    return self.x1 == self.x2
 
   def __str__(self):
-    return f'({self.start.x}, {self.start.y}) -> ({self.end.x}, {self.end.y})'
+    return f'({self.x1}, {self.y1}) -> ({self.x2}, {self.y2})'
 
 def get_lines(filename):
   '''Parses a collection of lines from the given file.'''
@@ -76,27 +75,27 @@ def get_simple_intersections(lines, ignore_diagonal=True):
   max_x = -1
   max_y = -1
   for line in lines:
-    max_x = max(line.start.x, line.end.x, max_x)
-    max_y = max(line.start.y, line.end.y, max_y)
+    max_x = max(line.x1, line.x2, max_x)
+    max_y = max(line.y1, line.y2, max_y)
 
     if line.is_horizontal():
-      y = line.start.y
-      for x in range(line.start.x, line.end.x + 1):
+      y = line.y1
+      for x in range(line.x1, line.x2 + 1):
         board[f'{x},{y}'] += 1
     elif line.is_vertical():
-      x = line.start.x
-      for y in range(line.start.y, line.end.y + 1):
+      x = line.x1
+      for y in range(line.y1, line.y2 + 1):
         board[f'{x},{y}'] += 1
     else:
       if ignore_diagonal:
         continue
       # All diagonal lines are oriented from lower X to higher X
-      x = line.start.x
-      y = line.start.y
-      while x <= line.end.x:
+      x = line.x1
+      y = line.y1
+      while x <= line.x2:
         board[f'{x},{y}'] += 1
         x += 1
-        if y <= line.end.y:
+        if y <= line.y2:
           y += 1
         else:
           y -= 1
