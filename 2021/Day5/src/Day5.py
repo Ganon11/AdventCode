@@ -84,11 +84,7 @@ def get_intersections(lines, ignore_diagonal=True):
         else:
           y -= 1
 
-  total = 0
-  for value in board.values():
-    if value >= 2:
-      total += 1
-  return total
+  return len([value for value in board.values() if value >= 2])
 
 def main():
   '''Navigate the field of hydrothermal vents.'''
