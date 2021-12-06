@@ -58,26 +58,10 @@ def get_lines(filename):
       lines.append(SimpleLine(line.strip()))
   return lines
 
-def print_board(board, max_x, max_y):
-  '''Prints a board of intersecting lines.'''
-  for y in range(max_y + 1):
-    for x in range(max_x + 1):
-      point = f'{x},{y}'
-      if board[point] == 0:
-        print(' ', end='')
-      else:
-        print(board[point], end='')
-    print('')
-
 def get_simple_intersections(lines, ignore_diagonal=True):
   '''Determines which horizontal and vertical lines intersect'''
   board = defaultdict(int)
-  max_x = -1
-  max_y = -1
   for line in lines:
-    max_x = max(line.x1, line.x2, max_x)
-    max_y = max(line.y1, line.y2, max_y)
-
     if line.is_horizontal():
       y = line.y1
       for x in range(line.x1, line.x2 + 1):
