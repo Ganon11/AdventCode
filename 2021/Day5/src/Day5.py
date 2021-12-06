@@ -85,7 +85,7 @@ def get_intersections(lines, ignore_diagonal=True):
           y -= 1
 
   total = 0
-  for _, value in board.items():
+  for value in board.values():
     if value >= 2:
       total += 1
   return total
