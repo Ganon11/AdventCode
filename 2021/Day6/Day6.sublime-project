@@ -1,0 +1,40 @@
+{
+  "folders":
+  [
+    {
+      "path": "src",
+      "name": "Source"
+    },
+    {
+      "path": "input",
+      "name": "Input files"
+    }
+  ],
+  "build_systems":
+  [
+    {
+      "name": "Run Python Part 1",
+      "cmd": ["py", "-3", "$file", "-f", "../input/input.txt", "-d", "80"]
+    },
+    {
+      "name": "Run Python Part 2",
+      "cmd": ["py", "-3", "$file", "-f", "../input/input.txt", "-d", "256"]
+    },
+    {
+      "name": "Run Python Sample 1",
+      "cmd": ["py", "-3", "$file", "-f", "../input/sample1.txt", "-d", "5"]
+    },
+    {
+      "name": "Run Python Sample 2 18 Days",
+      "cmd": ["py", "-3", "$file", "-f", "../input/sample2.txt", "-d", "18"]
+    },
+    {
+      "name": "Run Python Sample 2 80 Days",
+      "cmd": ["py", "-3", "$file", "-f", "../input/sample2.txt", "-d", "80"]
+    },
+    {
+      "name": "Run Python Sample 2 256 Days",
+      "cmd": ["py", "-3", "$file", "-f", "../input/sample2.txt", "-d", "256"]
+    },
+  ]
+}
