@@ -58,8 +58,8 @@ def get_lines(filename):
       lines.append(SimpleLine(line.strip()))
   return lines
 
-def get_simple_intersections(lines, ignore_diagonal=True):
-  '''Determines which horizontal and vertical lines intersect'''
+def get_intersections(lines, ignore_diagonal=True):
+  '''Determines which lines intersect'''
   board = defaultdict(int)
   for line in lines:
     if line.is_horizontal():
@@ -98,7 +98,7 @@ def main():
   args = parser.parse_args()
 
   lines = get_lines(args.filename)
-  result = get_simple_intersections(lines, args.part == 1)
+  result = get_intersections(lines, args.part == 1)
   print(f'Total intersections: {result}')
 
 if __name__ == "__main__":
