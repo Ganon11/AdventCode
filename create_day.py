@@ -183,9 +183,9 @@ def create_sample_files(basedir, count):
 def main():
   """Scaffolds an AoC day."""
   parser = argparse.ArgumentParser()
-  parser.add_argument('day', type=int)
-  parser.add_argument('-d', '--delete', action='store_true')
-  parser.add_argument('year', type=int)
+  parser.add_argument('-d', '--day', type=int, required=True)
+  parser.add_argument('-y', '--year', type=int, required=True)
+  parser.add_argument('-e', '--delete', action='store_true')
   parser.add_argument('-r', '--ruby', action='store_true')
   parser.add_argument('-p', '--python', action='store_true')
   parser.add_argument('-s', '--samples', default=1, type=int)
