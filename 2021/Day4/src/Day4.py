@@ -144,11 +144,9 @@ def play_bingo(numbers, boards, end_early=False):
   ignored = dict()
   winning_number = None
   for number in numbers:
-    print(f'{number}!')
     winners = take_turn(number, boards, ignored)
 
     if winners:
-      print(f'Boards {winners} won!')
       for winner in winners:
         ignored[winner] = True
         winning_boards.append(winner)
@@ -158,9 +156,7 @@ def play_bingo(numbers, boards, end_early=False):
 
   if winning_boards:
     winner = winning_boards[-1]
-    print(f'The last winner is board {winner} after calling {winning_number}!')
     print(f'Score is {boards[winner].score(winning_number)}')
-    print(boards[winner])
 
 def main():
   '''Plays Bingo with a given input file.'''
