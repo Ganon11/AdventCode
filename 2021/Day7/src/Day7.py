@@ -45,7 +45,9 @@ def main():
   if args.part == 1:
     crabs.sort()
     num_crabs = len(crabs)
-    print(get_cost(crabs, crabs[num_crabs // 2]))
+    median_position = crabs[num_crabs // 2]
+    cost = get_cost(crabs, median_position)
+    print(f'Best: {cost} to move to {median_position}')
   else:
     mean = sum(crabs) / len(crabs)
     lower = math.floor(mean)
