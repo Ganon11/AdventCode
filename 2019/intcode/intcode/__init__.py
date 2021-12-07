@@ -3,14 +3,29 @@
 
 This is an interpreter for [Advent of Code](https://adventofcode.com/) 2019's IntCode.
 
-IntCode was first introduced in [Day 2](https://adventofcode.com/2019/day/2). This first
-iteration required **ADD**, **MULTIPLY**, and **HALT** commands.
+IntCode was first introduced in [Day 2](https://adventofcode.com/2019/day/2).
+This first iteration required **ADD**, **MULTIPLY**, and **HALT** commands.
 
-IntCode was expanded in [Day 5](https://adventofcode.com/2019/day/5). In this iteration,
-the concept of *parameter modes* was introduced, and six more instructions were added:
-**INPUT**, **OUTPUT**, **JUMP-IF-TRUE**, **JUMP-IF-FALSE**, **LESS-THAN**, and **EQUALS**.
+IntCode was expanded in [Day 5](https://adventofcode.com/2019/day/5). In this
+iteration, the concept of *parameter modes* was introduced, and six more
+instructions were added: **INPUT**, **OUTPUT**, **JUMP-IF-TRUE**,
+**JUMP-IF-FALSE**, **LESS-THAN**, and **EQUALS**.
+
+In [Day 7](https://adventofcode.com/2019/day/7), I changed how **INPUT** and
+**OUTPUT** worked by enqueueing input and appending output to a list. This was
+needed to implement message passing between multiple IntCode programs running in
+parallel. I also added the **step** function to execute an IntCode program one
+step at a time. As further enhancements, I allowed IntCode programs to execute
+until blocking for input, then be resumed later (either via **execute** or
+**step**).
+
+In [Day 9](https://adventofcode.com/2019/day/9), IntCode was completed by adding
+the **RELATIVE** *parameter mode*, introducing the concept of a *relative base*,
+adding the **UPDATE-RELATIVE-BASE** opcode, and allowing memory accesses to new
+memory to expand the RAM and retrieve a 0 value.
 """
 
+import argparse
 import warnings
 
 from defaultlist import defaultlist
@@ -263,3 +278,21 @@ class IntCodeProgram:
       return NotImplemented
 
     return self.memory != other.memory or self.instruction_pointer != other.ip
+
+def main():
+  """
+  Runs a sample IntCode program.
+  """
+  parser = argparse.ArgumentParser()
+  parser.add_argument('-f', '--filename', required=True)
+  args = parser.parse_args()
+  values = []
+  with open(args.filename, 'r') as file:
+    values = [int(value) for value in file.read().split(',')]
+
+  program = IntCodeProgram(values)
+  program.execute()
+  print(f'Program Output: {program.output}')
+
+if __name__ == '__main__':
+  main()
