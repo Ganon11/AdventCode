@@ -1,4 +1,5 @@
 import argparse
+import math
 
 def get_crabs(filename):
   '''Gets the initial position of the crabs from the file'''
@@ -46,14 +47,15 @@ def main():
     num_crabs = len(crabs)
     print(get_cost(crabs, crabs[num_crabs // 2]))
   else:
-    optimal_cost = None
-    optimal_position = None
-    for position in range(min(crabs), max(crabs) + 1):
-      local_cost = get_real_cost(crabs, position)
-      if optimal_cost is None or local_cost < optimal_cost:
-        optimal_cost = local_cost
-        optimal_position = position
-    print(f'Best: {optimal_cost} to move to {optimal_position}')
+    mean = sum(crabs) / len(crabs)
+    lower = math.floor(mean)
+    upper = math.ceil(mean)
+    lower_cost = get_real_cost(crabs, lower)
+    upper_cost = get_real_cost(crabs, upper)
+    if lower_cost < upper_cost:
+      print(f'Best: {lower_cost} to move to {lower}')
+    else:
+      print(f'Best: {upper_cost} to move to {upper}')
 
 if __name__ == "__main__":
   main()
