@@ -6,18 +6,6 @@ class BingoSquare:
     self.number = number
     self.picked = False
 
-  def get_number(self):
-    '''Gets the square's number'''
-    return self.number
-
-  def get_picked(self):
-    '''Gets the square's picked status'''
-    return self.picked
-
-  def pick_number(self):
-    '''Picks this number'''
-    self.picked = True
-
   def __str__(self):
     if self.picked:
       return '{0: >5}'.format('_' + str(self.number) + '_')
@@ -45,8 +33,8 @@ class BingoBoard:
       number_found = False
 
       for square in row:
-        if square.get_number() == number:
-          square.pick_number()
+        if square.number == number:
+          square.picked = True
           number_found = True
           break
 
@@ -58,7 +46,7 @@ class BingoBoard:
     if debug:
       print('Checking rows')
     for index, row in enumerate(self.board):
-      if all(s.get_picked() for s in row):
+      if all(s.picked for s in row):
         if debug:
           print(f'Won by row {index}')
         return True
@@ -68,7 +56,7 @@ class BingoBoard:
     for c in range(5):
       all_picked = True
       for r in range(5):
-        if not self.board[r][c].get_picked():
+        if not self.board[r][c].picked:
           all_picked = False
           break
 
@@ -87,8 +75,8 @@ class BingoBoard:
     total = 0
     for row in self.board:
       for square in row:
-        if not square.get_picked():
-          total += square.get_number()
+        if not square.picked:
+          total += square.number
 
     return total * number
 
