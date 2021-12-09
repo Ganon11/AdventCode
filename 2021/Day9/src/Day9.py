@@ -9,69 +9,43 @@ def get_grid(filename):
     lines = fh.readlines()
 
   grid = dict()
-  row = 0
-  for line in lines:
-    col = 0
-    for depth in line.strip():
-      grid[Position(col, row)] = int(depth)
-      col += 1
-    row += 1
+  for y, line in enumerate(lines):
+    for x, depth in enumerate(line.strip()):
+      grid[Position(x, y)] = int(depth)
 
   return grid
 
-def print_grid(grid):
-  '''Prints a depth grid'''
-  minx = min(grid.keys(), key=lambda p: p.x).x
-  maxx = max(grid.keys(), key=lambda p: p.x).x
-  miny = min(grid.keys(), key=lambda p: p.y).y
-  maxy = max(grid.keys(), key=lambda p: p.y).y
-
-  for y in range(miny, maxy + 1):
-    for x in range(minx, maxx + 1):
-      position = Position(x, y)
-      print(grid[position], end='')
-    print('', flush=True)
-
 def find_low_points(grid):
   '''Finds positions that are local minimums in the grid'''
-  low_points = list()
-  for position, depth in grid.items():
-    is_low_point = True
-    for neighbor in position.get_adjacent_positions():
-      if neighbor in grid and grid[neighbor] <= depth:
-        is_low_point = False
-        break
+  return [p for p,d in grid.items() \
+   if all(n not in grid or grid[n] > d for n in p.get_adjacent_positions()) ]
 
-    if is_low_point:
-      low_points.append(position)
+def find_size_of_basin(grid, start):
+  '''Returns the size of the basin around start'''
+  # Each low_point forms a basin.
+  # Each basin can be fully explored by BFS from the low point.
+  frontier = Queue()
+  frontier.put(start)
+  explored = set()
+  explored.add(start)
+  while not frontier.empty():
+    point = frontier.get()
+    for neighbor in point.get_adjacent_positions():
+      if neighbor in explored:
+        continue
+      if neighbor not in grid:
+        continue
+      if grid[neighbor] == 9:
+        continue
+      explored.add(neighbor)
+      frontier.put(neighbor)
+  return len(explored)
 
-  return low_points
-
-def get_basins(grid, low_points=None):
+def get_basins(grid, low_points):
   '''Returns the size of the basins of each low point'''
-  if low_points is None:
-    low_points = find_low_points(grid)
-
   basins = dict()
   for point in low_points:
-    # Each low_point forms a basin.
-    # Each basin can be fully explored by BFS from the low point.
-    frontier = Queue()
-    frontier.put(point)
-    explored = set()
-    explored.add(point)
-    while not frontier.empty():
-      p = frontier.get()
-      for neighbor in p.get_adjacent_positions():
-        if neighbor in explored:
-          continue
-        if neighbor not in grid:
-          continue
-        if grid[neighbor] == 9:
-          continue
-        explored.add(neighbor)
-        frontier.put(neighbor)
-    basins[point] = len(explored)
+    basins[point] = find_size_of_basin(grid, point)
 
   return basins
 
@@ -88,13 +62,8 @@ def main():
     print(f'Total risk level: {sum(map(lambda p: grid[p] + 1, low_points))}')
   else:
     basins = get_basins(grid, low_points)
-    sizes = list(basins.values())
-    sizes.sort()
-    if len(sizes) < 3:
-      print('Not enough basins found!')
-    else:
-      product = sizes[-1] * sizes[-2] * sizes[-3]
-      print(f'Basin product: {product}')
+    sizes = sorted(list(basins.values()))
+    print(f'Basin product: {sizes[-1] * sizes[-2] * sizes[-3]}')
 
 if __name__ == "__main__":
   main()
