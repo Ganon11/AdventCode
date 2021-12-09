@@ -14,6 +14,67 @@ class Position:
   def _is_valid_operand(other):
     return hasattr(other, "x") and hasattr(other, "y") and hasattr(other, "z")
 
+  @staticmethod
+  def get_points_in_line(p1, p2): # pylint: disable=R0912
+    '''Returns all the points between p1 and p2, inclusive.'''
+    # Only handles horizontal, vertical, or diagonal lines
+    good_line = False
+    num_points = 0
+    if p1 == p2:
+      good_line = True
+      num_points = 1
+    if p1.x == p2.x and p1.y != p2.y and p1.z == p2.z:
+      good_line = True # Vertical lines are ok
+      num_points = abs(p1.y - p2.y) + 1
+    elif p1.x != p2.x and p1.y == p2.y and p1.z == p2.z:
+      good_line = True # Horizontal lines are ok
+      num_points = abs(p1.x - p2.x) + 1
+    elif p1.x == p2.x and p1.y == p2.y and p1.z != p2.z:
+      # Whatever the equivalent of "horizontal" or "vertical" for the Z axis lines are ok
+      good_line = True
+      num_points = abs(p1.z - p2.z) + 1
+    # Now check two-dimensional diagonals
+    elif p1.x == p2.x and abs(p1.y - p2.y) == abs(p1.z - p2.z):
+      good_line = True
+      num_points = abs(p1.y - p2.y) + 1
+    elif p1.y == p2.y and abs(p1.x - p2.x) == abs(p1.z - p2.z):
+      good_line = True
+      num_points = abs(p1.z - p2.z) + 1
+    elif p1.z == p2.z and abs(p1.x - p2.x) == abs(p1.y - p2.y):
+      good_line = True
+      num_points = abs(p1.x - p2.x) + 1
+    # Now check three-dimensional diagonals
+    elif abs(p1.x - p2.x) == abs(p1.y - p2.y) and abs(p1.y - p2.y) == abs(p1.z - p2.z):
+      good_line = True
+      num_points = abs(p1.x - p2.x) + 1
+
+    if not good_line:
+      return []
+
+    points = list()
+    x = p1.x
+    y = p1.y
+    z = p1.z
+    for _ in range(num_points):
+      points.append(Position(x, y, z))
+
+      if x < p2.x:
+        x += 1
+      elif x > p2.x:
+        x -= 1
+
+      if y < p2.y:
+        y += 1
+      elif y > p2.y:
+        y -= 1
+
+      if z < p2.z:
+        z += 1
+      elif z > p2.z:
+        z -= 1
+
+    return points
+
   def distance(self, other=None):
     """
     Returns the Manhattan Distance (change in X plus change in Y plus change in Z) from this point

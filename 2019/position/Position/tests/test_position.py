@@ -1,5 +1,100 @@
 import position
 
+def test_points_in_line_empty_for_invalid_lines():
+  p1 = position.Position(1, 2, 3)
+  p2 = position.Position(2, 4, 9)
+  assert [] == position.Position.get_points_in_line(p1, p2)
+
+  p1 = position.Position(1, 2, 3)
+  p2 = position.Position(1, 4, 9)
+  assert [] == position.Position.get_points_in_line(p1, p2)
+
+  p1 = position.Position(1, 2, 3)
+  p2 = position.Position(2, 2, 9)
+  assert [] == position.Position.get_points_in_line(p1, p2)
+
+  p1 = position.Position(1, 2, 3)
+  p2 = position.Position(2, 4, 3)
+  assert [] == position.Position.get_points_in_line(p1, p2)
+
+def test_points_in_horizontal_line():
+  p1 = position.Position(1, 2, 3)
+  p2 = position.Position(4, 2, 3)
+
+  subpositions = [p1, position.Position(2, 2, 3), position.Position(3, 2, 3), p2]
+  line = position.Position.get_points_in_line(p1, p2)
+  assert len(line) == 4
+  assert subpositions == line
+
+def test_points_in_vertical_line():
+  p1 = position.Position(1, 2, 3)
+  p2 = position.Position(1, 5, 3)
+
+  subpositions = [p1, position.Position(1, 3, 3), position.Position(1, 4, 3), p2]
+  line = position.Position.get_points_in_line(p1, p2)
+  assert len(line) == 4
+  assert subpositions == line
+
+def test_points_in_z_axis_line():
+  p1 = position.Position(1, 2, 3)
+  p2 = position.Position(1, 2, 6)
+
+  subpositions = [p1, position.Position(1, 2, 4), position.Position(1, 2, 5), p2]
+  line = position.Position.get_points_in_line(p1, p2)
+  assert len(line) == 4
+  assert subpositions == line
+
+def test_points_in_xy_diagonal_line():
+  p1 = position.Position(1, 2, 3)
+  p2 = position.Position(4, 5, 3)
+
+  subpositions = [p1, position.Position(2, 3, 3), position.Position(3, 4, 3), p2]
+  line = position.Position.get_points_in_line(p1, p2)
+  assert len(line) == 4
+  assert subpositions == line
+
+def test_points_in_xz_diagonal_line():
+  p1 = position.Position(1, 2, 3)
+  p2 = position.Position(4, 2, 6)
+
+  subpositions = [p1, position.Position(2, 2, 4), position.Position(3, 2, 5), p2]
+  line = position.Position.get_points_in_line(p1, p2)
+  assert len(line) == 4
+  assert subpositions == line
+
+def test_points_in_yz_diagonal_line():
+  p1 = position.Position(1, 2, 3)
+  p2 = position.Position(1, 5, 6)
+
+  subpositions = [p1, position.Position(1, 3, 4), position.Position(1, 4, 5), p2]
+  line = position.Position.get_points_in_line(p1, p2)
+  assert len(line) == 4
+  assert subpositions == line
+
+def test_points_in_xyz_diagonal_line():
+  p1 = position.Position(1, 2, 3)
+  p2 = position.Position(4, 5, 6)
+
+  subpositions = [p1, position.Position(2, 3, 4), position.Position(3, 4, 5), p2]
+  line = position.Position.get_points_in_line(p1, p2)
+  assert len(line) == 4
+  assert subpositions == line
+
+def test_points_in_line_order_doesnt_matter():
+  p1 = position.Position(1, 2, 3)
+  p2 = position.Position(1, 2, 6)
+  line1 = position.Position.get_points_in_line(p1, p2)
+  line2 = position.Position.get_points_in_line(p2, p1)
+
+  assert len(line1) == len(line2)
+  assert all(p in line2 for p in line1)
+
+def test_points_in_line_one_point():
+  p = position.Position(1, 2, 3)
+  line = position.Position.get_points_in_line(p, p)
+  assert len(line) == 1
+  assert p in line
+
 def test_comparisons_with_self():
   o = position.Position()
   assert o == o # pylint: disable=R0124
