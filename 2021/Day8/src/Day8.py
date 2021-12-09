@@ -26,6 +26,8 @@ class Display:
   @classmethod
   def initialize_digit_scores(cls):
     '''Initializes some static information about seven-segment displays'''
+
+    # These were manually calculated by inspecting the seven-segment display.
     cls._SEGMENTS[0] = set("abcefg")
     cls._SEGMENTS[1] = set("cf")
     cls._SEGMENTS[2] = set("acdeg")
@@ -37,10 +39,13 @@ class Display:
     cls._SEGMENTS[8] = set("abcdefg")
     cls._SEGMENTS[9] = set("abcdfg")
 
+    # Now determine how often each segment is used
     for digit, segments in cls._SEGMENTS.items():
       for segment in segments:
         cls._SEGMENT_FREQUENCY[segment] += 1
 
+    # Finally, calculate a "score" for each digit by summing the frequency of
+    # its segments
     for digit, segments in cls._SEGMENTS.items():
       score = 0
       for segment in segments:
@@ -57,12 +62,14 @@ class Display:
 
   def get_output_value(self):
     '''Decodes the wires and segments, and calculates the output value'''
+
     # First, create a local segment frequency map
     local_segment_frequency = defaultdict(int)
     for signal in self.signals:
       for segment in signal:
         local_segment_frequency[segment] += 1
 
+    # Now determine what digits our outputs are, based on their "score"
     actual_digits = list()
     for output in self.outputs:
       output_score = 0
@@ -79,8 +86,8 @@ class Display:
         print('Something went wrong')
       actual_digits.append(actual_digit)
 
-    value = int(''.join(map(str, actual_digits)))
-    return value
+    # Finally, convert the individual digits to one value
+    return int(''.join(map(str, actual_digits)))
 
 def get_displays(filename):
   '''Gets the list of displays from the given file'''
@@ -116,7 +123,6 @@ def main():
     total = 0
     for display in displays:
       subtotal = display.get_output_value()
-      #print(f'{display.outputs} -> {subtotal}')
       total += subtotal
     print(f'Output values sum: {total}')
 
