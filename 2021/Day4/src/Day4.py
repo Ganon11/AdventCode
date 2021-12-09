@@ -1,29 +1,16 @@
 import argparse
 
-class BingoSquare:
+class BingoSquare: # pylint: disable=R0903
   '''Represents a square in a bingo board.'''
   def __init__(self, number):
     self.number = number
     self.picked = False
 
-  def __str__(self):
-    if self.picked:
-      return '{0: >5}'.format('_' + str(self.number) + '_')
-
-    return '{0: >5}'.format(self.number)
-
 class BingoBoard:
   '''Represents a bingo board.'''
   def __init__(self, lines):
-    # board will be a 2D array, 5x5, of the numbers
-    self.board = []
-    # picked will be a 2D
-    self.picked = []
-    for line in lines:
-      row = []
-      for number in map(int, line.strip().split()):
-        row.append(BingoSquare(number))
-      self.board.append(row)
+    self.board = [[BingoSquare(int(n)) for n in line.strip().split()] \
+     for line in lines]
 
   def number_called(self, number):
     '''
@@ -41,18 +28,12 @@ class BingoBoard:
       if number_found:
         break
 
-  def is_winning(self, debug=False):
+  def is_winning(self):
     '''Determines if this board is winning.'''
-    if debug:
-      print('Checking rows')
-    for index, row in enumerate(self.board):
+    for row in self.board:
       if all(s.picked for s in row):
-        if debug:
-          print(f'Won by row {index}')
         return True
 
-    if debug:
-      print('Checking columns')
     for c in range(5):
       all_picked = True
       for r in range(5):
@@ -61,8 +42,6 @@ class BingoBoard:
           break
 
       if all_picked:
-        if debug:
-          print(f'Won by column {c}')
         return True
 
     return False
@@ -72,20 +51,8 @@ class BingoBoard:
     Calculates the score of the board by summing the unpicked squares, then
     multiplying by the last-picked number.
     '''
-    total = 0
-    for row in self.board:
-      for square in row:
-        if not square.picked:
-          total += square.number
-
+    total = sum([sum([s.number for s in row if not s.picked]) for row in self.board])
     return total * number
-
-  def __str__(self):
-    s = ''
-    for row in self.board:
-      s += ' '.join(map(str, row))
-      s += '\n'
-    return s
 
 def parse_input(filename):
   '''Parses the input file to get the numbers called and the boards.'''
@@ -101,9 +68,7 @@ def parse_input(filename):
   # Then a blank line
   index = 2
   while index < len(lines):
-    rows = lines[index:index + 5]
-    b = BingoBoard(rows)
-    boards.append(b)
+    boards.append(BingoBoard(lines[index:index + 5]))
     index += 6
 
   return (numbers, boards)
@@ -121,7 +86,7 @@ def take_turn(number, boards, ignored):
 
   return winning_indices
 
-def play_bingo(numbers, boards, end_early=False):
+def play_bingo(numbers, boards, end_early):
   '''
   Let's play Bingo!
 
