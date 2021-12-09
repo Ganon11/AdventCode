@@ -1,29 +1,15 @@
 import argparse
 
 def get_depths(filename):
+  '''Gets the list of depths from the file.'''
   depths = list()
   with open(filename, 'r') as file:
     depths = [int(x) for x in file.readlines()]
 
   return depths
 
-def check_increments(depths):
-  num_depths = len(depths)
-
-  if num_depths <= 1:
-    return 0
-
-  index = 1
-  total = 0
-  while index < num_depths:
-    if depths[index] > depths[index - 1]:
-      total = total + 1
-
-    index = index + 1
-
-  return total
-
-def check_sliding_window(depths, window):
+def check_sliding_window(depths, window=1):
+  '''Checks for decreasing depth with an optional window for moving averages.'''
   num_depths = len(depths)
 
   if num_depths <= window:
@@ -45,6 +31,7 @@ def check_sliding_window(depths, window):
   return total
 
 def main():
+  '''Where are we even going, anyway?'''
   parser = argparse.ArgumentParser()
   parser.add_argument('-f', '--filename', default='../input/sample.txt')
   parser.add_argument('-p', '--part', choices=[1, 2], default=1, type=int)
@@ -53,7 +40,7 @@ def main():
 
   depths = get_depths(args.filename)
   if args.part == 1:
-    deeper = check_increments(depths)
+    deeper = check_sliding_window(depths)
   else:
     deeper = check_sliding_window(depths, args.window)
 
