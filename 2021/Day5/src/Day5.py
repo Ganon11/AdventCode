@@ -23,8 +23,16 @@ class SimpleLine:
     '''Determines if this line is vertical'''
     return self.p1.x == self.p2.x
 
+  def is_diagonal(self):
+    '''Determines if this line is diagonal'''
+    return abs(self.p1.x - self.p2.x) == abs(self.p1.y - self.p2.y)
+
   def __str__(self):
     return f'({self.p1}) -> ({self.p2})'
+
+  def get_points(self):
+    '''Gets the points included in this line'''
+    return Position.get_points_in_line(self.p1, self.p2)
 
 def get_lines(filename):
   '''Parses a collection of lines from the given file.'''
@@ -38,33 +46,11 @@ def get_intersections(lines, ignore_diagonal):
   '''Determines which lines intersect'''
   board = defaultdict(int)
   for line in lines:
-    if line.is_horizontal():
-      y = line.p1.y
-      for x in range(min(line.p1.x, line.p2.x), max(line.p1.x, line.p2.x) + 1):
-        board[Position(x, y)] += 1
-    elif line.is_vertical():
-      x = line.p1.x
-      for y in range(min(line.p1.y, line.p2.y), max(line.p1.y, line.p2.y) + 1):
-        board[Position(x, y)] += 1
-    else:
-      if ignore_diagonal:
-        continue
-
-      count_points = abs(line.p1.x - line.p2.x) + 1
-      x = line.p1.x
-      y = line.p1.y
-      for _ in range(count_points):
-        board[Position(x, y)] += 1
-
-        if x < line.p2.x:
-          x += 1
-        else:
-          x -= 1
-
-        if y < line.p2.y:
-          y += 1
-        else:
-          y -= 1
+    if ignore_diagonal and line.is_diagonal():
+      continue
+    points = line.get_points()
+    for p in points:
+      board[p] += 1
 
   return len([value for value in board.values() if value >= 2])
 
