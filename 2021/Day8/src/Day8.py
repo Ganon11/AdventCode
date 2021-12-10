@@ -47,18 +47,12 @@ class Display:
     # Finally, calculate a "score" for each digit by summing the frequency of
     # its segments
     for digit, segments in cls._SEGMENTS.items():
-      score = 0
-      for segment in segments:
-        score += cls._SEGMENT_FREQUENCY[segment]
-      cls._DIGIT_SCORES[digit] = score
+      cls._DIGIT_SCORES[digit] = sum(cls._SEGMENT_FREQUENCY[segment] for segment in segments)
 
   def get_count_simple_outputs(self):
     '''Count the outputs that are definitely a certain digit'''
-    total = 0
-    for output in self.outputs:
-      if len(output) == 2 or len(output) == 3 or len(output) == 4 or len(output) == 7:
-        total += 1
-    return total
+    simple_output_lens = [2, 3, 4, 7]
+    return sum(len(output) in simple_output_lens for output in self.outputs)
 
   def get_output_value(self):
     '''Decodes the wires and segments, and calculates the output value'''
@@ -72,19 +66,12 @@ class Display:
     # Now determine what digits our outputs are, based on their "score"
     actual_digits = list()
     for output in self.outputs:
-      output_score = 0
-      for segment in output:
-        output_score += local_segment_frequency[segment]
+      output_score = sum(local_segment_frequency[segment] for segment in output)
 
-      actual_digit = -1
       for digit, score in Display._DIGIT_SCORES.items():
         if output_score == score:
-          actual_digit = digit
+          actual_digits.append(digit)
           break
-
-      if actual_digit == -1:
-        print('Something went wrong')
-      actual_digits.append(actual_digit)
 
     # Finally, convert the individual digits to one value
     return int(''.join(map(str, actual_digits)))
@@ -95,17 +82,7 @@ def get_displays(filename):
   with open(filename, 'r') as fh:
     lines = fh.readlines()
 
-  displays = []
-  for line in lines:
-    displays.append(Display(line))
-  return displays
-
-def count_simple_outputs(displays):
-  '''Count the outputs that are definitely a certain digit'''
-  total = 0
-  for display in displays:
-    total += display.get_count_simple_outputs()
-  return total
+  return [Display(line) for line in lines]
 
 def main():
   '''I hope this isn't a ticking time bomb.'''
@@ -114,17 +91,14 @@ def main():
   parser.add_argument('-p', '--part', choices=[1, 2], default=1, type=int)
   args = parser.parse_args()
 
-  Display.initialize_digit_scores()
   displays = get_displays(args.filename)
   if args.part == 1:
-    total = count_simple_outputs(displays)
+    total = sum(display.get_count_simple_outputs() for display in displays)
     print(f'Count of simple outputs: {total}')
   else:
-    total = 0
-    for display in displays:
-      subtotal = display.get_output_value()
-      total += subtotal
+    total = sum(display.get_output_value() for display in displays)
     print(f'Output values sum: {total}')
 
+Display.initialize_digit_scores()
 if __name__ == "__main__":
   main()
