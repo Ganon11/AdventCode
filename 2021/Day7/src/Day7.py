@@ -3,36 +3,10 @@ import math
 
 def get_crabs(filename):
   '''Gets the initial position of the crabs from the file'''
-  crabs = []
+  crabs = None
   with open(filename, 'r') as fh:
     crabs = list(map(int, fh.readline().strip().split(',')))
   return crabs
-
-def get_cost(crabs, position):
-  '''
-  Determines the amount of fuel required for all crabs to align to position.
-  '''
-  total = 0
-  for crab in crabs:
-    fuel = abs(crab - position)
-    total += fuel
-  return total
-
-def get_real_cost(crabs, position):
-  '''
-  Determines the real amount of fuel required for all crabs to align to
-  position.
-  '''
-  total = 0
-  for crab in crabs:
-    # To move 1 space costs 1 fuel
-    # To move 2 spaces costs 1 + 2 = 3 fuel
-    # To move 3 spaces costs 1 + 2 + 3 = 6 fuel
-    # To move n spaces costs 1 + 2 + 3 ... + n = n(n+1)/2 fuel
-    distance = abs(crab - position)
-    fuel = (distance * (distance + 1)) // 2
-    total += fuel
-  return total
 
 def main():
   '''Insert crab rave here.'''
@@ -44,16 +18,15 @@ def main():
   crabs = get_crabs(args.filename)
   if args.part == 1:
     crabs.sort()
-    num_crabs = len(crabs)
-    median_position = crabs[num_crabs // 2]
-    cost = get_cost(crabs, median_position)
+    median_position = crabs[len(crabs) // 2]
+    cost = sum(abs(crab - median_position) for crab in crabs)
     print(f'Best: {cost} to move to {median_position}')
   else:
     mean = sum(crabs) / len(crabs)
     lower = math.floor(mean)
     upper = math.ceil(mean)
-    lower_cost = get_real_cost(crabs, lower)
-    upper_cost = get_real_cost(crabs, upper)
+    lower_cost = sum((abs(crab - lower) * (abs(crab - lower) + 1)) // 2 for crab in crabs)
+    upper_cost = sum((abs(crab - upper) * (abs(crab - upper) + 1)) // 2 for crab in crabs)
     if lower_cost < upper_cost:
       print(f'Best: {lower_cost} to move to {lower}')
     else:

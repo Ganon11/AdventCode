@@ -22,8 +22,7 @@ def find_low_points(grid):
 
 def find_size_of_basin(grid, start):
   '''Returns the size of the basin around start'''
-  # Each low_point forms a basin.
-  # Each basin can be fully explored by BFS from the low point.
+  # Each low_point forms a basin. Each basin can be fully explored by BFS from the low point.
   frontier = Queue()
   frontier.put(start)
   explored = set()
