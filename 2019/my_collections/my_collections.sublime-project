@@ -10,8 +10,8 @@
   "build_systems":
   [
     {
-      "name": "Run Tests (Python 3.8)",
-      "cmd": ["tox", "-e", "py38"],
+      "name": "Run Tests",
+      "cmd": ["tox", "-e", "py"],
       "working_dir": "${project_path}"
     }
   ]

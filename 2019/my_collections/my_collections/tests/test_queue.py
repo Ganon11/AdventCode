@@ -33,3 +33,17 @@ def test_queue_peek_does_not_pop_element():
   assert not q.empty()
   assert q.peek() == 1
   assert not q.empty()
+
+def test_queue_with_initial_element():
+  q = my_collections.Queue([1])
+  assert not q.empty()
+  assert q.get() == 1
+  assert q.empty()
+
+def test_queue_with_initial_elements():
+  q = my_collections.Queue([1, 2, 3])
+  assert not q.empty()
+  assert q.get() == 1
+  assert q.get() == 2
+  assert q.get() == 3
+  assert q.empty()
