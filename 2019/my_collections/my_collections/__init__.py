@@ -4,8 +4,8 @@ import heapq
 class Queue:
   """A simple FIFO queue."""
 
-  def __init__(self):
-    self.elements = collections.deque()
+  def __init__(self, iterable=list()):
+    self.elements = collections.deque(iterable)
 
   def empty(self):
     """Returns True if the queue is empty, and False otherwise"""
@@ -26,7 +26,7 @@ class Queue:
 class PriorityQueue:
   """A priority queue."""
 
-  def __init__(self):
+  def __init__(self, iterable=list()):
     self.elements = []
 
   def empty(self):
