@@ -1,125 +1,69 @@
 import argparse
+from collections import deque
 
-class Chunk:
-  '''A chunk can contain other chunks.'''
+CHARACTER_MAP = {
+  '(': ')',
+  '[': ']',
+  '{': '}',
+  '<': '>'
+}
 
-  _OPEN_TO_CLOSE = {
-    '(': ')',
-    '[': ']',
-    '{': '}',
-    '<': '>'
-  }
+SYNTAX_ERROR_SCORE_MAP = {
+  ')': 3,
+  ']': 57,
+  '}': 1197,
+  '>': 25137
+}
 
-  def __init__(self, line, index=0):
-    self.illegal_character = None
-    self.corrupt = False
-    self.complete = False
-    self.end_index = -1
-    self.autocomplete = ''
+AUTOCOMPLETE_SCORE_MAP = {
+  ')': 1,
+  ']': 2,
+  '}': 3,
+  '>': 4
+}
 
-    self.start = line[index]
-    if self.start not in Chunk._OPEN_TO_CLOSE:
-      self.corrupt = True
-      self.illegal_character = self.start
-      return
+def calculate_autocomplete_score(autocomplete):
+  '''Calculates the score of an autocomplete string'''
+  score = 0
+  for c in autocomplete:
+    score *= 5
+    score += AUTOCOMPLETE_SCORE_MAP[c]
+  return score
 
-    print(f'Starting new chunk at {index} with {self.start}')
-
-    self.chunks = []
-    line_length = len(line)
-    index += 1
-    while index < line_length:
-      current = line[index]
-      if current in Chunk._OPEN_TO_CLOSE:
-        new_chunk = Chunk(line, index)
-        self.chunks.append(new_chunk)
-        if new_chunk.corrupt:
-          self.corrupt = True
-          self.illegal_character = new_chunk.illegal_character
-          break
-        index = new_chunk.end_index + 1
-        if not new_chunk.complete:
-          self.autocomplete += new_chunk.autocomplete
-          break
-      elif current != Chunk._OPEN_TO_CLOSE[self.start]:
-        self.corrupt = True
-        self.illegal_character = current
-        break
-      else:
-        self.complete = True
-        break
-
-    self.end_index = index
-    if not self.complete:
-      print(f'Chunk is incomplete: our own start is {self.start}')
-      self.autocomplete += Chunk._OPEN_TO_CLOSE[self.start]
-
-  def get_corruption_score(self):
-    '''Gets the illegal point value of this chunk'''
-    if self.illegal_character is None:
-      return 0
-    if self.illegal_character == ')':
-      return 3
-    if self.illegal_character == ']':
-      return 57
-    if self.illegal_character == '}':
-      return 1197
-    if self.illegal_character == '>':
-      return 25137
-    return 0
-
-  @staticmethod
-  def _get_autocomplete_score(character):
-    '''Gets the score for a closing character'''
-    if character == ')':
-      return 1
-    if character == ']':
-      return 2
-    if character == '}':
-      return 3
-    if character == '>':
-      return 4
-    return 0
-
-  def get_autocomplete_score(self):
-    '''Gets the score of this chunk's autocomplete string'''
-    score = 0
-    print(f"Chunk's autocomplete: {self.autocomplete}")
-    for c in self.autocomplete:
-      score *= 5
-      score += Chunk._get_autocomplete_score(c)
-    return score
-
-  def get_chunk_str(self, indentation=''):
-    '''Gets a formatted string representing the chunk and its subchunks.'''
-    chunk_str = None
-    if self.corrupt:
-      chunk_str = f'{indentation}Corrupt chunk begins with {self.start}\n'
-    else:
-      chunk_str = f'{indentation}Chunk begins with {self.start}\n'
-    for chunk in self.chunks:
-      chunk_str += chunk.get_chunk_str(indentation + '\t')
-    if self.corrupt:
-      chunk_str += f'{indentation}Corrupt chunk ends with {self.illegal_character}\n'
-    elif self.complete:
-      chunk_str += f'{indentation}Chunk ends with {Chunk._OPEN_TO_CLOSE[self.start]}\n'
-    return chunk_str
-
-def get_chunks(filename):
-  '''Gets a collection of chunks for each line of the file.'''
-  chunks = []
+def process_chunks(filename):
+  '''
+  Processes the chunks in the file to determine the syntax error score and autocomplete scores.
+  '''
+  lines = []
   with open(filename, 'r') as fh:
-    for line in fh.readlines():
-      line = line.strip()
-      index = 0
-      row = []
-      while index < len(line):
-        new_chunk = Chunk(line, index)
-        row.append(new_chunk)
-        index = new_chunk.end_index
-      chunks.append(row)
+    lines = fh.readlines()
 
-  return chunks
+  syntax_error_score = 0
+  autocomplete_scores = []
+  for line in lines:
+    stack = deque()
+    corrupt = False
+    for c in line.strip():
+      if c in CHARACTER_MAP:
+        stack.append(c)
+        continue
+
+      if c == CHARACTER_MAP[stack[-1]]:
+        stack.pop()
+        continue
+
+      corrupt = True
+      syntax_error_score += SYNTAX_ERROR_SCORE_MAP[c]
+      break
+
+    if not corrupt and len(stack):
+      autocomplete = ''
+      while len(stack):
+        autocomplete += CHARACTER_MAP[stack.pop()]
+      autocomplete_scores.append(calculate_autocomplete_score(autocomplete))
+
+
+  return (syntax_error_score, autocomplete_scores)
 
 def main():
   '''Feeling chunky.'''
@@ -128,23 +72,13 @@ def main():
   parser.add_argument('-p', '--part', choices=[1, 2], default=1, type=int)
   args = parser.parse_args()
 
-  chunk_rows = get_chunks(args.filename)
-  print(chunk_rows)
+  (syntax_error_score, autocomplete_scores) = process_chunks(args.filename)
   if args.part == 1:
-    score = 0
-    for chunk_row in chunk_rows:
-      for chunk in chunk_row:
-        if chunk.corrupt:
-          score += chunk.get_corruption_score()
-
-    print(f'Chunk score: {score}')
+    print(f'Syntax error score: {syntax_error_score}')
   else:
-    scores = []
-    for chunk_row in chunk_rows:
-      for chunk in chunk_row:
-        if not chunk.complete:
-          scores.append(chunk.get_autocomplete_score())
-    print(scores)
+    autocomplete_scores.sort()
+    winning_score = autocomplete_scores[len(autocomplete_scores) // 2]
+    print(f'Winning autocomplete score: {winning_score}')
 
 if __name__ == "__main__":
   main()
