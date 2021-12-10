@@ -30,11 +30,7 @@ def find_size_of_basin(grid, start):
   while not frontier.empty():
     point = frontier.get()
     for neighbor in point.get_adjacent_positions():
-      if neighbor in explored:
-        continue
-      if neighbor not in grid:
-        continue
-      if grid[neighbor] == 9:
+      if neighbor in explored or neighbor not in grid or grid[neighbor] == 9:
         continue
       explored.add(neighbor)
       frontier.put(neighbor)
