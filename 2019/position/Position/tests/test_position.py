@@ -471,6 +471,91 @@ def test_adjacency():
   assert not o.is_adjacent_to(su)
   assert not o.is_adjacent_to(sd)
 
+def test_simple_adjacent_positions():
+  o = position.Position()
+  n = o.north()
+  s = o.south()
+  e = o.east()
+  w = o.west()
+  u = o.up()
+  d = o.down()
+
+  adjacent_positions = o.get_adjacent_positions()
+  assert len(adjacent_positions) == 6
+  assert n in adjacent_positions
+  assert s in adjacent_positions
+  assert e in adjacent_positions
+  assert w in adjacent_positions
+  assert u in adjacent_positions
+  assert d in adjacent_positions
+  assert o not in adjacent_positions
+
+def test_diagonal_adjacent_positions():
+  o = position.Position()
+
+  unw = o.up().north().west()
+  un = o.up().north()
+  une = o.up().north().east()
+  uw = o.up().west()
+  u = o.up()
+  ue = o.up().east()
+  usw = o.up().south().west()
+  us = o.up().south()
+  use = o.up().east()
+
+  nw = o.north().west()
+  n = o.north()
+  ne = o.north().east()
+  w = o.west()
+  e = o.east()
+  sw = o.south().west()
+  s = o.south()
+  se = o.east()
+
+  dnw = o.down().north().west()
+  dn = o.down().north()
+  dne = o.down().north().east()
+  dw = o.down().west()
+  d = o.down()
+  de = o.down().east()
+  dsw = o.down().south().west()
+  ds = o.down().south()
+  dse = o.down().east()
+
+  adjacent_positions = o.get_adjacent_positions(include_diagonals=True)
+  assert len(adjacent_positions) == 26
+
+  assert unw in adjacent_positions
+  assert un in adjacent_positions
+  assert une in adjacent_positions
+  assert uw in adjacent_positions
+  assert u in adjacent_positions
+  assert ue in adjacent_positions
+  assert usw in adjacent_positions
+  assert us in adjacent_positions
+  assert use in adjacent_positions
+  
+  assert nw in adjacent_positions
+  assert n in adjacent_positions
+  assert ne in adjacent_positions
+  assert w in adjacent_positions
+  assert e in adjacent_positions
+  assert sw in adjacent_positions
+  assert s in adjacent_positions
+  assert se in adjacent_positions
+  
+  assert dnw in adjacent_positions
+  assert dn in adjacent_positions
+  assert dne in adjacent_positions
+  assert dw in adjacent_positions
+  assert d in adjacent_positions
+  assert de in adjacent_positions
+  assert dsw in adjacent_positions
+  assert ds in adjacent_positions
+  assert dse in adjacent_positions
+
+  assert o not in adjacent_positions
+
 def test_add():
   position1 = position.Position(1, 2, 3)
   position2 = position.Position(3, 4, 5)

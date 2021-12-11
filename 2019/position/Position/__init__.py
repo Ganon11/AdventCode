@@ -141,8 +141,19 @@ class Position:
     """Returns the Position one step down (negative Z)"""
     return Position(self.x, self.y, self.z - 1)
 
-  def get_adjacent_positions(self):
+  def get_adjacent_positions(self, include_diagonals=False):
     """Returns a list of adjacent positions."""
+    if include_diagonals:
+      return [self.north().west(), self.north(), self.north().east(), \
+        self.west(), self.east(), \
+        self.south().west(), self.south(), self.south().east(), \
+        self.up().north().west(), self.up().north(), self.up().north().east(), \
+        self.up().west(), self.up(), self.up().east(), \
+        self.up().south().west(), self.up().south(), self.up().south().east(), \
+        self.down().north().west(), self.down().north(), self.down().north().east(), \
+        self.down().west(), self.down(), self.down().east(), \
+        self.down().south().west(), self.down().south(), self.down().south().east()
+      ]
     return [self.north(), self.west(), self.east(), self.south(), self.up(), self.down()]
 
   def __hash__(self):
