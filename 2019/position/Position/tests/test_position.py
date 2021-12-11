@@ -437,7 +437,7 @@ def test_west_down():
   dw = o.down().west()
   assert wd == dw
 
-def test_adjacency():
+def test_simple_adjacency():
   o = position.Position()
   n = o.north()
   s = o.south()
@@ -470,6 +470,75 @@ def test_adjacency():
   assert not o.is_adjacent_to(sw)
   assert not o.is_adjacent_to(su)
   assert not o.is_adjacent_to(sd)
+
+def test_diagonal_adjacency():
+  o = position.Position()
+
+  unw = o.up().north().west()
+  un = o.up().north()
+  une = o.up().north().east()
+  uw = o.up().west()
+  u = o.up()
+  ue = o.up().east()
+  usw = o.up().south().west()
+  us = o.up().south()
+  use = o.up().east()
+
+  nw = o.north().west()
+  n = o.north()
+  ne = o.north().east()
+  w = o.west()
+  e = o.east()
+  sw = o.south().west()
+  s = o.south()
+  se = o.east()
+
+  dnw = o.down().north().west()
+  dn = o.down().north()
+  dne = o.down().north().east()
+  dw = o.down().west()
+  d = o.down()
+  de = o.down().east()
+  dsw = o.down().south().west()
+  ds = o.down().south()
+  dse = o.down().east()
+
+  assert o.is_adjacent_to(unw, include_diagonals=True)
+  assert o.is_adjacent_to(un, include_diagonals=True)
+  assert o.is_adjacent_to(une, include_diagonals=True)
+  assert o.is_adjacent_to(uw, include_diagonals=True)
+  assert o.is_adjacent_to(u, include_diagonals=True)
+  assert o.is_adjacent_to(ue, include_diagonals=True)
+  assert o.is_adjacent_to(usw, include_diagonals=True)
+  assert o.is_adjacent_to(us, include_diagonals=True)
+  assert o.is_adjacent_to(use, include_diagonals=True)
+
+  assert o.is_adjacent_to(nw, include_diagonals=True)
+  assert o.is_adjacent_to(n, include_diagonals=True)
+  assert o.is_adjacent_to(ne, include_diagonals=True)
+  assert o.is_adjacent_to(w, include_diagonals=True)
+  assert o.is_adjacent_to(e, include_diagonals=True)
+  assert o.is_adjacent_to(sw, include_diagonals=True)
+  assert o.is_adjacent_to(s, include_diagonals=True)
+  assert o.is_adjacent_to(se, include_diagonals=True)
+
+  assert o.is_adjacent_to(dnw, include_diagonals=True)
+  assert o.is_adjacent_to(dn, include_diagonals=True)
+  assert o.is_adjacent_to(dne, include_diagonals=True)
+  assert o.is_adjacent_to(dw, include_diagonals=True)
+  assert o.is_adjacent_to(d, include_diagonals=True)
+  assert o.is_adjacent_to(de, include_diagonals=True)
+  assert o.is_adjacent_to(dsw, include_diagonals=True)
+  assert o.is_adjacent_to(ds, include_diagonals=True)
+  assert o.is_adjacent_to(dse, include_diagonals=True)
+
+  # A few non-adjacent positions
+  assert not o.is_adjacent_to(o.up().up(), include_diagonals=True)
+  assert not o.is_adjacent_to(o.north().north(), include_diagonals=True)
+  assert not o.is_adjacent_to(o.west().west(), include_diagonals=True)
+  assert not o.is_adjacent_to(o.east().east(), include_diagonals=True)
+  assert not o.is_adjacent_to(o.south().south(), include_diagonals=True)
+  assert not o.is_adjacent_to(o.down().down(), include_diagonals=True)
 
 def test_simple_adjacent_positions():
   o = position.Position()
