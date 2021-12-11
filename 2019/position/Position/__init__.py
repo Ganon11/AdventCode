@@ -106,7 +106,7 @@ class Position:
     delta_z = abs(self.z - other.z)
     return math.sqrt(delta_x ** 2 + delta_y ** 2 + delta_z ** 2)
 
-  def is_adjacent_to(self, other):
+  def is_adjacent_to(self, other, include_diagonals=False):
     """
     Returns True if this point is one step (not counting diagonals) from other,
     and False otherwise
@@ -114,8 +114,7 @@ class Position:
     if not self._is_valid_operand(other):
       return NotImplemented
 
-    s = abs(self.x - other.x) + abs(self.y - other.y) + abs(self.z - other.z)
-    return s == 1
+    return other in self.get_adjacent_positions(include_diagonals)
 
   def north(self):
     """Returns the Position one step to the north (positive Y)"""
