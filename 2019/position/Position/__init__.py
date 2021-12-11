@@ -271,25 +271,25 @@ def walk_path(moves, start=Position()):
     count = int(move[1:])
 
     if direction == 'U':
-      for _ in range(0, count):
+      for _ in range(count):
         new_position = position.north()
         visited.append(new_position)
         position = new_position
 
     elif direction == 'D':
-      for _ in range(0, count):
+      for _ in range(count):
         new_position = position.south()
         visited.append(new_position)
         position = new_position
 
     elif direction == 'L':
-      for _ in range(0, count):
+      for _ in range(count):
         new_position = position.west()
         visited.append(new_position)
         position = new_position
 
     elif direction == 'R':
-      for _ in range(0, count):
+      for _ in range(count):
         new_position = position.east()
         visited.append(new_position)
         position = new_position
