@@ -11,7 +11,7 @@
   [
     {
       "name": "Run Tests",
-      "cmd": ["tox", "-e", "py"],
+      "cmd": ["tox"],
       "working_dir": "${project_path}"
     }
   ]

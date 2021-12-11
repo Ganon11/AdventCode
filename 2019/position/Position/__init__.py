@@ -23,14 +23,15 @@ class Position:
     if p1 == p2:
       good_line = True
       num_points = 1
-    if p1.x == p2.x and p1.y != p2.y and p1.z == p2.z:
+    elif p1.x == p2.x and p1.y != p2.y and p1.z == p2.z:
       good_line = True # Vertical lines are ok
       num_points = abs(p1.y - p2.y) + 1
     elif p1.x != p2.x and p1.y == p2.y and p1.z == p2.z:
       good_line = True # Horizontal lines are ok
       num_points = abs(p1.x - p2.x) + 1
     elif p1.x == p2.x and p1.y == p2.y and p1.z != p2.z:
-      # Whatever the equivalent of "horizontal" or "vertical" for the Z axis lines are ok
+      # "stacked" lines are ok
+      # (https://english.stackexchange.com/questions/56472/x-y-z-horizontal-vertical-and)
       good_line = True
       num_points = abs(p1.z - p2.z) + 1
     # Now check two-dimensional diagonals
