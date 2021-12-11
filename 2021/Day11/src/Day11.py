@@ -15,20 +15,8 @@ def get_grid(filename):
 
   return grid
 
-def print_grid(grid):
-  '''Prints a depth grid'''
-  minx = min(grid.keys(), key=lambda p: p.x).x
-  maxx = max(grid.keys(), key=lambda p: p.x).x
-  miny = min(grid.keys(), key=lambda p: p.y).y
-  maxy = max(grid.keys(), key=lambda p: p.y).y
-
-  for y in range(miny, maxy + 1):
-    for x in range(minx, maxx + 1):
-      position = Position(x, y)
-      print(grid[position], end='')
-    print('', flush=True)
-
-def run_day(grid):
+def run_step(grid):
+  '''Simulates a step of the flashing-octopus field.'''
   # First, the energy level of each octopus increases by 1
   flashing = Queue()
   for position in grid.keys():
@@ -37,6 +25,7 @@ def run_day(grid):
       flashing.put(position)
 
   # Then, any octopus with an energy level greater than 9 flashes
+  # An octopus can only flash at most once per step.
   flashed = set()
   while not flashing.empty():
     current = flashing.get()
@@ -44,7 +33,10 @@ def run_day(grid):
       continue
 
     flashed.add(current)
+    # A flashing octopus increases the energy level of all adjacent octopuses by
+    # 1, which can cause cascading flashes.
     for neighbor in current.get_adjacent_positions(include_diagonals=True):
+      # The grid doesn't grow
       if neighbor not in grid:
         continue
 
@@ -62,23 +54,26 @@ def run_day(grid):
   return (grid, len(flashed))
 
 def run_simulation(grid, steps):
+  '''Simulates the flashing octopus field for a certain number of steps.'''
   flashes = 0
   for _ in range(steps):
-    (grid, flashes_in_step) = run_day(grid)
+    (grid, flashes_in_step) = run_step(grid)
     flashes += flashes_in_step
 
-  return (grid, flashes)
+  return flashes
 
 def run_simulation_until_sync(grid):
+  '''Simulates the flashing octopus field until the octopuses synchronize.'''
   index = 1
-  (grid, flashes) = run_day(grid)
+  (grid, flashes) = run_step(grid)
   while flashes != len(grid):
     index += 1
-    (grid, flashes) = run_day(grid)
+    (grid, flashes) = run_step(grid)
 
-  return (grid, index)
+  return index
 
 def main():
+  '''I've heard of Strawberry Fields, but this is ridiculous.'''
   parser = argparse.ArgumentParser()
   parser.add_argument('-f', '--filename', default='../input/sample.txt')
   parser.add_argument('-p', '--part', choices=[1, 2], default=1, type=int)
@@ -87,13 +82,9 @@ def main():
 
   grid = get_grid(args.filename)
   if args.part == 1:
-    (grid, flashes) = run_simulation(grid, args.steps)
-    print_grid(grid)
-    print(f'Flashes: {flashes}')
+    print(f'Flashes: {run_simulation(grid, args.steps)}')
   else:
-    (grid, step) = run_simulation_until_sync(grid)
-    print_grid(grid)
-    print(f'Synchronized after {step} steps')
+    print(f'Synchronized after {run_simulation_until_sync(grid)} steps')
 
 if __name__ == "__main__":
   main()
