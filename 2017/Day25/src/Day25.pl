@@ -1,6 +1,5 @@
 use strict;
 use warnings;
-use Switch;
 use Data::Dumper;
 
 sub GetTapeValue {
@@ -17,10 +16,12 @@ sub Move {
   my $cursor = shift;
   my $direction = shift;
 
-  switch ($direction) {
-    case 'right' { return $cursor + 1; }
-    case 'left' { return $cursor - 1; }
-    else { die "Unknown move direction $direction" }
+  if ($direction eq 'right') {
+    return $cursor + 1
+  }
+
+  if ($direction eq 'left') {
+    return $cursor - 1
   }
 }
 
