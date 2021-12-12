@@ -6,10 +6,19 @@ class Cave:
     self.name = name
     self.is_small = name.lower() == name
     self.neighbors = set()
+    self.visited = False
 
   def add_neighbor(self, cave):
     '''Denotes that this cave is adjacent to another cave'''
     self.neighbors.add(cave)
+
+  def visit(self):
+    '''Mark the cave as visited.'''
+    self.visited = True
+
+  def unvisit(self):
+    '''Mark the cave as unvisited.'''
+    self.visited = False
 
   def __str__(self):
     mystr = self.name
@@ -42,35 +51,35 @@ def get_cave_system(filename):
 
   return caves
 
-def traverse(caves, current_name, extra_visit_available=False, visited=set(), skip_remove=False):
+def traverse(caves, current, extra_visit_available=False, skip_remove=False):
   '''
   Searches depth-first through the cave system for all possible paths to end.
   '''
   paths = 0
 
-  current = caves[current_name]
   if current.is_small:
-    visited.add(current_name)
+    current.visit()
 
-  for neighbor in current.neighbors:
-    if neighbor == 'end':
+  for neighbor_name in current.neighbors:
+    neighbor = caves[neighbor_name]
+    if neighbor_name == 'end':
       paths += 1
-    elif neighbor not in visited:
-      paths += traverse(caves, neighbor, extra_visit_available, visited)
-    elif caves[neighbor].is_small and extra_visit_available:
-      paths += traverse(caves, neighbor, extra_visit_available=False, visited=visited, skip_remove=True)
+    elif not neighbor.visited:
+      paths += traverse(caves, neighbor, extra_visit_available)
+    elif neighbor.is_small and extra_visit_available:
+      paths += traverse(caves, neighbor, extra_visit_available=False, skip_remove=True)
 
   if current.is_small and not skip_remove:
-    visited.remove(current_name)
+    current.unvisit()
 
   return paths
 
 def find_all_paths(caves, part):
   '''Searches for all possible paths from start to end.'''
   if part == 1:
-    return traverse(caves, 'start')
+    return traverse(caves, caves['start'])
   elif part == 2:
-    return traverse(caves, 'start', extra_visit_available=True)
+    return traverse(caves, caves['start'], extra_visit_available=True)
 
 def main():
   '''
