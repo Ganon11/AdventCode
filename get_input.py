@@ -3,6 +3,7 @@ Fetches input for a particular year/day from adventofcode
 """
 
 import argparse
+from datetime import date
 import os
 import requests
 
@@ -26,19 +27,32 @@ def create_input_file(year, day, path=None):
     input_request = requests.get(url=url, cookies=cookies)
     file.write(input_request.text)
 
+def get_day(day):
+  """Gets today's date, or the date passed in."""
+  if day is not None:
+    return day
+
+  return date.today().day
+
+def get_year(year):
+  """Gets today's date, or the date passed in."""
+  if year is not None:
+    return year
+
+  return date.today().year
+
 def main():
   """Fetches the input for an AoC day."""
   parser = argparse.ArgumentParser()
-  parser.add_argument('--day', '-d', type=int)
-  parser.add_argument('--year', '-y', type=int)
+  parser.add_argument('--day', '-d', default=None, type=int)
+  parser.add_argument('--year', '-y', default=None, type=int)
   parser.add_argument('--path', '-p', type=str)
   args = parser.parse_args()
 
-  if args.day is None:
-    for day in range(25):
-      create_input_file(args.year, day + 1)
-  else:
-    create_input_file(args.year, args.day, args.path)
+  day = get_day(args.day)
+  year = get_year(args.year)
+  print(f'Fetching input for Year {year}, Day {day}')
+  create_input_file(year, day, args.path)
 
 if __name__ == "__main__":
   main()
