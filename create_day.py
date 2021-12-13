@@ -3,6 +3,7 @@ Scaffolds an Advent of Code day.
 """
 
 import argparse
+from datetime import date
 import os
 import shutil
 import requests
@@ -99,6 +100,7 @@ def create_sublime_project(basedir, daystr, write_python, write_ruby, sample_cou
 """)
 
 def create_src_dir(basedir, daystr, write_python, write_ruby, sample_count):
+  """Creates a source directory with ruby or python skeleton code."""
   os.mkdir(os.path.join(basedir, 'src'))
   if write_python:
     create_python_src_file(basedir, daystr, sample_count)
@@ -172,6 +174,7 @@ def create_input_file(basedir, day, year):
     file.write(input_request.text)
 
 def create_sample_files(basedir, count):
+  """Creates a number of sample files."""
   if count == 1:
     with open(os.path.join(basedir, 'input', 'sample.txt'), 'w') as file:
       file.write('Fill in sample here!')
@@ -180,19 +183,36 @@ def create_sample_files(basedir, count):
       with open(os.path.join(basedir, 'input', f'sample{i + 1}.txt'), 'w') as file:
         file.write('Fill in sample here!')
 
+def get_day(day):
+  """Gets today's date, or the date passed in."""
+  if day is not None:
+    return day
+
+  return date.today().day
+
+def get_year(year):
+  """Gets today's date, or the date passed in."""
+  if year is not None:
+    return year
+
+  return date.today().year
+
 def main():
   """Scaffolds an AoC day."""
   parser = argparse.ArgumentParser()
-  parser.add_argument('-d', '--day', type=int, required=True)
-  parser.add_argument('-y', '--year', type=int, required=True)
+  parser.add_argument('-d', '--day', default=None, type=int)
+  parser.add_argument('-y', '--year', default=None, type=int)
   parser.add_argument('-e', '--delete', action='store_true')
   parser.add_argument('-r', '--ruby', action='store_true')
   parser.add_argument('-p', '--python', action='store_true')
   parser.add_argument('-s', '--samples', default=1, type=int)
   args = parser.parse_args()
 
-  yearstr = str(args.year)
-  daystr = 'Day' + str(args.day)
+  day = get_day(args.day)
+  year = get_year(args.year)
+
+  yearstr = str(year)
+  daystr = 'Day' + str(day)
   basedir = os.path.join(yearstr, daystr)
 
   if args.delete:
