@@ -25,12 +25,13 @@ int wmain(int argc, wchar_t* argv[]) {
   __int64 size{ std::numeric_limits<__int64>::max() };
   unsigned int time{ 0 };
   while (true) {
-    if (star_map_is_small_enough(all_stars)) {
+    /*if (star_map_is_small_enough(all_stars)) {
       write_stars(all_stars);
-    }
+    }*/
 
     __int64 new_size{ move_stars(all_stars) };
     if (new_size > size) {
+      write_stars(all_stars);
       break;
     }
 
@@ -47,10 +48,10 @@ bool star_map_is_small_enough(const std::vector<Star>& stars) {
       return s1.get_position().m_x < s2.get_position().m_x; } };
   auto y_comparator{ [](const Star& s1, const Star& s2) {
       return s1.get_position().m_y < s2.get_position().m_y; } };
-  int min_x = std::min_element(stars.begin(), stars.end(), x_comparator)->get_position().m_x;
-  int min_y = std::min_element(stars.begin(), stars.end(), y_comparator)->get_position().m_y;
-  int max_x = std::max_element(stars.begin(), stars.end(), x_comparator)->get_position().m_x;
-  int max_y = std::max_element(stars.begin(), stars.end(), y_comparator)->get_position().m_y;
+  auto min_x = std::min_element(stars.begin(), stars.end(), x_comparator)->get_position().m_x;
+  auto min_y = std::min_element(stars.begin(), stars.end(), y_comparator)->get_position().m_y;
+  auto max_x = std::max_element(stars.begin(), stars.end(), x_comparator)->get_position().m_x;
+  auto max_y = std::max_element(stars.begin(), stars.end(), y_comparator)->get_position().m_y;
 
   if ((max_x - min_x) < 400 && (max_y - min_y) < 300) {
     return true;
@@ -64,18 +65,18 @@ bool write_stars(const std::vector<Star>& stars) {
       return s1.get_position().m_x < s2.get_position().m_x; } };
   auto y_comparator{ [](const Star& s1, const Star& s2) {
       return s1.get_position().m_y < s2.get_position().m_y; } };
-  int min_x = std::min_element(stars.begin(), stars.end(), x_comparator)->get_position().m_x;
-  int min_y = std::min_element(stars.begin(), stars.end(), y_comparator)->get_position().m_y;
-  int max_x = std::max_element(stars.begin(), stars.end(), x_comparator)->get_position().m_x;
-  int max_y = std::max_element(stars.begin(), stars.end(), y_comparator)->get_position().m_y;
+  auto min_x = std::min_element(stars.begin(), stars.end(), x_comparator)->get_position().m_x;
+  auto min_y = std::min_element(stars.begin(), stars.end(), y_comparator)->get_position().m_y;
+  auto max_x = std::max_element(stars.begin(), stars.end(), x_comparator)->get_position().m_x;
+  auto max_y = std::max_element(stars.begin(), stars.end(), y_comparator)->get_position().m_y;
 
   std::wofstream output{ L"StarMap.txt" };
   if (!output.good()) {
     return false;
   }
 
-  for (int y = min_y; y <= max_y; ++y) {
-    for (int x = min_x; x <= max_x; ++x) {
+  for (auto y = min_y; y <= max_y; ++y) {
+    for (auto x = min_x; x <= max_x; ++x) {
       auto star_is_at_position{ [x, y](const Star& s) {
           auto position{ s.get_position() };
           return position.m_x == x && position.m_y == y;
