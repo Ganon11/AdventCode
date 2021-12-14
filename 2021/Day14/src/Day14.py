@@ -37,11 +37,8 @@ def expand_polymer(pairs, rules):
   '''Expands a polymer string following the given rules.'''
   new_pairs = defaultdict(int)
   for pair, count in pairs.items():
-    if pair in rules:
-      new_pairs[pair[0] + rules[pair]] += count
-      new_pairs[rules[pair] + pair[1]] += count
-    else:
-      new_pairs[pair] += count
+    new_pairs[pair[0] + rules[pair]] += count
+    new_pairs[rules[pair] + pair[1]] += count
   return new_pairs
 
 def score_polymer(pairs, first, last):
