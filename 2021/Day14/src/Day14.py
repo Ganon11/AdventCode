@@ -29,8 +29,7 @@ def convert_string_to_pairs(string):
   for index, _ in enumerate(string):
     if index + 1 == len(string):
       break
-    pair = string[index] + string[index + 1]
-    pairs[pair] += 1
+    pairs[string[index : index + 2]] += 1
 
   return pairs
 
@@ -39,10 +38,8 @@ def expand_polymer(pairs, rules):
   new_pairs = defaultdict(int)
   for pair, count in pairs.items():
     if pair in rules:
-      first = pair[0] + rules[pair]
-      second = rules[pair] + pair[1]
-      new_pairs[first] += count
-      new_pairs[second] += count
+      new_pairs[pair[0] + rules[pair]] += count
+      new_pairs[rules[pair] + pair[1]] += count
     else:
       new_pairs[pair] += count
   return new_pairs
