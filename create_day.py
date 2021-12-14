@@ -227,7 +227,7 @@ def main():
       os.mkdir(basedir)
       create_sublime_project(basedir, daystr, args.python, args.ruby, args.samples)
       create_src_dir(basedir, daystr, args.python, args.ruby, args.samples)
-      create_input_file(basedir, args.day, args.year)
+      create_input_file(basedir, day, year)
       create_sample_files(basedir, args.samples)
 
 if __name__ == "__main__":
