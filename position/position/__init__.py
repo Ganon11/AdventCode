@@ -10,10 +10,6 @@ class Position:
     self.y = y
     self.z = z
 
-  # @staticmethod
-  # def _is_valid_operand(other):
-  #   return hasattr(other, "x") and hasattr(other, "y") and hasattr(other, "z")
-
   @staticmethod
   def get_points_in_line(p1, p2): # pylint: disable=R0912
     '''Returns all the points between p1 and p2, inclusive.'''
@@ -86,9 +82,6 @@ class Position:
     if other is None:
       other = Position()
 
-    # if not self._is_valid_operand(other):
-    #   return NotImplemented
-
     return abs(self.x - other.x) + abs(self.y - other.y) + abs(self.z - other.z)
 
   def real_distance(self, other=None):
@@ -98,9 +91,6 @@ class Position:
     """
     if other is None:
       other = Position()
-
-    # if not self._is_valid_operand(other):
-    #   return NotImplemented
 
     delta_x = abs(self.x - other.x)
     delta_y = abs(self.y - other.y)
@@ -112,10 +102,7 @@ class Position:
     Returns True if this point is one step (not counting diagonals) from other,
     and False otherwise
     """
-    # if not self._is_valid_operand(other):
-    #   return NotImplemented
-
-    return other in self.get_adjacent_positions(include_z=include_z, include_diagonals=include_diagonals)
+    return other in self.get_adjacent_positions(include_z, include_diagonals)
 
   def north(self):
     """Returns the Position one step to the north (positive Y)"""
@@ -165,17 +152,12 @@ class Position:
     return adjacent_positions
 
   def __hash__(self):
-    if self.y == 0:
-      return ((self.x + self.y) * (self.x + self.y + 1) // 2) + self.y
-    return hash(str(self))
+    return hash((self.x, self.y, self.z))
 
   def __str__(self):
     return f'({self.x}, {self.y}, {self.z})'
 
   def __lt__(self, other):
-    # if not Position._is_valid_operand(other):
-    #   return NotImplemented
-
     if self.z < other.z:
       return True
 
@@ -188,9 +170,6 @@ class Position:
     return False
 
   def __le__(self, other):
-    # if not Position._is_valid_operand(other):
-    #   return NotImplemented
-
     if self.z < other.z:
       return True
 
@@ -203,15 +182,9 @@ class Position:
     return self == other
 
   def __eq__(self, other):
-    # if not Position._is_valid_operand(other):
-    #   return NotImplemented
-
     return self.x == other.x and self.y == other.y and self.z == other.z
 
   def __gt__(self, other):
-    # if not Position._is_valid_operand(other):
-    #   return NotImplemented
-
     if self.z > other.z:
       return True
 
@@ -224,9 +197,6 @@ class Position:
     return False
 
   def __ge__(self, other):
-    # if not Position._is_valid_operand(other):
-    #   return NotImplemented
-
     if self.z > other.z:
       return True
 
@@ -239,21 +209,12 @@ class Position:
     return self == other
 
   def __ne__(self, other):
-    # if not Position._is_valid_operand(other):
-    #   return NotImplemented
-
     return self.x != other.x or self.y != other.y or self.z != other.z
 
   def __add__(self, other):
-    # if not Position._is_valid_operand(other):
-    #   return NotImplemented
-
     return Position(self.x + other.x, self.y + other.y, self.z + other.z)
 
   def __radd__(self, other):
-    # if not Position._is_valid_operand(other):
-    #   return NotImplemented
-
     return Position(self.x + other.x, self.y + other.y, self.z + other.z)
 
   def __repr__(self):
