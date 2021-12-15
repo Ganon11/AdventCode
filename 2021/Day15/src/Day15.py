@@ -32,9 +32,6 @@ def get_grid(filename):
 
 def get_risk_of_position(grid, position, dimension_size):
   '''Gets the actual risk of a position.'''
-  if position in grid:
-    return grid[position]
-
   risk_adjustment = (position.x // dimension_size)
   actual_x = position.x % dimension_size
   risk_adjustment += (position.y // dimension_size)
