@@ -23,12 +23,13 @@ def get_grid(filename):
     lines = fh.readlines()
 
   grid = dict()
+  dimension_size = len(lines)
   for y, line in enumerate(lines):
     line = line.strip()
     for x, character in enumerate(line):
       grid[Position(x, y)] = int(character)
 
-  return grid
+  return grid, dimension_size
 
 def get_risk_of_position(grid, position, dimension_size):
   '''Gets the actual risk of a position.'''
@@ -40,10 +41,9 @@ def get_risk_of_position(grid, position, dimension_size):
   adjusted_position = Position(actual_x, actual_y)
   return ((grid[adjusted_position] + risk_adjustment - 1) % 9) + 1
 
-def get_cost_of_best_path(grid, scale_factor=1):
+def get_cost_of_best_path(grid, dimension_size, scale_factor=1):
   '''Finds the cost of the best path from 0,0 to the bottom-right.'''
   start = Position(x=0, y=0)
-  dimension_size = max(grid.keys(), key=lambda p: p.x).x + 1
   max_position = (dimension_size * scale_factor) - 1
   goal = Position(x=max_position, y=max_position)
 
@@ -79,12 +79,12 @@ def main():
   parser.add_argument('-p', '--part', choices=[1, 2], default=1, type=int)
   args = parser.parse_args()
 
-  grid = get_grid(args.filename)
+  grid, dimension_size = get_grid(args.filename)
   cost = None
   if args.part == 1:
-    cost = get_cost_of_best_path(grid)
+    cost = get_cost_of_best_path(grid, dimension_size)
   elif args.part == 2:
-    cost = get_cost_of_best_path(grid, scale_factor=5)
+    cost = get_cost_of_best_path(grid, dimension_size, scale_factor=5)
   print(f'Cost: {cost}')
 
 if __name__ == "__main__":

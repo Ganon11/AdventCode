@@ -35,8 +35,3 @@ def test_priority_queue_peek_does_not_pop_element():
   assert not q.empty()
   assert q.peek() == "Item 1"
   assert not q.empty()
-
-def test_priority_queue_does_not_allow_non_integer_priority():
-  q = my_collections.PriorityQueue()
-  with pytest.raises(AssertionError):
-    q.put("Item 1", "Priority")
