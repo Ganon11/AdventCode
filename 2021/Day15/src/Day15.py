@@ -50,7 +50,7 @@ def get_cost_of_best_path(grid, scale_factor=1):
     if current == goal:
       break
 
-    for neighbor in current.get_adjacent_positions():
+    for neighbor in current.get_adjacent_positions(include_z=False):
       # Check in bounds
       if (neighbor.z != 0 or
           neighbor.x < 0 or max_position < neighbor.x or
