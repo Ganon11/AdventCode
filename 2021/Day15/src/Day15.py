@@ -15,18 +15,34 @@ def get_grid(filename):
 
   return grid
 
-def get_cost_of_best_path(grid):
+def get_risk_of_position(grid, position, dimension_size):
+  '''Gets the actual risk of a position.'''
+  if position in grid:
+    return grid[position]
+
+  risk_adjustment = (position.x // dimension_size)
+  actual_x = position.x % dimension_size
+  risk_adjustment += (position.y // dimension_size)
+  actual_y = position.y % dimension_size
+
+  adjusted_position = Position(actual_x, actual_y)
+  actual_risk = grid[adjusted_position] + risk_adjustment
+  if actual_risk > 9:
+    actual_risk -= 9
+
+  return actual_risk
+
+def get_cost_of_best_path(grid, scale_factor=1):
   '''Finds the cost of the best path from 0,0 to the bottom-right.'''
   start = Position(0, 0)
-  maxx = max(grid.keys(), key=lambda p: p.x).x
-  maxy = max(grid.keys(), key=lambda p: p.y).y
-  goal = Position(maxx, maxy)
+  dimension_size = max(grid.keys(), key=lambda p: p.x).x + 1
+  max_position = (dimension_size * scale_factor) - 1
+  goal = Position(max_position, max_position)
+
   frontier = PriorityQueue()
   frontier.put(start, 0)
-  came_from = dict()
-  cost_so_far = dict()
-  came_from[start] = None
-  cost_so_far[start] = 0
+  came_from = { start: None }
+  cost_so_far = { start: 0 }
 
   while not frontier.empty():
     current = frontier.get()
@@ -35,9 +51,14 @@ def get_cost_of_best_path(grid):
       break
 
     for neighbor in current.get_adjacent_positions():
-      if neighbor not in grid:
+      # Check in bounds
+      if (neighbor.z != 0 or
+          neighbor.x < 0 or max_position < neighbor.x or
+          neighbor.y < 0 or max_position < neighbor.y):
         continue
-      new_cost = cost_so_far[current] + grid[neighbor]
+
+      new_cost = cost_so_far[current] + get_risk_of_position(grid, neighbor, dimension_size)
+
       if neighbor not in cost_so_far or new_cost < cost_so_far[neighbor]:
         cost_so_far[neighbor] = new_cost
         priority = new_cost + neighbor.distance(goal)
@@ -45,29 +66,6 @@ def get_cost_of_best_path(grid):
         came_from[neighbor] = current
 
   return cost_so_far[goal]
-
-def expand_grid(grid):
-  '''Expands the grid 5 times in each direction.'''
-  maxx = max(grid.keys(), key=lambda p: p.x).x
-  maxy = max(grid.keys(), key=lambda p: p.y).y
-  for expand_y in range(5):
-    for expand_x in range(5):
-      if expand_y == 0 and expand_x == 0:
-        continue
-
-      risk_adjustment = expand_y + expand_x
-      for original_y in range(maxy + 1):
-        for original_x in range(maxx + 1):
-          original_position = Position(original_x, original_y)
-          new_risk = grid[original_position] + risk_adjustment
-          if new_risk > 9:
-            new_risk -= 9
-          new_x = original_x + (expand_x * (maxx + 1))
-          new_y = original_y + (expand_y * (maxy + 1))
-          new_position = Position(new_x, new_y)
-          grid[new_position] = new_risk
-
-  return grid
 
 def main():
   '''I can't think of anything clever.'''
@@ -77,9 +75,11 @@ def main():
   args = parser.parse_args()
 
   grid = get_grid(args.filename)
-  if args.part == 2:
-    grid = expand_grid(grid)
-  cost = get_cost_of_best_path(grid)
+  cost = None
+  if args.part == 1:
+    cost = get_cost_of_best_path(grid)
+  elif args.part == 2:
+    cost = get_cost_of_best_path(grid, scale_factor=5)
   print(f'Cost: {cost}')
 
 if __name__ == "__main__":
