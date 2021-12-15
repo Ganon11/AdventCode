@@ -19,30 +19,26 @@ def get_distance(p1, p2):
 
 def get_grid(filename):
   '''Gets the grid from the file.'''
-  lines = []
   with open(filename, 'r') as fh:
-    lines = list(map(lambda line: line.strip(), fh.readlines()))
+    lines = fh.readlines()
 
   grid = dict()
   for y, line in enumerate(lines):
+    line = line.strip()
     for x, character in enumerate(line):
-      grid[Position(x=x, y=y)] = int(character)
+      grid[Position(x, y)] = int(character)
 
   return grid
 
 def get_risk_of_position(grid, position, dimension_size):
   '''Gets the actual risk of a position.'''
-  risk_adjustment = (position.x // dimension_size)
+  risk_adjustment = position.x // dimension_size
   actual_x = position.x % dimension_size
-  risk_adjustment += (position.y // dimension_size)
+  risk_adjustment += position.y // dimension_size
   actual_y = position.y % dimension_size
 
-  adjusted_position = Position(x=actual_x, y=actual_y)
-  actual_risk = grid[adjusted_position] + risk_adjustment
-  if actual_risk > 9:
-    actual_risk -= 9
-
-  return actual_risk
+  adjusted_position = Position(actual_x, actual_y)
+  return ((grid[adjusted_position] + risk_adjustment - 1) % 9) + 1
 
 def get_cost_of_best_path(grid, scale_factor=1):
   '''Finds the cost of the best path from 0,0 to the bottom-right.'''
@@ -53,7 +49,6 @@ def get_cost_of_best_path(grid, scale_factor=1):
 
   frontier = PriorityQueue()
   frontier.put(start, 0)
-  came_from = { start: None }
   cost_so_far = { start: 0 }
 
   while not frontier.empty():
@@ -74,7 +69,6 @@ def get_cost_of_best_path(grid, scale_factor=1):
         cost_so_far[neighbor] = new_cost
         priority = new_cost + get_distance(neighbor, goal)
         frontier.put(neighbor, priority)
-        came_from[neighbor] = current
 
   return cost_so_far[goal]
 
