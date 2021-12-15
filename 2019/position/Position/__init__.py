@@ -10,9 +10,9 @@ class Position:
     self.y = y
     self.z = z
 
-  @staticmethod
-  def _is_valid_operand(other):
-    return hasattr(other, "x") and hasattr(other, "y") and hasattr(other, "z")
+  # @staticmethod
+  # def _is_valid_operand(other):
+  #   return hasattr(other, "x") and hasattr(other, "y") and hasattr(other, "z")
 
   @staticmethod
   def get_points_in_line(p1, p2): # pylint: disable=R0912
@@ -86,8 +86,8 @@ class Position:
     if other is None:
       other = Position()
 
-    if not self._is_valid_operand(other):
-      return NotImplemented
+    # if not self._is_valid_operand(other):
+    #   return NotImplemented
 
     return abs(self.x - other.x) + abs(self.y - other.y) + abs(self.z - other.z)
 
@@ -99,23 +99,23 @@ class Position:
     if other is None:
       other = Position()
 
-    if not self._is_valid_operand(other):
-      return NotImplemented
+    # if not self._is_valid_operand(other):
+    #   return NotImplemented
 
     delta_x = abs(self.x - other.x)
     delta_y = abs(self.y - other.y)
     delta_z = abs(self.z - other.z)
     return math.sqrt(delta_x ** 2 + delta_y ** 2 + delta_z ** 2)
 
-  def is_adjacent_to(self, other, include_diagonals=False):
+  def is_adjacent_to(self, other, include_z=True, include_diagonals=False):
     """
     Returns True if this point is one step (not counting diagonals) from other,
     and False otherwise
     """
-    if not self._is_valid_operand(other):
-      return NotImplemented
+    # if not self._is_valid_operand(other):
+    #   return NotImplemented
 
-    return other in self.get_adjacent_positions(include_diagonals)
+    return other in self.get_adjacent_positions(include_z=include_z, include_diagonals=include_diagonals)
 
   def north(self):
     """Returns the Position one step to the north (positive Y)"""
@@ -141,30 +141,40 @@ class Position:
     """Returns the Position one step down (negative Z)"""
     return Position(self.x, self.y, self.z - 1)
 
-  def get_adjacent_positions(self, include_diagonals=False):
-    """Returns a list of adjacent positions."""
+  def get_adjacent_positions(self, include_z=True, include_diagonals=False):
+    """Returns a set of adjacent positions."""
+    adjacent_positions = set([self.north(), self.west(), self.east(), self.south()])
+
+    if include_z:
+      adjacent_positions.update([self.up(), self.down()])
+
     if include_diagonals:
-      return [self.north().west(), self.north(), self.north().east(), \
-        self.west(), self.east(), \
-        self.south().west(), self.south(), self.south().east(), \
-        self.up().north().west(), self.up().north(), self.up().north().east(), \
-        self.up().west(), self.up(), self.up().east(), \
-        self.up().south().west(), self.up().south(), self.up().south().east(), \
-        self.down().north().west(), self.down().north(), self.down().north().east(), \
-        self.down().west(), self.down(), self.down().east(), \
+      adjacent_positions.update([self.north().west(), self.north().east(), \
+        self.south().west(), self.south().east()])
+
+    if include_z and include_diagonals:
+      adjacent_positions.update([
+        self.up().north().west(), self.up().north(), self.up().north().east(),
+        self.up().west(), self.up().east(),
+        self.up().south().west(), self.up().south(), self.up().south().east(),
+        self.down().north().west(), self.down().north(), self.down().north().east(),
+        self.down().west(), self.down().east(),
         self.down().south().west(), self.down().south(), self.down().south().east()
-      ]
-    return [self.north(), self.west(), self.east(), self.south(), self.up(), self.down()]
+      ])
+
+    return adjacent_positions
 
   def __hash__(self):
+    if self.y == 0:
+      return ((self.x + self.y) * (self.x + self.y + 1) // 2) + self.y
     return hash(str(self))
 
   def __str__(self):
     return f'({self.x}, {self.y}, {self.z})'
 
   def __lt__(self, other):
-    if not Position._is_valid_operand(other):
-      return NotImplemented
+    # if not Position._is_valid_operand(other):
+    #   return NotImplemented
 
     if self.z < other.z:
       return True
@@ -178,8 +188,8 @@ class Position:
     return False
 
   def __le__(self, other):
-    if not Position._is_valid_operand(other):
-      return NotImplemented
+    # if not Position._is_valid_operand(other):
+    #   return NotImplemented
 
     if self.z < other.z:
       return True
@@ -193,14 +203,14 @@ class Position:
     return self == other
 
   def __eq__(self, other):
-    if not Position._is_valid_operand(other):
-      return NotImplemented
+    # if not Position._is_valid_operand(other):
+    #   return NotImplemented
 
     return self.x == other.x and self.y == other.y and self.z == other.z
 
   def __gt__(self, other):
-    if not Position._is_valid_operand(other):
-      return NotImplemented
+    # if not Position._is_valid_operand(other):
+    #   return NotImplemented
 
     if self.z > other.z:
       return True
@@ -214,8 +224,8 @@ class Position:
     return False
 
   def __ge__(self, other):
-    if not Position._is_valid_operand(other):
-      return NotImplemented
+    # if not Position._is_valid_operand(other):
+    #   return NotImplemented
 
     if self.z > other.z:
       return True
@@ -229,20 +239,20 @@ class Position:
     return self == other
 
   def __ne__(self, other):
-    if not Position._is_valid_operand(other):
-      return NotImplemented
+    # if not Position._is_valid_operand(other):
+    #   return NotImplemented
 
     return self.x != other.x or self.y != other.y or self.z != other.z
 
   def __add__(self, other):
-    if not Position._is_valid_operand(other):
-      return NotImplemented
+    # if not Position._is_valid_operand(other):
+    #   return NotImplemented
 
     return Position(self.x + other.x, self.y + other.y, self.z + other.z)
 
   def __radd__(self, other):
-    if not Position._is_valid_operand(other):
-      return NotImplemented
+    # if not Position._is_valid_operand(other):
+    #   return NotImplemented
 
     return Position(self.x + other.x, self.y + other.y, self.z + other.z)
 
