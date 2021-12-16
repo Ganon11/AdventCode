@@ -4,19 +4,6 @@ from my_collections import PriorityQueue
 
 Position = namedtuple('Position', ['x', 'y'])
 
-def get_neighbors(position):
-  '''Gets neighbors of a position.'''
-  return set([
-    Position(position.x - 1, position.y),
-    Position(position.x + 1, position.y),
-    Position(position.x, position.y - 1),
-    Position(position.x, position.y + 1)
-  ])
-
-def get_distance(p1, p2):
-  '''Gets the Manhattan distance between two points.'''
-  return abs(p1.x - p2.x) + abs(p1.y - p2.y)
-
 def get_grid(filename):
   '''Gets the grid from the file.'''
   with open(filename, 'r') as fh:
@@ -43,9 +30,9 @@ def get_risk_of_position(grid, position, dimension_size):
 
 def get_cost_of_best_path(grid, dimension_size, scale_factor=1):
   '''Finds the cost of the best path from 0,0 to the bottom-right.'''
-  start = Position(x=0, y=0)
+  start = Position(0, 0)
   max_position = (dimension_size * scale_factor) - 1
-  goal = Position(x=max_position, y=max_position)
+  goal = Position(max_position, max_position)
 
   frontier = PriorityQueue()
   frontier.put(start, 0)
@@ -57,7 +44,12 @@ def get_cost_of_best_path(grid, dimension_size, scale_factor=1):
     if current == goal:
       break
 
-    for neighbor in get_neighbors(current):
+    for neighbor in [
+      Position(current.x - 1, current.y),
+      Position(current.x + 1, current.y),
+      Position(current.x, current.y - 1),
+      Position(current.x, current.y + 1)
+    ]:
       # Check in bounds
       if (neighbor.x < 0 or max_position < neighbor.x or
           neighbor.y < 0 or max_position < neighbor.y):
@@ -67,7 +59,7 @@ def get_cost_of_best_path(grid, dimension_size, scale_factor=1):
 
       if neighbor not in cost_so_far or new_cost < cost_so_far[neighbor]:
         cost_so_far[neighbor] = new_cost
-        priority = new_cost + get_distance(neighbor, goal)
+        priority = new_cost + abs(neighbor.x - goal.x) + abs(neighbor.y - goal.y)
         frontier.put(neighbor, priority)
 
   return cost_so_far[goal]
