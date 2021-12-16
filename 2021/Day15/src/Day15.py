@@ -1,8 +1,5 @@
 import argparse
-from collections import namedtuple
 from my_collections import PriorityQueue
-
-Position = namedtuple('Position', ['x', 'y'])
 
 def get_grid(filename):
   '''Gets the grid from the file.'''
@@ -14,25 +11,24 @@ def get_grid(filename):
   for y, line in enumerate(lines):
     line = line.strip()
     for x, character in enumerate(line):
-      grid[Position(x, y)] = int(character)
+      grid[(x, y)] = int(character)
 
   return grid, dimension_size
 
 def get_risk_of_position(grid, position, dimension_size):
   '''Gets the actual risk of a position.'''
-  risk_adjustment = position.x // dimension_size
-  actual_x = position.x % dimension_size
-  risk_adjustment += position.y // dimension_size
-  actual_y = position.y % dimension_size
+  risk_adjustment = position[0] // dimension_size
+  actual_x = position[0] % dimension_size
+  risk_adjustment += position[1] // dimension_size
+  actual_y = position[1] % dimension_size
 
-  adjusted_position = Position(actual_x, actual_y)
-  return ((grid[adjusted_position] + risk_adjustment - 1) % 9) + 1
+  return ((grid[(actual_x, actual_y)] + risk_adjustment - 1) % 9) + 1
 
 def get_cost_of_best_path(grid, dimension_size, scale_factor=1):
   '''Finds the cost of the best path from 0,0 to the bottom-right.'''
-  start = Position(0, 0)
+  start = (0, 0)
   max_position = (dimension_size * scale_factor) - 1
-  goal = Position(max_position, max_position)
+  goal = (max_position, max_position)
 
   frontier = PriorityQueue()
   frontier.put(start, 0)
@@ -44,22 +40,18 @@ def get_cost_of_best_path(grid, dimension_size, scale_factor=1):
     if current == goal:
       break
 
-    for neighbor in [
-      Position(current.x - 1, current.y),
-      Position(current.x + 1, current.y),
-      Position(current.x, current.y - 1),
-      Position(current.x, current.y + 1)
-    ]:
+    for neighbor in [(current[0] - 1, current[1]), (current[0] + 1, current[1]),
+                     (current[0], current[1] - 1), (current[0], current[1] + 1)]:
       # Check in bounds
-      if (neighbor.x < 0 or max_position < neighbor.x or
-          neighbor.y < 0 or max_position < neighbor.y):
+      if (neighbor[0] < 0 or max_position < neighbor[0] or
+          neighbor[1] < 0 or max_position < neighbor[1]):
         continue
 
       new_cost = cost_so_far[current] + get_risk_of_position(grid, neighbor, dimension_size)
 
       if neighbor not in cost_so_far or new_cost < cost_so_far[neighbor]:
         cost_so_far[neighbor] = new_cost
-        priority = new_cost + abs(neighbor.x - goal.x) + abs(neighbor.y - goal.y)
+        priority = new_cost + abs(neighbor[0] - goal[0]) + abs(neighbor[1] - goal[1])
         frontier.put(neighbor, priority)
 
   return cost_so_far[goal]
