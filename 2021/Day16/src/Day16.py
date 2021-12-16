@@ -3,7 +3,7 @@ import argparse
 class Packet:
   '''Represents a Buoyancy Interchange Transmission System (BITS) Packet.'''
 
-  def __init__(self, bits, index=0, skip_padding=False):
+  def __init__(self, bits, index=0):
     '''Unpacks a packet from a series of bits.'''
     initial_index = index
     (self.version, index) = Packet._get_value_from_bits(bits, index, 3)
@@ -13,9 +13,6 @@ class Packet:
       self.subpackets = []
     else:
       (self.subpackets, index) = Packet._get_subpackets(bits, index)
-
-    if not skip_padding:
-      index += 4 - ((index - initial_index) % 4)
 
     self.packet_size = index - initial_index
 
@@ -52,7 +49,7 @@ class Packet:
     (bit_length, index) = Packet._get_value_from_bits(bits, index, 15)
     current_index = index
     while index - current_index < bit_length:
-      new_packet = Packet(bits, index, skip_padding=True)
+      new_packet = Packet(bits, index)
       subpackets.append(new_packet)
       index += new_packet.packet_size
 
@@ -64,7 +61,7 @@ class Packet:
     subpackets = []
     (subpacket_count, index) = Packet._get_value_from_bits(bits, index, 11)
     for _ in range(subpacket_count):
-      new_packet = Packet(bits, index, skip_padding=True)
+      new_packet = Packet(bits, index)
       subpackets.append(new_packet)
       index += new_packet.packet_size
 
