@@ -64,7 +64,6 @@ def main():
   args = parser.parse_args()
 
   grid, dimension_size = get_grid(args.filename)
-  cost = None
   if args.part == 1:
     cost = get_cost_of_best_path(grid, dimension_size)
   elif args.part == 2:
