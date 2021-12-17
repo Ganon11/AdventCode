@@ -1,4 +1,5 @@
 import argparse
+import math
 import re
 from position import Position
 
@@ -59,12 +60,34 @@ def get_max_height(target_tl, target_br):
   '''Gets the max height the probe can reach while ending up in the target area.'''
   max_height = None
   velocities = set()
+
+  # Stealing a bit of math from reddit to determine the search space
+
+  # With a given initial x_velocity of x_v0, we travel x_v0 + (x_v0 -1) + (x_v0 - 2) + ... + 1
+  # steps to the right (since drag pushes the velocity to 0). This is equal to
+  # (x_v0 * (x_v0 + 1)) / 2.
+  # We want this to be greater than the minimum x - that is, we want
+  # (x_v0 * (x_v0 + 1)) / 2 >= x_min
+  # Re-arrange this and use the quadratic formula to find that the smallest x_velocity that could
+  # possibly get us to the target area is
+  # x_v >= (-1 +- sqrt(8 * xmin)) / 2
+  min_x_velocity = int((math.sqrt(8 * min(target_tl.x, target_br.x)) - 1) / 2)
+
+  # We overshoot the target area if our x_velocity is greater than xmax.
   max_x_velocity = max(target_br.x, target_tl.x) + 1
-  print(f'Xv 0..{max_x_velocity}')
-  min_y_velocity = min(target_tl.y, target_br.y) - 1
-  print(f'Yv {min_y_velocity}..200')
-  for x_velocity in range(max_x_velocity):
-    for y_velocity in range(min_y_velocity, 200):
+
+  # We overshoot the target area if our y_velocity is lower than y_min.
+  min_y_velocity = min(0, target_tl.y, target_br.y)
+
+  # We start at y = 0. We will eventually fall back to y = 0, at which point our y_velocity will
+  # equal the opposite of our initial y_velocity (i.e. velocities go:
+  #   5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5 <- at this point we cross y=0 again)
+  # We will overshoot if this velocity exceeds the target area.
+  # Therefore, the max_y_velocity equals the opposite of the min_y target position.
+  max_y_velocity = (-1 * min(target_tl.y, target_br.y))
+
+  for x_velocity in range(min_x_velocity, max_x_velocity):
+    for y_velocity in range(min_y_velocity, max_y_velocity):
       (hits_target, height) = lands_in_target_area(x_velocity, y_velocity, target_tl, target_br)
       if hits_target:
         if max_height is None or max_height < height:
