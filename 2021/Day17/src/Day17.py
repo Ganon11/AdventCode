@@ -8,34 +8,25 @@ def get_target_area(filename):
   with open(filename, 'r') as fh:
     line = fh.read().strip()
 
-  target_area_pattern = re.compile(r'target area: x=(-?\d+)..(-?\d+), y=(-?\d+)..(-?\d+)', re.IGNORECASE)
-  match = target_area_pattern.match(line)
+  match = re.match(r'target area: x=(-?\d+)..(-?\d+), y=(-?\d+)..(-?\d+)', line, re.IGNORECASE)
   x1 = int(match.group(1))
   x2 = int(match.group(2))
   y1 = int(match.group(3))
   y2 = int(match.group(4))
 
-  return (Position(x1, y1), Position(x2, y2))
+  return (Position(min(x1, x2), max(y1, y2)), Position(max(x1, x2), min(y1, y2)))
 
 def position_is_in_target_area(position, target_tl, target_br):
   ''' Determines if the given position is within the target area.'''
-  min_x = min(target_tl.x, target_br.x)
-  max_x = max(target_tl.x, target_br.x)
-  min_y = min(target_tl.y, target_br.y)
-  max_y = max(target_tl.y, target_br.y)
-  return min_x <= position.x and position.x <= max_x and \
-    min_y <= position.y and position.y <= max_y
+  return target_tl.x <= position.x and position.x <= target_br.x and \
+    target_br.y <= position.y and position.y <= target_tl.y
 
 def lands_in_target_area(x_velocity, y_velocity, target_tl, target_br):
   '''Determines if a shot lands in the target area, and returns the max height of the shot.'''
   position = Position(0, 0)
   max_height = None
   hits_target = False
-  min_x = min(target_tl.x, target_br.x)
-  max_x = max(target_tl.x, target_br.x)
-  min_y = min(target_tl.y, target_br.y)
-  max_y = max(target_tl.y, target_br.y)
-  while position.x < max_x and position.y > min_y:
+  while position.x < target_br.x and position.y > target_br.y:
     position.x += x_velocity # x position increases by x_velocity
     position.y += y_velocity # y position increases by y_velocity
     if max_height is None or position.y > max_height:
@@ -71,20 +62,20 @@ def get_max_height(target_tl, target_br):
   # Re-arrange this and use the quadratic formula to find that the smallest x_velocity that could
   # possibly get us to the target area is
   # x_v >= (-1 +- sqrt(8 * xmin)) / 2
-  min_x_velocity = int((math.sqrt(8 * min(target_tl.x, target_br.x)) - 1) / 2)
+  min_x_velocity = int((math.sqrt(8 * target_tl.x) - 1) / 2)
 
   # We overshoot the target area if our x_velocity is greater than xmax.
-  max_x_velocity = max(target_br.x, target_tl.x) + 1
+  max_x_velocity = target_br.x + 1
 
   # We overshoot the target area if our y_velocity is lower than y_min.
-  min_y_velocity = min(0, target_tl.y, target_br.y)
+  min_y_velocity = target_br.y
 
   # We start at y = 0. We will eventually fall back to y = 0, at which point our y_velocity will
   # equal the opposite of our initial y_velocity (i.e. velocities go:
   #   5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5 <- at this point we cross y=0 again)
   # We will overshoot if this velocity exceeds the target area.
   # Therefore, the max_y_velocity equals the opposite of the min_y target position.
-  max_y_velocity = (-1 * min(target_tl.y, target_br.y))
+  max_y_velocity = (-1 * target_br.y)
 
   for x_velocity in range(min_x_velocity, max_x_velocity):
     for y_velocity in range(min_y_velocity, max_y_velocity):
@@ -96,6 +87,7 @@ def get_max_height(target_tl, target_br):
   return (max_height, velocities)
 
 def main():
+  '''I hate golf.'''
   parser = argparse.ArgumentParser()
   parser.add_argument('-f', '--filename', default='../input/sample.txt')
   args = parser.parse_args()
