@@ -13,20 +13,12 @@
   "build_systems":
   [
     {
-      "name": "Run Python Part 1",
+      "name": "Run Python",
       "cmd": ["python", "$file", "-f", "../input/input.txt"]
     },
     {
-      "name": "Run Python Part 2",
-      "cmd": ["python", "$file", "-f", "../input/input.txt"]
-    },
-    {
-      "name": "Run Python Sample Part 1",
+      "name": "Run Python Sample",
       "cmd": ["python", "$file", "-f", "../input/sample.txt"]
-    },
-    {
-      "name": "Run Python Sample Part 2",
-      "cmd": ["python", "$file", "-f", "../input/sample.txt"]
-    },
+    }
   ]
 }
