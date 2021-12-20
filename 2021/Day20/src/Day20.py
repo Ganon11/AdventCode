@@ -25,6 +25,7 @@ def get_trench_map(filename):
   return (image_enhancement_algorithm, grid, max_x, max_y)
 
 def get_index(x, y, grid, infinite_value):
+  '''Converts an x, y point into an index on the IEA.'''
   digits = ''
   neighbors = None
   if (x, y) in get_index.PRECOMPUTED_NEIGHBORS:
@@ -50,9 +51,11 @@ def get_index(x, y, grid, infinite_value):
 get_index.PRECOMPUTED_NEIGHBORS = dict()
 
 def count_pixels(grid):
+  '''Counts the number of "on" pixels in the image.'''
   return sum(1 for p in grid.keys() if grid[p] == '#')
 
 def do_step(grid, step, iea, dimensions):
+  '''Enhances the image according to the IEA.'''
   new_grid = dict()
   minx = dimensions[0] - 1
   miny = dimensions[1] - 1
@@ -73,6 +76,7 @@ def do_step(grid, step, iea, dimensions):
   return (new_grid, (minx, miny, maxx, maxy))
 
 def main():
+  '''Zoom and enhance!'''
   parser = argparse.ArgumentParser()
   parser.add_argument('-f', '--filename', default='../input/sample.txt')
   parser.add_argument('-p', '--part', choices=[1, 2], default=1, type=int)
