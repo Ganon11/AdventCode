@@ -7,13 +7,11 @@ def get_grid(filename):
     lines = fh.readlines()
 
   grid = dict()
-  dimension_size = len(lines)
   for y, line in enumerate(lines):
-    line = line.strip()
-    for x, character in enumerate(line):
+    for x, character in enumerate(line.strip()):
       grid[(x, y)] = int(character)
 
-  return grid, dimension_size
+  return grid, len(lines)
 
 def get_risk_of_position(grid, position, dimension_size):
   '''Gets the actual risk of a position.'''
