@@ -1,4 +1,5 @@
 import argparse
+from functools import cache
 
 def get_starting_positions(filename):
   '''Gets player 1 and 2's starting positions from the file.'''
@@ -35,13 +36,152 @@ def deterministic_dice():
 deterministic_dice.NEXT_RESULT = 1
 deterministic_dice.TOTAL_ROLLS = 0
 
+@cache
+def play_game_in_universe(player, position_0, position_1, total_0, total_1):
+  '''We Dr Strange now'''
+  if total_0 >= 21:
+    return [1, 0]
+
+  if total_1 >= 21:
+    return [0, 1]
+
+  wins = [0, 0]
+  nextplayer = (player + 1) % 2
+  if player == 0:
+    # Roll a 3 in 1 universe
+    position_0 += 3
+    if position_0 > 10:
+      position_0 -= 10
+    temp_total = total_0 + position_0
+    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, temp_total, total_1)
+    wins[0] += temp_wins[0]
+    wins[1] += temp_wins[1]
+
+    # Roll a 4 in 3 universes
+    position_0 += 1
+    if position_0 > 10:
+      position_0 -= 10
+    temp_total = total_0 + position_0
+    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, temp_total, total_1)
+    wins[0] += temp_wins[0] * 3
+    wins[1] += temp_wins[1] * 3
+
+    # Roll a 5 in 6 universes
+    position_0 += 1
+    if position_0 > 10:
+      position_0 -= 10
+    temp_total = total_0 + position_0
+    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, temp_total, total_1)
+    wins[0] += temp_wins[0] * 6
+    wins[1] += temp_wins[1] * 6
+
+    # Roll a 6 in 7 universes
+    position_0 += 1
+    if position_0 > 10:
+      position_0 -= 10
+    temp_total = total_0 + position_0
+    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, temp_total, total_1)
+    wins[0] += temp_wins[0] * 7
+    wins[1] += temp_wins[1] * 7
+
+    # Roll a 7 in 6 universes
+    position_0 += 1
+    if position_0 > 10:
+      position_0 -= 10
+    temp_total = total_0 + position_0
+    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, temp_total, total_1)
+    wins[0] += temp_wins[0] * 6
+    wins[1] += temp_wins[1] * 6
+
+    # Roll an 8 in 3 universes
+    position_0 += 1
+    if position_0 > 10:
+      position_0 -= 10
+    temp_total = total_0 + position_0
+    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, temp_total, total_1)
+    wins[0] += temp_wins[0] * 3
+    wins[1] += temp_wins[1] * 3
+
+    # Roll an 9 in 1 universe
+    position_0 += 1
+    if position_0 > 10:
+      position_0 -= 10
+    temp_total = total_0 + position_0
+    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, temp_total, total_1)
+    wins[0] += temp_wins[0]
+    wins[1] += temp_wins[1]
+
+##################### PLAYER 2 #####################
+  elif player == 1:
+    # Roll a 3 in 1 universe
+    position_1 += 3
+    if position_1 > 10:
+      position_1 -= 10
+    temp_total = total_1 + position_1
+    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, total_0, temp_total)
+    wins[0] += temp_wins[0]
+    wins[1] += temp_wins[1]
+
+    # Roll a 4 in 3 universes
+    position_1 += 1
+    if position_1 > 10:
+      position_1 -= 10
+    temp_total = total_1 + position_1
+    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, total_0, temp_total)
+    wins[0] += temp_wins[0] * 3
+    wins[1] += temp_wins[1] * 3
+
+    # Roll a 5 in 6 universes
+    position_1 += 1
+    if position_1 > 10:
+      position_1 -= 10
+    temp_total = total_1 + position_1
+    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, total_0, temp_total)
+    wins[0] += temp_wins[0] * 6
+    wins[1] += temp_wins[1] * 6
+
+    # Roll a 6 in 7 universes
+    position_1 += 1
+    if position_1 > 10:
+      position_1 -= 10
+    temp_total = total_1 + position_1
+    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, total_0, temp_total)
+    wins[0] += temp_wins[0] * 7
+    wins[1] += temp_wins[1] * 7
+
+    # Roll a 7 in 6 universes
+    position_1 += 1
+    if position_1 > 10:
+      position_1 -= 10
+    temp_total = total_1 + position_1
+    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, total_0, temp_total)
+    wins[0] += temp_wins[0] * 6
+    wins[1] += temp_wins[1] * 6
+
+    # Roll an 8 in 3 universes
+    position_1 += 1
+    if position_1 > 10:
+      position_1 -= 10
+    temp_total = total_1 + position_1
+    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, total_0, temp_total)
+    wins[0] += temp_wins[0] * 3
+    wins[1] += temp_wins[1] * 3
+
+    # Roll an 9 in 1 universe
+    position_1 += 1
+    if position_1 > 10:
+      position_1 -= 10
+    temp_total = total_1 + position_1
+    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, total_0, temp_total)
+    wins[0] += temp_wins[0]
+    wins[1] += temp_wins[1]
+
+  return wins
+
 def play_game(starting_positions, goal_score=1000):
   player = 0
   positions = [starting_positions[0], starting_positions[1]]
   totals = [0, 0]
-
-  #print(f'Player 1 starting position: {positions[0]}')
-  #print(f'Player 1 starting position: {positions[1]}')
 
   while totals[0] < goal_score and totals[1] < goal_score:
     spaces_to_move = deterministic_dice()
@@ -62,8 +202,12 @@ def main():
   args = parser.parse_args()
 
   starting_positions = get_starting_positions(args.filename)
-  result = play_game(starting_positions)
-  print(f'Game result: {result}')
+  if args.part == 1:
+    result = play_game(starting_positions)
+    print(f'Game result: {result}')
+  elif args.part == 2:
+    wins = play_game_in_universe(0, starting_positions[0], starting_positions[1], 0, 0)
+    print(wins)
 
 if __name__ == "__main__":
   main()
