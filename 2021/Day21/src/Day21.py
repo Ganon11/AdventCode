@@ -37,6 +37,22 @@ deterministic_dice.NEXT_RESULT = 1
 deterministic_dice.TOTAL_ROLLS = 0
 
 @cache
+def get_universe_constants(position, dice_result, total):
+  resultant_position = position + dice_result
+  if resultant_position > 10:
+    resultant_position -= 10
+  resultant_total = total + resultant_position
+  product = 1
+  if dice_result == 4 or dice_result == 8:
+    product = 3
+  elif dice_result == 5 or dice_result == 7:
+    product = 6
+  elif dice_result == 6:
+    product = 7
+
+  return (resultant_position, resultant_total, product)
+
+@cache
 def play_game_in_universe(player, position_0, position_1, total_0, total_1):
   '''We Dr Strange now'''
   if total_0 >= 21:
@@ -47,134 +63,21 @@ def play_game_in_universe(player, position_0, position_1, total_0, total_1):
 
   wins = [0, 0]
   nextplayer = (player + 1) % 2
+
   if player == 0:
-    # Roll a 3 in 1 universe
-    position_0 += 3
-    if position_0 > 10:
-      position_0 -= 10
-    temp_total = total_0 + position_0
-    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, temp_total, total_1)
-    wins[0] += temp_wins[0]
-    wins[1] += temp_wins[1]
-
-    # Roll a 4 in 3 universes
-    position_0 += 1
-    if position_0 > 10:
-      position_0 -= 10
-    temp_total = total_0 + position_0
-    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, temp_total, total_1)
-    wins[0] += temp_wins[0] * 3
-    wins[1] += temp_wins[1] * 3
-
-    # Roll a 5 in 6 universes
-    position_0 += 1
-    if position_0 > 10:
-      position_0 -= 10
-    temp_total = total_0 + position_0
-    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, temp_total, total_1)
-    wins[0] += temp_wins[0] * 6
-    wins[1] += temp_wins[1] * 6
-
-    # Roll a 6 in 7 universes
-    position_0 += 1
-    if position_0 > 10:
-      position_0 -= 10
-    temp_total = total_0 + position_0
-    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, temp_total, total_1)
-    wins[0] += temp_wins[0] * 7
-    wins[1] += temp_wins[1] * 7
-
-    # Roll a 7 in 6 universes
-    position_0 += 1
-    if position_0 > 10:
-      position_0 -= 10
-    temp_total = total_0 + position_0
-    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, temp_total, total_1)
-    wins[0] += temp_wins[0] * 6
-    wins[1] += temp_wins[1] * 6
-
-    # Roll an 8 in 3 universes
-    position_0 += 1
-    if position_0 > 10:
-      position_0 -= 10
-    temp_total = total_0 + position_0
-    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, temp_total, total_1)
-    wins[0] += temp_wins[0] * 3
-    wins[1] += temp_wins[1] * 3
-
-    # Roll an 9 in 1 universe
-    position_0 += 1
-    if position_0 > 10:
-      position_0 -= 10
-    temp_total = total_0 + position_0
-    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, temp_total, total_1)
-    wins[0] += temp_wins[0]
-    wins[1] += temp_wins[1]
+    for dice_result in range(3, 10):
+      (r_position, r_total, product) = get_universe_constants(position_0, dice_result, total_0)
+      temp_wins = play_game_in_universe(nextplayer, r_position, position_1, r_total, total_1)
+      wins[0] += temp_wins[0] * product
+      wins[1] += temp_wins[1] * product
 
 ##################### PLAYER 2 #####################
   elif player == 1:
-    # Roll a 3 in 1 universe
-    position_1 += 3
-    if position_1 > 10:
-      position_1 -= 10
-    temp_total = total_1 + position_1
-    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, total_0, temp_total)
-    wins[0] += temp_wins[0]
-    wins[1] += temp_wins[1]
-
-    # Roll a 4 in 3 universes
-    position_1 += 1
-    if position_1 > 10:
-      position_1 -= 10
-    temp_total = total_1 + position_1
-    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, total_0, temp_total)
-    wins[0] += temp_wins[0] * 3
-    wins[1] += temp_wins[1] * 3
-
-    # Roll a 5 in 6 universes
-    position_1 += 1
-    if position_1 > 10:
-      position_1 -= 10
-    temp_total = total_1 + position_1
-    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, total_0, temp_total)
-    wins[0] += temp_wins[0] * 6
-    wins[1] += temp_wins[1] * 6
-
-    # Roll a 6 in 7 universes
-    position_1 += 1
-    if position_1 > 10:
-      position_1 -= 10
-    temp_total = total_1 + position_1
-    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, total_0, temp_total)
-    wins[0] += temp_wins[0] * 7
-    wins[1] += temp_wins[1] * 7
-
-    # Roll a 7 in 6 universes
-    position_1 += 1
-    if position_1 > 10:
-      position_1 -= 10
-    temp_total = total_1 + position_1
-    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, total_0, temp_total)
-    wins[0] += temp_wins[0] * 6
-    wins[1] += temp_wins[1] * 6
-
-    # Roll an 8 in 3 universes
-    position_1 += 1
-    if position_1 > 10:
-      position_1 -= 10
-    temp_total = total_1 + position_1
-    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, total_0, temp_total)
-    wins[0] += temp_wins[0] * 3
-    wins[1] += temp_wins[1] * 3
-
-    # Roll an 9 in 1 universe
-    position_1 += 1
-    if position_1 > 10:
-      position_1 -= 10
-    temp_total = total_1 + position_1
-    temp_wins = play_game_in_universe(nextplayer, position_0, position_1, total_0, temp_total)
-    wins[0] += temp_wins[0]
-    wins[1] += temp_wins[1]
+    for dice_result in range(3, 10):
+      (r_position, r_total, product) = get_universe_constants(position_1, dice_result, total_1)
+      temp_wins = play_game_in_universe(nextplayer, position_0, r_position, total_0, r_total)
+      wins[0] += temp_wins[0] * product
+      wins[1] += temp_wins[1] * product
 
   return wins
 
