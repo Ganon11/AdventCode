@@ -37,12 +37,14 @@ deterministic_dice.NEXT_RESULT = 1
 deterministic_dice.TOTAL_ROLLS = 0
 
 @cache
-def get_universe_constants(position, dice_result, total):
+def get_universe_constants(position, dice_result):
+  '''Get the new position and the number of universes with this result.'''
   resultant_position = position + dice_result
   if resultant_position > 10:
     resultant_position -= 10
-  resultant_total = total + resultant_position
-  product = 1
+
+  if dice_result == 3 or dice_result == 9:
+    product = 1
   if dice_result == 4 or dice_result == 8:
     product = 3
   elif dice_result == 5 or dice_result == 7:
@@ -50,7 +52,7 @@ def get_universe_constants(position, dice_result, total):
   elif dice_result == 6:
     product = 7
 
-  return (resultant_position, resultant_total, product)
+  return (resultant_position, product)
 
 @cache
 def play_game_in_universe(player, position_0, position_1, total_0, total_1):
@@ -66,15 +68,15 @@ def play_game_in_universe(player, position_0, position_1, total_0, total_1):
 
   if player == 0:
     for dice_result in range(3, 10):
-      (r_position, r_total, product) = get_universe_constants(position_0, dice_result, total_0)
+      (r_position, product) = get_universe_constants(position_0, dice_result)
+      r_total = total_0 + r_position
       temp_wins = play_game_in_universe(nextplayer, r_position, position_1, r_total, total_1)
       wins[0] += temp_wins[0] * product
       wins[1] += temp_wins[1] * product
-
-##################### PLAYER 2 #####################
   elif player == 1:
     for dice_result in range(3, 10):
-      (r_position, r_total, product) = get_universe_constants(position_1, dice_result, total_1)
+      (r_position, product) = get_universe_constants(position_1, dice_result)
+      r_total = total_1 + r_position
       temp_wins = play_game_in_universe(nextplayer, position_0, r_position, total_0, r_total)
       wins[0] += temp_wins[0] * product
       wins[1] += temp_wins[1] * product
@@ -88,11 +90,8 @@ def play_game(starting_positions, goal_score=1000):
 
   while totals[0] < goal_score and totals[1] < goal_score:
     spaces_to_move = deterministic_dice()
-    positions[player] += spaces_to_move
-    while positions[player] > 10:
-      positions[player] -= 10
+    positions[player] = ((positions[player] + spaces_to_move - 1) % 10) + 1
     totals[player] += positions[player]
-    #print(f'Player {player + 1} rolls {spaces_to_move} and moves to space {positions[player]} for a total score of {totals[player]}')
     player = (player + 1) % 2
 
   return totals[player] * deterministic_dice.TOTAL_ROLLS
@@ -110,7 +109,7 @@ def main():
     print(f'Game result: {result}')
   elif args.part == 2:
     wins = play_game_in_universe(0, starting_positions[0], starting_positions[1], 0, 0)
-    print(wins)
+    print(max(wins))
 
 if __name__ == "__main__":
   main()
