@@ -84,6 +84,7 @@ def play_game_in_universe(player, position_0, position_1, total_0, total_1):
   return wins
 
 def play_game(starting_positions, goal_score=1000):
+  '''Plays a simple, non-quantum game.'''
   player = 0
   positions = [starting_positions[0], starting_positions[1]]
   totals = [0, 0]
