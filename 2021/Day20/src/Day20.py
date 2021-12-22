@@ -1,4 +1,5 @@
 import argparse
+from functools import cache
 
 def get_trench_map(filename):
   '''Get the image enhancement string and grid from the file.'''
@@ -24,21 +25,20 @@ def get_trench_map(filename):
 
   return (image_enhancement_algorithm, grid, max_x, max_y)
 
+@cache
+def get_neighbors(x, y):
+  '''Gets an ordered list of neighbors to a position.'''
+  return [
+    (x - 1, y - 1), (x, y - 1), (x + 1, y - 1),
+    (x - 1, y),     (x, y),     (x + 1, y),
+    (x - 1, y + 1), (x, y + 1), (x + 1, y + 1)
+  ]
+
 def get_index(x, y, grid, infinite_value):
   '''Converts an x, y point into an index on the IEA.'''
   digits = ''
-  neighbors = None
-  if (x, y) in get_index.PRECOMPUTED_NEIGHBORS:
-    neighbors = get_index.PRECOMPUTED_NEIGHBORS[(x, y)]
-  else:
-    neighbors = [
-      (x - 1, y - 1), (x, y - 1), (x + 1, y - 1),
-      (x - 1, y),     (x, y),     (x + 1, y),
-      (x - 1, y + 1), (x, y + 1), (x + 1, y + 1)
-    ]
-    get_index.PRECOMPUTED_NEIGHBORS[(x, y)] = neighbors
 
-  for neighbor in neighbors:
+  for neighbor in get_neighbors(x, y):
     if neighbor not in grid:
       digits += infinite_value
     elif grid[neighbor] == '#':
@@ -47,8 +47,6 @@ def get_index(x, y, grid, infinite_value):
       digits += '0'
 
   return int(digits, 2)
-
-get_index.PRECOMPUTED_NEIGHBORS = dict()
 
 def count_pixels(grid):
   '''Counts the number of "on" pixels in the image.'''
