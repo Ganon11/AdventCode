@@ -57,10 +57,10 @@ def get_universe_constants(position, dice_result):
 @cache
 def play_game_in_universe(player, position_0, position_1, total_0, total_1):
   '''We Dr Strange now'''
-  if total_0 >= 21:
+  if total_0 >= play_game_in_universe.GOAL_SCORE:
     return [1, 0]
 
-  if total_1 >= 21:
+  if total_1 >= play_game_in_universe.GOAL_SCORE:
     return [0, 1]
 
   wins = [0, 0]
@@ -82,6 +82,8 @@ def play_game_in_universe(player, position_0, position_1, total_0, total_1):
       wins[1] += temp_wins[1] * product
 
   return wins
+
+play_game_in_universe.GOAL_SCORE = 21
 
 def play_game(starting_positions, goal_score=1000):
   '''Plays a simple, non-quantum game.'''
@@ -110,7 +112,7 @@ def main():
     print(f'Game result: {result}')
   elif args.part == 2:
     wins = play_game_in_universe(0, starting_positions[0], starting_positions[1], 0, 0)
-    print(max(wins))
+    print(wins)
 
 if __name__ == "__main__":
   main()
