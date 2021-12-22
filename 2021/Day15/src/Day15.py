@@ -1,4 +1,5 @@
 import argparse
+from functools import cache
 from my_collections import PriorityQueue
 
 def get_grid(filename):
@@ -13,20 +14,23 @@ def get_grid(filename):
 
   return grid, len(lines)
 
-def get_risk_of_position(grid, position, dimension_size):
+@cache
+def get_risk_of_position(position, dimension_size):
   '''Gets the actual risk of a position.'''
   risk_adjustment = position[0] // dimension_size
   actual_x = position[0] % dimension_size
   risk_adjustment += position[1] // dimension_size
   actual_y = position[1] % dimension_size
 
-  return ((grid[(actual_x, actual_y)] + risk_adjustment - 1) % 9) + 1
+  grid_value = get_risk_of_position.THE_GRID[(actual_x, actual_y)]
+  return ((grid_value + risk_adjustment - 1) % 9) + 1
 
 def get_cost_of_best_path(grid, dimension_size, scale_factor=1):
   '''Finds the cost of the best path from 0,0 to the bottom-right.'''
   start = (0, 0)
   max_position = (dimension_size * scale_factor) - 1
   goal = (max_position, max_position)
+  get_risk_of_position.THE_GRID = grid
 
   frontier = PriorityQueue()
   frontier.put(start, 0)
@@ -45,7 +49,7 @@ def get_cost_of_best_path(grid, dimension_size, scale_factor=1):
           neighbor[1] < 0 or max_position < neighbor[1]):
         continue
 
-      new_cost = cost_so_far[current] + get_risk_of_position(grid, neighbor, dimension_size)
+      new_cost = cost_so_far[current] + get_risk_of_position(neighbor, dimension_size)
 
       if neighbor not in cost_so_far or new_cost < cost_so_far[neighbor]:
         cost_so_far[neighbor] = new_cost
