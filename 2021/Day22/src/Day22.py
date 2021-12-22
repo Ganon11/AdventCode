@@ -24,12 +24,12 @@ def get_reboot_instructions(filename):
 
 def instruction_in_reboot_range(instruction):
   '''Checks if this is an initialization step.'''
-  min_x = min(instruction[1], instruction[2])
-  max_x = max(instruction[1], instruction[2])
-  min_y = min(instruction[3], instruction[4])
-  max_y = max(instruction[3], instruction[4])
-  min_z = min(instruction[5], instruction[6])
-  max_z = max(instruction[5], instruction[6])
+  min_x = instruction[1]
+  max_x = instruction[2]
+  min_y = instruction[3]
+  max_y = instruction[4]
+  min_z = instruction[5]
+  max_z = instruction[6]
 
   if min_x < -50 or max_x > 50 or \
     min_y < -50 or max_y > 50 or \
@@ -40,12 +40,12 @@ def instruction_in_reboot_range(instruction):
 
 def follow_instruction(grid, instruction):
   '''Yessir yessir.'''
-  min_x = min(instruction[1], instruction[2])
-  max_x = max(instruction[1], instruction[2])
-  min_y = min(instruction[3], instruction[4])
-  max_y = max(instruction[3], instruction[4])
-  min_z = min(instruction[5], instruction[6])
-  max_z = max(instruction[5], instruction[6])
+  min_x = instruction[1]
+  max_x = instruction[2]
+  min_y = instruction[3]
+  max_y = instruction[4]
+  min_z = instruction[5]
+  max_z = instruction[6]
 
   for x in range(min_x, max_x + 1):
     for y in range(min_y, max_y + 1):
