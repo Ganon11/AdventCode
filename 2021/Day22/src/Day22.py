@@ -22,6 +22,31 @@ def get_reboot_instructions(filename):
 
   return tokens
 
+class CheckPoint:
+  '''An endpoint in one dimension.'''
+
+  def __init__(self, value, is_start, identifier):
+    self.value = value
+    self.is_start = is_start
+    self.identifier = identifier
+
+  def __lt__(self, other):
+    return self.value < other.value
+
+def transform_line_segments(segments):
+  '''
+  Transforms a collection of possibly intersecting line segments into a collection of
+  non-intersecting line segments.
+  '''
+  cps = []
+  for index, segment in enumerate(segments):
+    cp1 = CheckPoint(segment[0], True, index * 2)
+    cp2 = CheckPoint(segment[1], False, index * 2 + 1)
+    cps.append([cp1, cp2])
+
+  ni_cps = []
+
+
 def instruction_in_reboot_range(instruction):
   '''Checks if this is an initialization step.'''
   min_x = instruction[1]
