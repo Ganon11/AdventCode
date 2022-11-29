@@ -24,21 +24,29 @@ def get_trench_map(filename):
 
   return (image_enhancement_algorithm, grid, max_x, max_y)
 
-def get_index(x, y, grid, infinite_value):
-  '''Converts an x, y point into an index on the IEA.'''
-  digits = ''
+def get_neighbors(x, y):
+  '''Gets all neighboring positions of (x, y).'''
   neighbors = None
-  if (x, y) in get_index.PRECOMPUTED_NEIGHBORS:
-    neighbors = get_index.PRECOMPUTED_NEIGHBORS[(x, y)]
+  position = (x, y)
+  if position in get_neighbors.PRECOMPUTED_NEIGHBORS:
+    neighbors = get_neighbors.PRECOMPUTED_NEIGHBORS[(x, y)]
   else:
     neighbors = [
       (x - 1, y - 1), (x, y - 1), (x + 1, y - 1),
       (x - 1, y),     (x, y),     (x + 1, y),
       (x - 1, y + 1), (x, y + 1), (x + 1, y + 1)
     ]
-    get_index.PRECOMPUTED_NEIGHBORS[(x, y)] = neighbors
+    get_neighbors.PRECOMPUTED_NEIGHBORS[position] = neighbors
 
-  for neighbor in neighbors:
+  return neighbors
+
+get_neighbors.PRECOMPUTED_NEIGHBORS = dict()
+
+def get_index(x, y, grid, infinite_value):
+  '''Converts an x, y point into an index on the IEA.'''
+  digits = ''
+
+  for neighbor in get_neighbors(x, y):
     if neighbor not in grid:
       digits += infinite_value
     elif grid[neighbor] == '#':
@@ -47,8 +55,6 @@ def get_index(x, y, grid, infinite_value):
       digits += '0'
 
   return int(digits, 2)
-
-get_index.PRECOMPUTED_NEIGHBORS = dict()
 
 def count_pixels(grid):
   '''Counts the number of "on" pixels in the image.'''
@@ -65,9 +71,9 @@ def do_step(grid, step, iea, dimensions):
   if iea[0] == '.':
     infinite_value = '0'
   elif step % 2 == 0:
-    infinite_value = '1'
-  else:
     infinite_value = '0'
+  else:
+    infinite_value = '1'
 
   for y in range(miny, maxy + 1):
     for x in range(minx, maxx + 1):
@@ -92,7 +98,7 @@ def main():
   dimensions = (0, 0, maxx, maxy)
 
   for step in range(steps):
-    (grid, dimensions) = do_step(grid, step + 1, image_enhancement_algorithm, dimensions)
+    (grid, dimensions) = do_step(grid, step, image_enhancement_algorithm, dimensions)
 
   total = count_pixels(grid)
   print(f'After {steps} steps, there are {total} pixels on.')
