@@ -1,4 +1,5 @@
 import argparse
+from functools import cache
 
 def get_trench_map(filename):
   '''Get the image enhancement string and grid from the file.'''
