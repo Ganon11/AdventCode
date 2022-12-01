@@ -3,19 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AoC2022", "AoC2022.csproj", "{DD092607-FEA3-480A-9BE2-30EFBDF366B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Position", "Position\Position.csproj", "{02ABFA54-8050-4E4F-8395-2D5B9311F80B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Position", "..\Position\Position.csproj", "{02ABFA54-8050-4E4F-8395-2D5B9311F80B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PositionTests", "..\PositionTests\PositionTests.csproj", "{1E4EEF38-4BF1-4C13-9EAC-17B167248F6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PositionTests", "PositionTests\PositionTests.csproj", "{1E4EEF38-4BF1-4C13-9EAC-17B167248F6F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{02ABFA54-8050-4E4F-8395-2D5B9311F80B} = {02ABFA54-8050-4E4F-8395-2D5B9311F80B}
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C6F2277C-A759-4EB6-A9E2-F51179ECD9EF}"
 	ProjectSection(SolutionItems) = preProject
-		..\.editorconfig = ..\.editorconfig
+		.editorconfig = .editorconfig
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Days", "Days", "{DB49CF74-93B7-4A43-A71D-0D812E916A60}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day1", "Day1\Day1.csproj", "{CA6AD266-A9EB-45B6-B430-0E9D7F5F0A98}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +25,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DD092607-FEA3-480A-9BE2-30EFBDF366B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DD092607-FEA3-480A-9BE2-30EFBDF366B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DD092607-FEA3-480A-9BE2-30EFBDF366B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DD092607-FEA3-480A-9BE2-30EFBDF366B4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{02ABFA54-8050-4E4F-8395-2D5B9311F80B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{02ABFA54-8050-4E4F-8395-2D5B9311F80B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02ABFA54-8050-4E4F-8395-2D5B9311F80B}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -35,9 +33,16 @@ Global
 		{1E4EEF38-4BF1-4C13-9EAC-17B167248F6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E4EEF38-4BF1-4C13-9EAC-17B167248F6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E4EEF38-4BF1-4C13-9EAC-17B167248F6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA6AD266-A9EB-45B6-B430-0E9D7F5F0A98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA6AD266-A9EB-45B6-B430-0E9D7F5F0A98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA6AD266-A9EB-45B6-B430-0E9D7F5F0A98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA6AD266-A9EB-45B6-B430-0E9D7F5F0A98}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CA6AD266-A9EB-45B6-B430-0E9D7F5F0A98} = {DB49CF74-93B7-4A43-A71D-0D812E916A60}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C819E05B-DE6B-4C37-8D4E-A2DBDE1DCC4C}
