@@ -1,4 +1,9 @@
+using System.Diagnostics;
 using Day2;
+
+#region Input Parsing
+
+Stopwatch sw = new Stopwatch();
 
 string filepath;
 if (args.Length == 0)
@@ -11,6 +16,16 @@ else
 }
 
 var lines = File.ReadAllLines(filepath);
+
+sw.Stop();
+Console.WriteLine($"Input parsing took {sw.Elapsed}");
+
+#endregion
+#region OOP
+
+sw.Reset();
+sw.Start();
+
 int total = 0;
 int intendedTotal = 0;
 foreach (var line in lines)
@@ -22,6 +37,32 @@ foreach (var line in lines)
 
 Console.WriteLine($"Your score: {total}");
 Console.WriteLine($"Your intended score: {intendedTotal}");
+
+sw.Stop();
+Console.WriteLine($"OOP method took {sw.Elapsed}");
+
+#endregion
+#region Lookup
+
+sw.Reset();
+sw.Start();
+
+int speed1 = 0;
+int speed2 = 0;
+foreach (var line in lines)
+{
+   string[] tokens = line.Split(' ');
+   speed1 += Speedup.Part1[tokens[0][0]][tokens[1][0]];
+   speed2 += Speedup.Part2[tokens[0][0]][tokens[1][0]];
+}
+
+Console.WriteLine($"Your fast score: {speed1}");
+Console.WriteLine($"Your intended fast score: {speed2}");
+
+sw.Stop();
+Console.WriteLine($"Lookup method took {sw.Elapsed}");
+
+#endregion
 
 namespace Day2
 {
@@ -37,6 +78,65 @@ namespace Day2
       Loss = 0,
       Draw = 3,
       Won = 6
+   }
+
+   public class Speedup
+   {
+      public static readonly Dictionary<char, Dictionary<char, int>> Part1 = new()
+      {
+         {
+            'A', new()
+            {
+               { 'X', 4 },
+               { 'Y', 8 },
+               { 'Z', 3 }
+            }
+         },
+         {
+            'B', new()
+            {
+               { 'X', 1 },
+               { 'Y', 5 },
+               { 'Z', 9 }
+            }
+         },
+         {
+            'C', new()
+            {
+               { 'X', 7 },
+               { 'Y', 2 },
+               { 'Z', 6 }
+            }
+         }
+      };
+
+      public static readonly Dictionary<char, Dictionary<char, int>> Part2 = new()
+      {
+         {
+            'A', new()
+            {
+               { 'X', 3 },
+               { 'Y', 4 },
+               { 'Z', 8 }
+            }
+         },
+         {
+            'B', new()
+            {
+               { 'X', 1 },
+               { 'Y', 5 },
+               { 'Z', 9 }
+            }
+         },
+         {
+            'C', new()
+            {
+               { 'X', 2 },
+               { 'Y', 6 },
+               { 'Z', 7 }
+            }
+         }
+      };
    }
 
    public class RPSRound
