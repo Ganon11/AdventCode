@@ -1,7 +1,7 @@
 namespace Ganon11.AdventOfCode.Year2022;
 using Tidy.AdventOfCode;
 
-internal class Day1 : Day
+internal sealed class Day1 : Day
 {
    private static List<int> GetElves(string input)
    {

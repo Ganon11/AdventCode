@@ -1,7 +1,7 @@
 namespace Ganon11.AdventOfCode.Year2022;
 using Tidy.AdventOfCode;
 
-internal class Day2 : Day
+internal sealed class Day2 : Day
 {
    private static int CalculateScore(string input, Dictionary<char, Dictionary<char, int>> lookup)
    {
