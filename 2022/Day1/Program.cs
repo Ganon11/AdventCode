@@ -10,14 +10,14 @@ else
    filepath = args[0];
 }
 
-string[] lines = File.ReadAllLines(filepath);
-List<Elf> allElves = new List<Elf>();
-Elf currentElf = new Elf();
-foreach (string line in lines)
+var lines = File.ReadAllLines(filepath);
+var allElves = new List<Elf>();
+var currentElf = new Elf();
+foreach (var line in lines)
 {
    if (line.Any())
    {
-      currentElf.Items.Add(int.Parse(line, System.Globalization.CultureInfo.CurrentCulture));
+      _ = currentElf.Items.Add(int.Parse(line, System.Globalization.CultureInfo.CurrentCulture));
    }
    else
    {
@@ -31,11 +31,11 @@ if (currentElf.Items.Any())
    allElves.Add(currentElf);
 }
 
-IOrderedEnumerable<Elf> sortedElves = allElves.OrderByDescending(e => e.Calories);
+var sortedElves = allElves.OrderByDescending(e => e.Calories);
 
-Elf maxElf = sortedElves.Skip(0).Take(1).First();
-Elf secElf = sortedElves.Skip(1).Take(1).First();
-Elf thiElf = sortedElves.Skip(2).Take(1).First();
+var maxElf = sortedElves.Skip(0).Take(1).First();
+var secElf = sortedElves.Skip(1).Take(1).First();
+var thiElf = sortedElves.Skip(2).Take(1).First();
 
 Console.WriteLine($"Max Elf carrying {maxElf.Calories}");
 Console.WriteLine($"Second Elf carrying {secElf.Calories}");

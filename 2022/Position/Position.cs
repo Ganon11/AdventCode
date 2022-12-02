@@ -8,15 +8,15 @@ public class Position : IComparable<Position>, IEquatable<Position>
 
    public Position(int x = 0, int y = 0, int z = 0)
    {
-      X = x;
-      Y = y;
-      Z = z;
+      this.X = x;
+      this.Y = y;
+      this.Z = z;
    }
 
    public static IEnumerable<Position> GetPointsInLine(Position p1, Position p2)
    {
-      bool good = false;
-      int numPoints = 0;
+      var good = false;
+      var numPoints = 0;
 
       if (p1.Equals(p2))
       {
@@ -81,19 +81,31 @@ public class Position : IComparable<Position>, IEquatable<Position>
          points.Add(new Position(x, y, z));
 
          if (x < p2.X)
+         {
             ++x;
+         }
          else if (x > p2.X)
+         {
             --x;
+         }
 
          if (y < p2.Y)
+         {
             ++y;
+         }
          else if (y > p2.Y)
+         {
             --y;
+         }
 
          if (z < p2.Z)
+         {
             ++z;
+         }
          else if (z > p2.Z)
+         {
             --z;
+         }
       }
 
       return points;
@@ -129,101 +141,65 @@ public class Position : IComparable<Position>, IEquatable<Position>
       return GetAdjacentPositions(includeZ, includeDiagonals).Any(adj => adj == other);
    }
 
-   public Position North
-   {
-      get
-      {
-         return new Position(X, Y + 1, Z);
-      }
-   }
+   public Position North => new(this.X, this.Y + 1, this.Z);
 
-   public Position South
-   {
-      get
-      {
-         return new Position(X, Y - 1, Z);
-      }
-   }
+   public Position South => new(this.X, this.Y - 1, this.Z);
 
-   public Position East
-   {
-      get
-      {
-         return new Position(X + 1, Y, Z);
-      }
-   }
+   public Position East => new(this.X + 1, this.Y, this.Z);
 
-   public Position West
-   {
-      get
-      {
-         return new Position(X - 1, Y, Z);
-      }
-   }
+   public Position West => new(this.X - 1, this.Y, this.Z);
 
-   public Position Up
-   {
-      get
-      {
-         return new Position(X, Y, Z + 1);
-      }
-   }
+   public Position Up => new(this.X, this.Y, this.Z + 1);
 
-   public Position Down
-   {
-      get
-      {
-         return new Position(X, Y, Z - 1);
-      }
-   }
+   public Position Down => new(this.X, this.Y, this.Z - 1);
 
    public IEnumerable<Position> GetAdjacentPositions(bool includeZ = true, bool includeDiagonals = false)
    {
       var result = new HashSet<Position>
       {
-         North,
-         West,
-         East,
-         South
+         this.North,
+         this.West,
+         this.East,
+         this.South
       };
 
       if (includeZ)
       {
-         result.Add(Up);
-         result.Add(Down);
+         _ = result.Add(this.Up);
+         _ = result.Add(this.Down);
       }
 
       if (includeDiagonals)
       {
-         result.Add(North.West);
-         result.Add(North.East);
-         result.Add(South.West);
-         result.Add(South.East);
+         _ = result.Add(this.North.West);
+         _ = result.Add(this.North.East);
+         _ = result.Add(this.South.West);
+         _ = result.Add(this.South.East);
       }
 
       if (includeZ && includeDiagonals)
       {
-         result.Add(North.Up);
-         result.Add(North.Down);
+         _ = result.Add(this.North.Up);
+         _ = result.Add(this.North.Down);
 
-         result.Add(South.Up);
-         result.Add(South.Down);
+         _ = result.Add(this.South.Up);
+         _ = result.Add(this.South.Down);
 
-         result.Add(East.Up);
-         result.Add(East.Down);
+         _ = result.Add(this.East.Up);
+         _ = result.Add(this.East.Down);
 
-         result.Add(West.Up);
-         result.Add(West.Down);
+         _ = result.Add(this.West.Up);
+         _ = result.Add(this.West.Down);
 
-         result.Add(Up.North.West);
-         result.Add(Up.North.East);
-         result.Add(Up.South.West);
-         result.Add(Up.South.East);
+         _ = result.Add(this.Up.North.West);
+         _ = result.Add(this.Up.North.East);
+         _ = result.Add(this.Up.South.West);
+         _ = result.Add(this.Up.South.East);
 
-         result.Add(Down.North.West);
-         result.Add(Down.North.East);
-         result.Add(Down.South.West);
-         result.Add(Down.South.East);
+         _ = result.Add(this.Down.North.West);
+         _ = result.Add(this.Down.North.East);
+         _ = result.Add(this.Down.South.West);
+         _ = result.Add(this.Down.South.East);
       }
 
       return result;
@@ -231,36 +207,32 @@ public class Position : IComparable<Position>, IEquatable<Position>
 
    public override int GetHashCode()
    {
-      Tuple<int, int, int> us = new(X, Y, Z);
+      Tuple<int, int, int> us = new(this.X, this.Y, this.Z);
       return us.GetHashCode();
    }
 
-   public override string ToString()
-   {
-      return $"({X}, {Y}, {Z})";
-   }
-
+   public override string ToString() => $"({this.X}, {this.Y}, {this.Z})";
 
    public int CompareTo(Position? other)
    {
       other ??= new Position();
 
-      if (Z < other.Z)
+      if (this.Z < other.Z)
       {
          return 1;
       }
 
-      if (Z == other.Z && Y < other.Y)
+      if (this.Z == other.Z && this.Y < other.Y)
       {
          return 1;
       }
 
-      if (Z == other.Z && Y == other.Y && X < other.X)
+      if (this.Z == other.Z && this.Y == other.Y && this.X < other.X)
       {
          return 1;
       }
 
-      if (Z == other.Z && Y == other.Y && X == other.X)
+      if (this.Z == other.Z && this.Y == other.Y && this.X == other.X)
       {
          return 0;
       }
@@ -272,7 +244,7 @@ public class Position : IComparable<Position>, IEquatable<Position>
    {
       other ??= new Position();
 
-      return X == other.X && Y == other.Y && Z == other.Z;
+      return this.X == other.X && this.Y == other.Y && this.Z == other.Z;
    }
 
    public override bool Equals(object? obj)
@@ -280,21 +252,25 @@ public class Position : IComparable<Position>, IEquatable<Position>
       obj ??= new Position();
 
       if (ReferenceEquals(this, obj))
+      {
          return true;
+      }
 
-      if (obj.GetType() != GetType())
+      if (obj.GetType() != this.GetType())
+      {
          return false;
+      }
 
-      Position other = (Position)obj;
+      var other = (Position)obj;
 
-      return Equals(other);
+      return this.Equals(other);
    }
 
    public static bool operator ==(Position left, Position right)
    {
-      if (ReferenceEquals(left, null))
+      if (left is null)
       {
-         return ReferenceEquals(right, null);
+         return right is null;
       }
 
       return left.Equals(right);
@@ -302,11 +278,13 @@ public class Position : IComparable<Position>, IEquatable<Position>
 
    public static bool operator !=(Position left, Position right) => !(left == right);
 
-   public static bool operator <(Position left, Position right) => ReferenceEquals(left, null) ? !ReferenceEquals(right, null) : left.CompareTo(right) < 0;
+   public static bool operator <(Position left, Position right) => left is null ? right is not null : left.CompareTo(right) < 0;
 
-   public static bool operator <=(Position left, Position right) => ReferenceEquals(left, null) || left.CompareTo(right) <= 0;
+   public static bool operator <=(Position left, Position right) => left is null || left.CompareTo(right) <= 0;
 
-   public static bool operator >(Position left, Position right) => !ReferenceEquals(left, null) && left.CompareTo(right) > 0;
+   public static bool operator >(Position left, Position right) => left is not null && left.CompareTo(right) > 0;
 
-   public static bool operator >=(Position left, Position right) => left is null ? ReferenceEquals(right, null) : left.CompareTo(right) >= 0;
+   public static bool operator >=(Position left, Position right) => left is null ? right is null : left.CompareTo(right) >= 0;
+
+   public static Position operator +(Position left, Position right) => new(left.X + right.X, left.Y + right.Y, left.Z + right.Z);
 }
