@@ -5,11 +5,11 @@ internal sealed class Day4 : Day
 {
    public override object ExecutePart1()
    {
-      return null;
+      return -1;
    }
 
    public override object ExecutePart2()
    {
-      return null;
+      return -1;
    }
 }
