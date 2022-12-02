@@ -1,7 +1,7 @@
 namespace Ganon11.AdventOfCode.Year2022;
 using Tidy.AdventOfCode;
 
-internal sealed class Day2 : Day
+internal sealed class Day17 : Day
 {
    public override object ExecutePart1()
    {
