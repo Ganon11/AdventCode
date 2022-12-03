@@ -1,20 +1,19 @@
 namespace Ganon11.AdventOfCode.Year2022;
 using Tidy.AdventOfCode;
 
-internal sealed class Day2 : Day<string[][]>
+internal sealed class Day2 : Day
 {
-   private static int CalculateScore(string[][] input, Dictionary<char, Dictionary<char, int>> lookup)
+   private static int CalculateScore(string input, Dictionary<char, Dictionary<char, int>> lookup)
    {
       var score = 0;
-      foreach (var line in input)
+      foreach (var line in input.Split('\n'))
       {
-         score += lookup[line[0][0]][line[1][0]];
+         var tokens = line.Split(' ');
+         score += lookup[tokens[0][0]][tokens[1][0]];
       }
 
       return score;
    }
-
-   public override string[][] ParseInput(string rawInput) => rawInput.Split("\n").Select(line => line.Split(" ")).ToArray();
 
    public override object ExecutePart1()
    {
@@ -39,5 +38,4 @@ internal sealed class Day2 : Day<string[][]>
 
       return CalculateScore(this.Input, lookup);
    }
-
 }
