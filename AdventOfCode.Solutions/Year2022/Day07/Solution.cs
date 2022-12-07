@@ -6,32 +6,30 @@ class Solution : SolutionBase<Solution.ElfDirectory?>
 
    public override string SolvePartOne()
    {
-      ElfDirectory? root = ParseInput(Input);
-      if (root == null)
+      if (ParsedInput == null)
       {
          return "ERROR";
       }
 
-      return GetAllDirectories(root).Where(d => d.GetSize() < 100000)
+      return GetAllDirectories(ParsedInput).Where(d => d.GetSize() < 100000)
          .Sum(d => d.GetSize())
          .ToString();
    }
 
    public override string SolvePartTwo()
    {
-      ElfDirectory? root = ParseInput(Input);
-      if (root == null)
+      if (ParsedInput == null)
       {
          return "ERROR";
       }
 
       const int TOTAL_DISK_SPACE = 70000000;
       const int TARGET_FREE_SPACE = 30000000;
-      var currentFreeSpace = TOTAL_DISK_SPACE - root.GetSize();
+      var currentFreeSpace = TOTAL_DISK_SPACE - ParsedInput.GetSize();
       var amountToDelete = TARGET_FREE_SPACE - currentFreeSpace;
 
       ElfDirectory? toDelete = null;
-      foreach (var dir in GetAllDirectories(root))
+      foreach (var dir in GetAllDirectories(ParsedInput))
       {
          var currentDirSize = dir.GetSize();
          if (currentDirSize >= amountToDelete)
