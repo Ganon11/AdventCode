@@ -4,7 +4,7 @@ using RangePair = Tuple<HashSet<int>, HashSet<int>>;
 
 class Solution : SolutionBase
 {
-   public Solution() : base(04, 2022, "") { }
+   public Solution() : base(04, 2022, "Camp Cleanup") { }
 
    private static HashSet<int> ConvertRangeStringToSet(string range)
    {

@@ -2,7 +2,7 @@ namespace AdventOfCode.Solutions.Year2022.Day06;
 
 class Solution : SolutionBase
 {
-   public Solution() : base(06, 2022, "") { }
+   public Solution() : base(06, 2022, "Tuning Trouble") { }
    private static int FindMarker(string input, int targetLength)
    {
       if (input.Length < targetLength)
