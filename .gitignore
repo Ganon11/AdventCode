@@ -366,6 +366,7 @@ sample.txt
 sample*.txt
 Redditinput.txt
 debug
+input
 # Output files
 output.txt
 Output.txt
