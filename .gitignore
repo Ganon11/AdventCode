@@ -357,6 +357,7 @@ build-iPhoneSimulator/
 *.sublime-workspace
 # Secret Session ID
 session.txt
+config.json
 # Input files
 input.txt
 input.txt
