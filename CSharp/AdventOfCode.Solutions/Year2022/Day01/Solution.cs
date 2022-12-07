@@ -1,23 +1,24 @@
 namespace AdventOfCode.Solutions.Year2022.Day01;
 
-class Solution : SolutionBase
+class Solution : SolutionBase<List<int>>
 {
    public Solution() : base(01, 2022, "Calorie Counting") { }
 
-   protected override string SolvePartOne()
+   public override List<int> ParseInput(string input) => input
+      .SplitByParagraph(shouldTrim: true)
+      .Select(g => g.SplitByNewline(shouldTrim: true).Select(l => int.Parse(l, System.Globalization.CultureInfo.CurrentCulture)).Sum())
+      .ToList();
+
+   public override string SolvePartOne()
    {
-      return Input.SplitByParagraph(shouldTrim: true)
-         .Select(g => g.SplitByNewline(shouldTrim: true).Select(l => int.Parse(l, System.Globalization.CultureInfo.CurrentCulture)).Sum())
-         .ToList()
+      return ParsedInput
          .Max()
          .ToString();
    }
 
-   protected override string SolvePartTwo()
+   public override string SolvePartTwo()
    {
-      return Input.SplitByParagraph(shouldTrim: true)
-         .Select(g => g.SplitByNewline(shouldTrim: true).Select(l => int.Parse(l, System.Globalization.CultureInfo.CurrentCulture)).Sum())
-         .ToList()
+      return ParsedInput
          .OrderByDescending(x => x)
          .Take(3)
          .Sum()

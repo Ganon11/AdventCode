@@ -6,9 +6,9 @@ partial class Solution : SolutionBase
 {
    public Solution() : base(05, 2022, "Supply Stacks") { }
 
-   protected override string SolvePartOne()
+   public override string SolvePartOne()
    {
-      var parsedInput = ParseInput(Input);
+      var parsedInput = d5ParseInput(Input);
       var stacks = parsedInput.Item1;
 
       foreach (var instruction in parsedInput.Item2)
@@ -22,9 +22,9 @@ partial class Solution : SolutionBase
       return GetTopCrateFromStacks(stacks);
    }
 
-   protected override string SolvePartTwo()
+   public override string SolvePartTwo()
    {
-      var parsedInput = ParseInput(Input);
+      var parsedInput = d5ParseInput(Input);
       var stacks = parsedInput.Item1;
 
       foreach (var instruction in parsedInput.Item2)
@@ -70,7 +70,7 @@ partial class Solution : SolutionBase
          }
       }
    }
-   private Tuple<Stack<char>[], Instruction[]> ParseInput(string rawInput)
+   private Tuple<Stack<char>[], Instruction[]> d5ParseInput(string rawInput)
    {
       rawInput = rawInput.Replace("\r", "");
       var tokens = rawInput.Split("\n\n");

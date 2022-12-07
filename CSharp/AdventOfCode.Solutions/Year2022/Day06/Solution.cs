@@ -32,12 +32,12 @@ class Solution : SolutionBase
       return -1;
    }
 
-   protected override string SolvePartOne()
+   public override string SolvePartOne()
    {
       return FindMarker(Input, 4).ToString();
    }
 
-   protected override string SolvePartTwo()
+   public override string SolvePartTwo()
    {
       return FindMarker(Input, 14).ToString();
    }

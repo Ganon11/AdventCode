@@ -4,9 +4,9 @@ class Solution : SolutionBase
 {
    public Solution() : base(07, 2022, "No Space Left On Device") { }
 
-   protected override string SolvePartOne()
+   public override string SolvePartOne()
    {
-      ElfDirectory? root = ParseInput(Input);
+      ElfDirectory? root = d7ParseInput(Input);
       if (root == null)
       {
          return "ERROR";
@@ -17,9 +17,9 @@ class Solution : SolutionBase
          .ToString();
    }
 
-   protected override string SolvePartTwo()
+   public override string SolvePartTwo()
    {
-      ElfDirectory? root = ParseInput(Input);
+      ElfDirectory? root = d7ParseInput(Input);
       if (root == null)
       {
          return "ERROR";
@@ -93,7 +93,7 @@ class Solution : SolutionBase
       }
    }
 
-   public ElfDirectory? ParseInput(string rawInput)
+   public ElfDirectory? d7ParseInput(string rawInput)
    {
       ElfDirectory? current = null, root = null;
 

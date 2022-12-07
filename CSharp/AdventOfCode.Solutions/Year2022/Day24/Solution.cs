@@ -4,12 +4,12 @@ class Solution : SolutionBase
 {
     public Solution() : base(24, 2022, "") { }
 
-    protected override string SolvePartOne()
+    public override string SolvePartOne()
     {
         return "";
     }
 
-    protected override string SolvePartTwo()
+    public override string SolvePartTwo()
     {
         return "";
     }
