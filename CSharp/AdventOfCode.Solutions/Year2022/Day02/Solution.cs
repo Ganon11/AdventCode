@@ -2,7 +2,7 @@ namespace AdventOfCode.Solutions.Year2022.Day02;
 
 class Solution : SolutionBase
 {
-   public Solution() : base(02, 2022, "") { }
+   public Solution() : base(02, 2022, "Rock Paper Scissors") { }
 
    protected override string SolvePartOne()
    {

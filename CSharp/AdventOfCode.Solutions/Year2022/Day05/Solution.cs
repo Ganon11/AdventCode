@@ -4,7 +4,7 @@ namespace AdventOfCode.Solutions.Year2022.Day05;
 
 partial class Solution : SolutionBase
 {
-   public Solution() : base(05, 2022, "") { }
+   public Solution() : base(05, 2022, "Supply Stacks") { }
 
    protected override string SolvePartOne()
    {
