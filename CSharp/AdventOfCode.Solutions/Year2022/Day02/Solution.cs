@@ -1,8 +1,10 @@
 namespace AdventOfCode.Solutions.Year2022.Day02;
 
-class Solution : SolutionBase
+class Solution : SolutionBase<string[][]>
 {
    public Solution() : base(02, 2022, "Rock Paper Scissors") { }
+
+   public override string[][] ParseInput(string input) => input.SplitByNewline(shouldTrim: true).Select(line => line.Split(" ")).ToArray();
 
    public override string SolvePartOne()
    {
@@ -12,9 +14,7 @@ class Solution : SolutionBase
          { "B", new() { { "X", 1 }, { "Y", 5 }, { "Z", 9 } } },
          { "C", new() { { "X", 7 }, { "Y", 2 }, { "Z", 6 } } }
       };
-      return Input.SplitByNewline(shouldTrim: true)
-         .Select(line => line.Split(" "))
-         .ToArray()
+      return ParsedInput
          .Select(line => P1[line[0]][line[1]])
          .Sum()
          .ToString();
@@ -28,9 +28,7 @@ class Solution : SolutionBase
          { "B", new() { { "X", 1 }, { "Y", 5 }, { "Z", 9 } } },
          { "C", new() { { "X", 2 }, { "Y", 6 }, { "Z", 7 } } }
       };
-      return Input.SplitByNewline(shouldTrim: true)
-         .Select(line => line.Split(" "))
-         .ToArray()
+      return ParsedInput
          .Select(line => P1[line[0]][line[1]])
          .Sum()
          .ToString();

@@ -2,16 +2,15 @@ using System.Text.RegularExpressions;
 
 namespace AdventOfCode.Solutions.Year2022.Day05;
 
-partial class Solution : SolutionBase
+partial class Solution : SolutionBase<Tuple<Stack<char>[], Solution.Instruction[]>>
 {
    public Solution() : base(05, 2022, "Supply Stacks") { }
 
    public override string SolvePartOne()
    {
-      var parsedInput = d5ParseInput(Input);
-      var stacks = parsedInput.Item1;
+      Stack<char>[] stacks = (Stack<char>[])ParsedInput.Item1.Clone();
 
-      foreach (var instruction in parsedInput.Item2)
+      foreach (var instruction in ParsedInput.Item2)
       {
          for (var i = 0; i < instruction.Count; ++i)
          {
@@ -24,10 +23,9 @@ partial class Solution : SolutionBase
 
    public override string SolvePartTwo()
    {
-      var parsedInput = d5ParseInput(Input);
-      var stacks = parsedInput.Item1;
+      Stack<char>[] stacks = (Stack<char>[])ParsedInput.Item1.Clone();
 
-      foreach (var instruction in parsedInput.Item2)
+      foreach (var instruction in ParsedInput.Item2)
       {
          var temp = new Stack<char>();
          for (var i = 0; i < instruction.Count; ++i)
@@ -70,12 +68,12 @@ partial class Solution : SolutionBase
          }
       }
    }
-   private Tuple<Stack<char>[], Instruction[]> d5ParseInput(string rawInput)
+   public override Tuple<Stack<char>[], Instruction[]> ParseInput(string input)
    {
-      rawInput = rawInput.Replace("\r", "");
-      var tokens = rawInput.Split("\n\n");
+      //input = input.Replace("\r", "");
+      var tokens = input.SplitByParagraph(shouldTrim: false);
 
-      var reversedLines = tokens[0].Split("\n").Reverse();
+      var reversedLines = tokens[0].SplitByNewline(shouldTrim: false).Reverse();
       var numStacks = MultipleSpacesRegex().Split(reversedLines.First().Trim()).Length;
       var stacks = new Stack<char>[numStacks];
       for (var stackNum = 0; stackNum < numStacks; ++stackNum)
