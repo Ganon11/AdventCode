@@ -1,12 +1,12 @@
 namespace AdventOfCode.Solutions.Year2022.Day07;
 
-class Solution : SolutionBase
+class Solution : SolutionBase<Solution.ElfDirectory?>
 {
    public Solution() : base(07, 2022, "No Space Left On Device") { }
 
    public override string SolvePartOne()
    {
-      ElfDirectory? root = d7ParseInput(Input);
+      ElfDirectory? root = ParseInput(Input);
       if (root == null)
       {
          return "ERROR";
@@ -19,7 +19,7 @@ class Solution : SolutionBase
 
    public override string SolvePartTwo()
    {
-      ElfDirectory? root = d7ParseInput(Input);
+      ElfDirectory? root = ParseInput(Input);
       if (root == null)
       {
          return "ERROR";
@@ -93,11 +93,11 @@ class Solution : SolutionBase
       }
    }
 
-   public ElfDirectory? d7ParseInput(string rawInput)
+   public override ElfDirectory? ParseInput(string input)
    {
       ElfDirectory? current = null, root = null;
 
-      foreach (var line in rawInput.SplitByNewline(shouldTrim: true))
+      foreach (var line in input.SplitByNewline(shouldTrim: true))
       {
          var tokens = line.Split(' ');
          // Command parsing
