@@ -8,18 +8,45 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="2015\**" />
+    <Compile Remove="2016\**" />
+    <Compile Remove="2017\**" />
+    <Compile Remove="2018\**" />
+    <Compile Remove="2019\**" />
+    <Compile Remove="2020\**" />
+    <Compile Remove="2021\**" />
     <Compile Remove="AdventOfCode.Services\**" />
     <Compile Remove="AdventOfCode.Solutions\**" />
     <Compile Remove="AdventOfCode.Position\**" />
     <Compile Remove="AdventOfCode.Position.Tests\**" />
+    <Compile Remove="my_collections\**" />
+    <Compile Remove="position\**" />
+    <EmbeddedResource Remove="2015\**" />
+    <EmbeddedResource Remove="2016\**" />
+    <EmbeddedResource Remove="2017\**" />
+    <EmbeddedResource Remove="2018\**" />
+    <EmbeddedResource Remove="2019\**" />
+    <EmbeddedResource Remove="2020\**" />
+    <EmbeddedResource Remove="2021\**" />
     <EmbeddedResource Remove="AdventOfCode.Services\**" />
     <EmbeddedResource Remove="AdventOfCode.Solutions\**" />
     <EmbeddedResource Remove="AdventOfCode.Position\**" />
     <EmbeddedResource Remove="AdventOfCode.Position.Tests\**" />
+    <EmbeddedResource Remove="my_collections\**" />
+    <EmbeddedResource Remove="position\**" />
+    <None Remove="2015\**" />
+    <None Remove="2016\**" />
+    <None Remove="2017\**" />
+    <None Remove="2018\**" />
+    <None Remove="2019\**" />
+    <None Remove="2020\**" />
+    <None Remove="2021\**" />
     <None Remove="AdventOfCode.Services\**" />
     <None Remove="AdventOfCode.Solutions\**" />
     <None Remove="AdventOfCode.Position\**" />
     <None Remove="AdventOfCode.Position.Tests\**" />
+    <None Remove="my_collections\**" />
+    <None Remove="position\**" />
   </ItemGroup>
 
   <ItemGroup>
