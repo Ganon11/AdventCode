@@ -21,9 +21,8 @@ public static class SolutionCollector
             {
                throw new InvalidOperationException($"Solution for {year} day {day:D2} does not have one constructor");
             }
-            yield return constructor.Invoke(constructor.GetParameters().ToArray()) as ISolution;
-            //var solution = Activator.CreateInstance(type) as SolutionBase;
-            //if (solution != null) yield return solution;
+            ISolution? solution = constructor.Invoke(constructor.GetParameters().ToArray()) as ISolution;
+            if (solution != null) yield return solution;
          }
       }
    }
