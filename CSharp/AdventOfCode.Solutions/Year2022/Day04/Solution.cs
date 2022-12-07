@@ -14,7 +14,7 @@ class Solution : SolutionBase
       return new HashSet<int>(Enumerable.Range(pair[0], pair[1] - pair[0] + 1));
    }
 
-   protected override string SolvePartOne()
+   public override string SolvePartOne()
    {
       return Input.SplitByNewline(shouldTrim: true)
          .Select(line =>
@@ -26,7 +26,7 @@ class Solution : SolutionBase
          .ToString();
    }
 
-   protected override string SolvePartTwo()
+   public override string SolvePartTwo()
    {
       return Input.SplitByNewline(shouldTrim: true)
          .Select(line =>

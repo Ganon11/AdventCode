@@ -4,7 +4,7 @@ class Solution : SolutionBase
 {
    public Solution() : base(02, 2022, "Rock Paper Scissors") { }
 
-   protected override string SolvePartOne()
+   public override string SolvePartOne()
    {
       Dictionary<string, Dictionary<string, int>> P1 = new()
       {
@@ -20,7 +20,7 @@ class Solution : SolutionBase
          .ToString();
    }
 
-   protected override string SolvePartTwo()
+   public override string SolvePartTwo()
    {
       Dictionary<string, Dictionary<string, int>> P1 = new()
       {

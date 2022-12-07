@@ -16,7 +16,7 @@ class Solution : SolutionBase
       }
    }
 
-   protected override string SolvePartOne()
+   public override string SolvePartOne()
    {
       var sum = 0;
       foreach (var rucksack in Input.SplitByNewline(shouldTrim: true))
@@ -42,7 +42,7 @@ class Solution : SolutionBase
       return sum.ToString();
    }
 
-   protected override string SolvePartTwo()
+   public override string SolvePartTwo()
    {
       var sum = 0;
       string[] groups = Input.SplitByNewline(shouldTrim: true);
