@@ -135,9 +135,9 @@ public abstract class SolutionBase<T> : ISolution
    }
 
    public override string ToString() =>
-       $"\n--- Day {Day}: {Title} --- {(Debug ? "!! Debug mode active, using DebugInput !!" : "")}\n"
+       $"--- Day {Day}: {Title} --- {(Debug ? "!! Debug mode active, using DebugInput !!" : "")}\n"
        + $"{ResultToString(1, Part1)}\n"
-       + $"{ResultToString(2, Part2)}";
+       + $"{ResultToString(2, Part2)}\n";
 
    string ResultToString(int part, SolutionResult result) =>
        $"  - Part{part} => " + (string.IsNullOrEmpty(result.Answer)
