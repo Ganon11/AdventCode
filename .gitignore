@@ -365,6 +365,7 @@ Day*input.txt
 sample.txt
 sample*.txt
 Redditinput.txt
+debug
 # Output files
 output.txt
 Output.txt
