@@ -2,15 +2,15 @@ namespace AdventOfCode.Solutions.Year2022.Day20;
 
 class Solution : SolutionBase
 {
-    public Solution() : base(20, 2022, "") { }
+   public Solution() : base(20, 2022, "") { }
 
-    public override string SolvePartOne()
-    {
-        return "";
-    }
+   public override string SolvePartOne()
+   {
+      return "";
+   }
 
-    public override string SolvePartTwo()
-    {
-        return "";
-    }
+   public override string SolvePartTwo()
+   {
+      return "";
+   }
 }

@@ -8,5 +8,5 @@ if (args.Length > 0 && int.TryParse(args.First(), out int day)) days = new[] { d
 
 foreach (var solution in SolutionCollector.FetchSolutions(year, days))
 {
-    Console.WriteLine(solution.ToString());
+   Console.WriteLine(solution.ToString());
 }
