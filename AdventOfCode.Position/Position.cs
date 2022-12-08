@@ -1,4 +1,4 @@
-namespace Position;
+namespace AdventOfCode.Position;
 
 public class Position : IComparable<Position>, IEquatable<Position>
 {
