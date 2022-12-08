@@ -1,4 +1,4 @@
-namespace PositionTests;
+namespace AdventOfCode.PositionTests;
 
 [TestClass]
 public class OperatorTests
