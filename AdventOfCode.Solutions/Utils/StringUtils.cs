@@ -34,7 +34,7 @@ public static class StringUtils
          return str
              .Split(delimiter)
              .Where(n => int.TryParse(n, out int v))
-             .Select(n => Convert.ToInt32(n))
+             .Select(n => Convert.ToInt32(n, System.Globalization.CultureInfo.CurrentCulture))
              .ToArray();
       }
    }
@@ -52,7 +52,7 @@ public static class StringUtils
          return str
              .Split(delimiter)
              .Where(n => long.TryParse(n, out long v))
-             .Select(n => Convert.ToInt64(n))
+             .Select(n => Convert.ToInt64(n, System.Globalization.CultureInfo.CurrentCulture))
              .ToArray();
       }
    }

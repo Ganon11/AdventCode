@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 namespace AdventOfCode.Solutions.Year2022.Day05;
 
-partial class Solution : SolutionBase<Tuple<Stack<char>[], Solution.Instruction[]>>
+sealed partial class Solution : SolutionBase<Tuple<Stack<char>[], Solution.Instruction[]>>
 {
    public Solution() : base(05, 2022, "Supply Stacks") { }
 

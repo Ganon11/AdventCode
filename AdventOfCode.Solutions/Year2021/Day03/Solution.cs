@@ -2,7 +2,7 @@ using System.Numerics;
 
 namespace AdventOfCode.Solutions.Year2021.Day03;
 
-class Solution : SolutionBase<string[]>
+internal sealed class Solution : SolutionBase<string[]>
 {
    public Solution() : base(03, 2021, "Binary Diagnostic") { }
 
@@ -68,13 +68,13 @@ class Solution : SolutionBase<string[]>
    {
       int gamma = GetSimpleRate(ParsedInput, (a, b) => a >= b);
       int epsilon = GetSimpleRate(ParsedInput, (a, b) => a <= b);
-      return (gamma * epsilon).ToString();
+      return (gamma * epsilon).ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
 
    public override string SolvePartTwo()
    {
       int o2 = GetComplexRate(ParsedInput, (a, b) => a < b);
       int co2 = GetComplexRate(ParsedInput, (a, b) => a >= b);
-      return (co2 * o2).ToString();
+      return (co2 * o2).ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
 }

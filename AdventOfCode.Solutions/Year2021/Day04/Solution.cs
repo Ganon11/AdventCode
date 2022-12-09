@@ -1,10 +1,12 @@
+using System.Text.RegularExpressions;
+
 namespace AdventOfCode.Solutions.Year2021.Day04;
 
-class Solution : SolutionBase<Tuple<int[], Solution.BingoBoard[]>>
+sealed partial class Solution : SolutionBase<Tuple<int[], Solution.BingoBoard[]>>
 {
   public Solution() : base(04, 2021, "Giant Squid") { }
 
-  private static IEnumerable<int> TakeTurn(int number, ref BingoBoard[] boards, HashSet<int> ignored = null)
+  private static IEnumerable<int> TakeTurn(int number, BingoBoard[] boards, HashSet<int>? ignored = null)
   {
     var winningIndices = new List<int>();
     for (var index = 0; index < boards.Length; ++index)
@@ -30,12 +32,12 @@ class Solution : SolutionBase<Tuple<int[], Solution.BingoBoard[]>>
     Array.Copy(ParsedInput.Item2, boards, ParsedInput.Item2.Length);
     foreach (var number in ParsedInput.Item1)
     {
-      var winners = TakeTurn(number, ref boards);
+      var winners = TakeTurn(number, boards);
       if (winners.Any())
       {
         return boards[winners.First()]
           .GetScore(number)
-          .ToString();
+          .ToString(System.Globalization.CultureInfo.CurrentCulture);
       }
     }
 
@@ -52,19 +54,19 @@ class Solution : SolutionBase<Tuple<int[], Solution.BingoBoard[]>>
     foreach (var number in ParsedInput.Item1)
     {
       calledNumber = number;
-      var winners = TakeTurn(number, ref boards, ignored);
+      var winners = TakeTurn(number, boards, ignored);
       if (winners.Any())
       {
         ignored.UnionWith(winners);
         winningBoards.AddRange(winners.Select(index => boards[index]));
-        if (winningBoards.Count() == boards.Length)
+        if (winningBoards.Count == boards.Length)
         {
           break;
         }
       }
     }
 
-    return winningBoards.Last().GetScore(calledNumber).ToString();
+    return winningBoards.Last().GetScore(calledNumber).ToString(System.Globalization.CultureInfo.CurrentCulture);
   }
 
   public override Tuple<int[], BingoBoard[]> ParseInput(string input)
@@ -82,7 +84,7 @@ class Solution : SolutionBase<Tuple<int[], Solution.BingoBoard[]>>
     return new(numbers, boards.ToArray());
   }
 
-  public record BingoSquare
+  public sealed record BingoSquare
   {
     public int Number { get; init; }
     public bool Picked { get; set; }
@@ -94,13 +96,16 @@ class Solution : SolutionBase<Tuple<int[], Solution.BingoBoard[]>>
     }
   }
 
-  public class BingoBoard
+  public sealed partial class BingoBoard
   {
+    [GeneratedRegex(@"\s+")]
+    private static partial Regex MultipleSpacesRegex();
+
     public BingoSquare[][] Board { get; init; }
 
     public BingoBoard(string[] lines)
     {
-      Board = lines.Select(line => System.Text.RegularExpressions.Regex.Split(line, @"\s+")
+      Board = lines.Select(line => MultipleSpacesRegex().Split(line)
           .Select(num => new BingoSquare(int.Parse(num, System.Globalization.CultureInfo.CurrentCulture)))
           .ToArray()).ToArray();
     }

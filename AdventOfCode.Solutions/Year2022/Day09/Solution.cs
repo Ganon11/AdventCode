@@ -2,7 +2,7 @@ namespace AdventOfCode.Solutions.Year2022.Day09;
 
 using AdventOfCode.Position;
 
-internal class Solution : SolutionBase<Tuple<char, int>[]>
+internal sealed class Solution : SolutionBase<Tuple<char, int>[]>
 {
    public Solution() : base(09, 2022, "Rope Bridge") { }
 

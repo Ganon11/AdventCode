@@ -1,6 +1,6 @@
 namespace AdventOfCode.Solutions.Year2022.Day10;
 
-class Solution : SolutionBase
+internal sealed class Solution : SolutionBase
 {
    public Solution() : base(10, 2022, "") { }
 

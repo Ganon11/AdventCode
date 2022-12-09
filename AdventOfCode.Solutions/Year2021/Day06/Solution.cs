@@ -1,6 +1,6 @@
 namespace AdventOfCode.Solutions.Year2021.Day06;
 
-class Solution : SolutionBase
+internal sealed class Solution : SolutionBase
 {
    public Solution() : base(06, 2021, "") { }
 

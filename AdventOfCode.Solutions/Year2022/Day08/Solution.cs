@@ -1,6 +1,6 @@
 namespace AdventOfCode.Solutions.Year2022.Day08;
 
-class Solution : SolutionBase<char[][]>
+internal sealed class Solution : SolutionBase<char[][]>
 {
    public Solution() : base(08, 2022, "Treetop Tree House") { }
 
