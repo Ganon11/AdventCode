@@ -2,7 +2,7 @@ namespace AdventOfCode.Solutions.Year2022.Day04;
 
 using RangePair = Tuple<HashSet<int>, HashSet<int>>;
 
-class Solution : SolutionBase<IEnumerable<RangePair>>
+internal sealed class Solution : SolutionBase<IEnumerable<RangePair>>
 {
    public Solution() : base(04, 2022, "Camp Cleanup") { }
 
@@ -25,13 +25,13 @@ class Solution : SolutionBase<IEnumerable<RangePair>>
    {
       return ParsedInput
          .Count(pair => pair.Item1.IsProperSubsetOf(pair.Item2) || pair.Item1.IsProperSupersetOf(pair.Item2) || pair.Item1.SetEquals(pair.Item2))
-         .ToString();
+         .ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
 
    public override string SolvePartTwo()
    {
       return ParsedInput
          .Count(pair => pair.Item1.Intersect(pair.Item2).Any())
-         .ToString();
+         .ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
 }

@@ -1,6 +1,6 @@
 namespace AdventOfCode.Solutions.Year2022.Day07;
 
-class Solution : SolutionBase<Solution.ElfDirectory?>
+internal sealed class Solution : SolutionBase<Solution.ElfDirectory?>
 {
    public Solution() : base(07, 2022, "No Space Left On Device") { }
 
@@ -13,7 +13,7 @@ class Solution : SolutionBase<Solution.ElfDirectory?>
 
       return GetAllDirectories(ParsedInput).Where(d => d.GetSize() < 100000)
          .Sum(d => d.GetSize())
-         .ToString();
+         .ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
 
    public override string SolvePartTwo()
@@ -46,7 +46,7 @@ class Solution : SolutionBase<Solution.ElfDirectory?>
          return "ERROR";
       }
 
-      return toDelete.GetSize().ToString();
+      return toDelete.GetSize().ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
 
 

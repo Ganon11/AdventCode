@@ -1,4 +1,6 @@
-﻿using AdventOfCode.Services;
+﻿#pragma warning disable CA1852
+
+using AdventOfCode.Services;
 using AdventOfCode.Solutions;
 
 var year = ConfigurationService.GetYear();
@@ -10,3 +12,5 @@ foreach (var solution in SolutionCollector.FetchSolutions(year, days))
 {
    Console.WriteLine(solution.ToString());
 }
+
+#pragma warning restore CA1852

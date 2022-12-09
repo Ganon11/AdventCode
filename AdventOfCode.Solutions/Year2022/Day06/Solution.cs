@@ -1,6 +1,6 @@
 namespace AdventOfCode.Solutions.Year2022.Day06;
 
-class Solution : SolutionBase
+internal sealed class Solution : SolutionBase
 {
    public Solution() : base(06, 2022, "Tuning Trouble") { }
    private static int FindMarker(string input, int targetLength)
@@ -34,11 +34,11 @@ class Solution : SolutionBase
 
    public override string SolvePartOne()
    {
-      return FindMarker(Input, 4).ToString();
+      return FindMarker(Input, 4).ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
 
    public override string SolvePartTwo()
    {
-      return FindMarker(Input, 14).ToString();
+      return FindMarker(Input, 14).ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
 }

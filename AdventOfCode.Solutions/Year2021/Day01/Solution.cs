@@ -1,12 +1,12 @@
 namespace AdventOfCode.Solutions.Year2021.Day01;
 
-class Solution : SolutionBase<int[]>
+internal sealed class Solution : SolutionBase<int[]>
 {
    public Solution() : base(01, 2021, "Sonar Sweep") { }
 
    public override int[] ParseInput(string input) => input.SplitByNewline(shouldTrim: true).Select(line => int.Parse(line, System.Globalization.CultureInfo.CurrentCulture)).ToArray();
 
-   private int NumTimesDescended(int[] depths, int window = 1)
+   private static int NumTimesDescended(int[] depths, int window = 1)
    {
       if (depths.Length < window)
       {
@@ -31,7 +31,7 @@ class Solution : SolutionBase<int[]>
       return total;
    }
 
-   public override string SolvePartOne() => NumTimesDescended(ParsedInput).ToString();
+   public override string SolvePartOne() => NumTimesDescended(ParsedInput).ToString(System.Globalization.CultureInfo.CurrentCulture);
 
-   public override string SolvePartTwo() => NumTimesDescended(ParsedInput, 3).ToString();
+   public override string SolvePartTwo() => NumTimesDescended(ParsedInput, 3).ToString(System.Globalization.CultureInfo.CurrentCulture);
 }

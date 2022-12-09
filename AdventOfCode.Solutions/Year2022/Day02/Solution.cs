@@ -1,6 +1,6 @@
 namespace AdventOfCode.Solutions.Year2022.Day02;
 
-class Solution : SolutionBase<string[][]>
+internal sealed class Solution : SolutionBase<string[][]>
 {
    public Solution() : base(02, 2022, "Rock Paper Scissors") { }
 
@@ -17,7 +17,7 @@ class Solution : SolutionBase<string[][]>
       return ParsedInput
          .Select(line => P1[line[0]][line[1]])
          .Sum()
-         .ToString();
+         .ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
 
    public override string SolvePartTwo()
@@ -31,6 +31,6 @@ class Solution : SolutionBase<string[][]>
       return ParsedInput
          .Select(line => P1[line[0]][line[1]])
          .Sum()
-         .ToString();
+         .ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
 }

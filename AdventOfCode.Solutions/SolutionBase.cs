@@ -139,7 +139,7 @@ public abstract class SolutionBase<T> : ISolution
        + $"{ResultToString(1, Part1)}\n"
        + $"{ResultToString(2, Part2)}\n";
 
-   string ResultToString(int part, SolutionResult result) =>
+   static string ResultToString(int part, SolutionResult result) =>
        $"  - Part{part} => " + (string.IsNullOrEmpty(result.Answer)
            ? "Unsolved"
            : $"{result.Answer} ({result.Time.TotalMilliseconds}ms)");

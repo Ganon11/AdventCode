@@ -1,6 +1,6 @@
 namespace AdventOfCode.Solutions.Year2021.Day02;
 
-class Solution : SolutionBase<Tuple<string, int>[]>
+internal sealed class Solution : SolutionBase<Tuple<string, int>[]>
 {
    public Solution() : base(02, 2021, "Dive!") { }
 
@@ -34,7 +34,7 @@ class Solution : SolutionBase<Tuple<string, int>[]>
          }
       }
 
-      return (horizontalPosition * depth).ToString();
+      return (horizontalPosition * depth).ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
 
    public override string SolvePartTwo()
@@ -61,6 +61,6 @@ class Solution : SolutionBase<Tuple<string, int>[]>
          }
       }
 
-      return (horizontalPosition * depth).ToString();
+      return (horizontalPosition * depth).ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
 }

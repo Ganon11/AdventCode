@@ -1,6 +1,6 @@
 namespace AdventOfCode.Solutions.Year2022.Day03;
 
-class Solution : SolutionBase
+internal sealed class Solution : SolutionBase
 {
    public Solution() : base(03, 2022, "Rucksack Reorganization") { }
 
@@ -39,7 +39,7 @@ class Solution : SolutionBase
          sum += GetPriority(intersection);
       }
 
-      return sum.ToString();
+      return sum.ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
 
    public override string SolvePartTwo()
@@ -57,6 +57,6 @@ class Solution : SolutionBase
          sum += GetPriority(intersection);
       }
 
-      return sum.ToString();
+      return sum.ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
 }
