@@ -120,8 +120,6 @@ internal sealed class Solution : SolutionBase<char[][]>
       return bestScenicScore;
    }
 
-   public override string SolvePartTwo()
-   {
-      return CalculateScenicScore(this.ParsedInput).ToString(System.Globalization.CultureInfo.CurrentCulture);
-   }
+   public override string SolvePartTwo() => CalculateScenicScore(this.ParsedInput)
+      .ToString(System.Globalization.CultureInfo.CurrentCulture);
 }
