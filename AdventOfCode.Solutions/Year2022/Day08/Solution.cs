@@ -75,7 +75,7 @@ internal sealed class Solution : SolutionBase<char[][]>
 
    public override string SolvePartOne() => CountVisible(this.ParsedInput).ToString(System.Globalization.CultureInfo.CurrentCulture);
 
-   private static int CalculateScenicScore(char[][] trees, int row, int col)
+   private static int CalculateScenicScore(char[][] trees)
    {
       static int CalculateScore(char[][] trees, int row, int col, int deltaRow, int deltaCol)
       {
@@ -97,25 +97,19 @@ internal sealed class Solution : SolutionBase<char[][]>
          return score;
       }
 
-      var upScore = CalculateScore(trees, row, col, -1, 0);
-      var downScore = CalculateScore(trees, row, col, 1, 0);
-      var leftScore = CalculateScore(trees, row, col, 0, -1);
-      var rightScore = CalculateScore(trees, row, col, 0, 1);
-
-      return upScore * downScore * leftScore * rightScore;
-   }
-
-   public override string SolvePartTwo()
-   {
-      var height = this.ParsedInput.Length;
-      var width = this.ParsedInput.First().Length;
+      var height = trees.Length;
+      var width = trees.First().Length;
       var bestScenicScore = -1;
-
       for (var row = 1; row < (height - 1); ++row)
       {
          for (var col = 1; col < (width - 1); ++col)
          {
-            var scenicScore = CalculateScenicScore(this.ParsedInput, row, col);
+            var upScore = CalculateScore(trees, row, col, -1, 0);
+            var downScore = CalculateScore(trees, row, col, 1, 0);
+            var leftScore = CalculateScore(trees, row, col, 0, -1);
+            var rightScore = CalculateScore(trees, row, col, 0, 1);
+
+            int scenicScore = upScore * downScore * leftScore * rightScore;
             if (scenicScore > bestScenicScore)
             {
                bestScenicScore = scenicScore;
@@ -123,6 +117,11 @@ internal sealed class Solution : SolutionBase<char[][]>
          }
       }
 
-      return bestScenicScore.ToString(System.Globalization.CultureInfo.CurrentCulture);
+      return bestScenicScore;
+   }
+
+   public override string SolvePartTwo()
+   {
+      return CalculateScenicScore(this.ParsedInput).ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
 }
