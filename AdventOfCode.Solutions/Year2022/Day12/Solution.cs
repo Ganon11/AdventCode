@@ -1,5 +1,6 @@
 namespace AdventOfCode.Solutions.Year2022.Day12;
 
+using System.Linq;
 using AdventOfCode.Position;
 
 internal sealed class Solution : SolutionBase<Tuple<Position, Position, Dictionary<Position, char>>>
@@ -38,7 +39,7 @@ internal sealed class Solution : SolutionBase<Tuple<Position, Position, Dictiona
 
    private static int FindShortestPath(Position start, Position end, Dictionary<Position, char> map)
    {
-      var frontier = new PriorityQueue<Position?, int>();
+      var frontier = new PriorityQueue<Position, int>();
       frontier.Enqueue(start, 0);
 
       var cameFrom = new Dictionary<Position, Position?>
@@ -85,7 +86,6 @@ internal sealed class Solution : SolutionBase<Tuple<Position, Position, Dictiona
 
       if (!costSoFar.ContainsKey(end))
       {
-         //Console.WriteLine($"Path not found!");
          return int.MaxValue;
       }
 
@@ -95,26 +95,49 @@ internal sealed class Solution : SolutionBase<Tuple<Position, Position, Dictiona
    public override string SolvePartOne() => FindShortestPath(this.ParsedInput.Item1, this.ParsedInput.Item2, this.ParsedInput.Item3)
          .ToString(System.Globalization.CultureInfo.CurrentCulture);
 
-   public override string SolvePartTwo()
+   private static int BreadthFirstSearch(Position start, Dictionary<Position, char> map)
    {
-      var end = this.ParsedInput.Item2;
-      var map = this.ParsedInput.Item3;
-      var costs = map
-         .Keys
-         .Select(p =>
+      var frontier = new Queue<Tuple<Position, int>>();
+      frontier.Enqueue(new (start, 0));
+      var reached = new HashSet<Position>();
+
+      while (frontier.Count > 0)
+      {
+         var current = frontier.Dequeue();
+         var currentHeight = map[current.Item1];
+
+         foreach (var next in current.Item1.GetAdjacentPositions(includeZ: false, includeDiagonals: false))
          {
-            if (!this.Debug && p.X != 0)
+            if (!map.ContainsKey(next))
             {
-               return int.MaxValue;
+               continue;
             }
 
-            if (map[p] == 'a')
+            if (reached.Contains(next))
             {
-               return FindShortestPath(p, end, map);
+               continue;
             }
 
-            return int.MaxValue;
-         });
-      return costs.Min().ToString(System.Globalization.CultureInfo.CurrentCulture);
+            var nextHeight = map[next];
+            if (nextHeight < (currentHeight - 1))
+            {
+               continue;
+            }
+
+            var newCost = current.Item2 + 1;
+            if (nextHeight == 'a')
+            {
+               return newCost;
+            }
+
+            frontier.Enqueue(new Tuple<Position, int>(next, newCost));
+            reached.Add(next);
+         }
+      }
+
+      return int.MaxValue;
    }
+
+   public override string SolvePartTwo() => BreadthFirstSearch(this.ParsedInput.Item2, this.ParsedInput.Item3)
+      .ToString(System.Globalization.CultureInfo.CurrentCulture);
 }
