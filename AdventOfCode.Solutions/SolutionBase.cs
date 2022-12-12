@@ -1,4 +1,4 @@
-﻿global using System;
+global using System;
 global using System.Collections;
 global using System.Collections.Generic;
 global using System.Linq;
@@ -17,10 +17,10 @@ public abstract class SolutionBase<T> : ISolution
    public int Year { get; }
    public string Title { get; }
    public bool Debug { get; set; }
-   public string Input => LoadInput(Debug);
-   public string DebugInput => LoadInput(true);
-   public T ParsedInput => ParseInput(Input);
-   public T ParsedDebugInput => ParseInput(DebugInput);
+   public string Input { get; init; }
+   public string DebugInput { get; init; }
+   public T ParsedInput { get; init; }
+   public T ParsedDebugInput { get; init; }
 
    public SolutionResult Part1 => Solve(1);
    public SolutionResult Part2 => Solve(2);
@@ -31,6 +31,12 @@ public abstract class SolutionBase<T> : ISolution
       Year = year;
       Title = title;
       Debug = useDebugInput;
+
+      Input = LoadInput(Debug);
+      DebugInput = LoadInput(true);
+
+      ParsedInput = ParseInput(Input);
+      ParsedDebugInput = ParseInput(DebugInput);
    }
 
    public IEnumerable<SolutionResult> SolveAll()
