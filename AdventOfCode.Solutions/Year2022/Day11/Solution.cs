@@ -43,9 +43,9 @@ internal sealed class Solution : SolutionBase<Monkey[]>
 internal sealed partial class Monkey
 {
    public int Id { get; init; }
-   public List<int> Items { get; set; } = new List<int>();
-   public Func<int, int> Operation { get; init; }
-   public Func<int, bool> Test { get; init; }
+   public List<long> Items { get; set; } = new List<long>();
+   public Func<long, long> Operation { get; init; }
+   public Func<long, bool> Test { get; init; }
    public Tuple<int, int> Destinations { get; init; }
 
    public int InspectionCount { get; private set; }
@@ -70,7 +70,7 @@ internal sealed partial class Monkey
       this.Items = m.Groups["items"].Value
          .Trim()
          .Split(", ")
-         .Select(token => int.Parse(token, System.Globalization.CultureInfo.CurrentCulture))
+         .Select(token => long.Parse(token, System.Globalization.CultureInfo.CurrentCulture))
          .ToList();
 
       m = OperationRegex().Match(lines[2]);
@@ -90,11 +90,11 @@ internal sealed partial class Monkey
       }
       else
       {
-         int intValue = int.Parse(operationValue, System.Globalization.CultureInfo.CurrentCulture);
+         long longValue = long.Parse(operationValue, System.Globalization.CultureInfo.CurrentCulture);
          this.Operation = m.Groups["operation"].Value switch
          {
-            "+" => (x) => x + intValue,
-            "*" => (x) => x * intValue,
+            "+" => (x) => x + longValue,
+            "*" => (x) => x * longValue,
             _ => throw new ArgumentException($"Unexpected format of Operation line \"{lines[2]}\"", nameof(paragraph)),
          };
       }
@@ -104,7 +104,7 @@ internal sealed partial class Monkey
       {
          throw new ArgumentException($"Error parsing Test from line \"{lines[3]}\"", nameof(paragraph));
       }
-      var testValue = int.Parse(m.Groups["value"].Value, System.Globalization.CultureInfo.CurrentCulture);
+      var testValue = long.Parse(m.Groups["value"].Value, System.Globalization.CultureInfo.CurrentCulture);
       this.Test = (x) => x % testValue == 0;
 
       m = TrueMonkeyRegex().Match(lines[4]);
@@ -137,7 +137,7 @@ internal sealed partial class Monkey
             Console.WriteLine($"\tMonkey inspects an item with a worry level of {item}");
          }
          // Inspect
-         int newItem = this.Operation(item);
+         long newItem = this.Operation(item);
          if (debugOutput)
          {
             Console.WriteLine($"\t\tWorry level changed to {newItem}");
