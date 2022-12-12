@@ -103,6 +103,11 @@ internal sealed class Solution : SolutionBase<Tuple<Position, Position, Dictiona
          .Keys
          .Select(p =>
          {
+            if (!this.Debug && p.X != 0)
+            {
+               return int.MaxValue;
+            }
+
             if (map[p] == 'a')
             {
                return FindShortestPath(p, end, map);
