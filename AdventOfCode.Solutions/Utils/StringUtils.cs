@@ -4,7 +4,7 @@ public static class StringUtils
 {
    public static string Reverse(this string str)
    {
-      char[] arr = str.ToCharArray();
+      var arr = str.ToCharArray();
       Array.Reverse(arr);
       return new string(arr);
    }
@@ -26,14 +26,21 @@ public static class StringUtils
       if (delimiter == "")
       {
          var result = new List<int>();
-         foreach (char c in str) if (int.TryParse(c.ToString(), out int n)) result.Add(n);
+         foreach (var c in str)
+         {
+            if (int.TryParse(c.ToString(), out var n))
+            {
+               result.Add(n);
+            }
+         }
+
          return result.ToArray();
       }
       else
       {
          return str
              .Split(delimiter)
-             .Where(n => int.TryParse(n, out int v))
+             .Where(n => int.TryParse(n, out var v))
              .Select(n => Convert.ToInt32(n, System.Globalization.CultureInfo.CurrentCulture))
              .ToArray();
       }
@@ -44,14 +51,21 @@ public static class StringUtils
       if (delimiter == "")
       {
          var result = new List<long>();
-         foreach (char c in str) if (long.TryParse(c.ToString(), out long n)) result.Add(n);
+         foreach (var c in str)
+         {
+            if (long.TryParse(c.ToString(), out var n))
+            {
+               result.Add(n);
+            }
+         }
+
          return result.ToArray();
       }
       else
       {
          return str
              .Split(delimiter)
-             .Where(n => long.TryParse(n, out long v))
+             .Where(n => long.TryParse(n, out var v))
              .Select(n => Convert.ToInt64(n, System.Globalization.CultureInfo.CurrentCulture))
              .ToArray();
       }
