@@ -66,7 +66,7 @@ public abstract class SolutionBase<T> : ISolution
       }
       else if (string.IsNullOrEmpty(Input))
       {
-#pragma warning disable CS2201 // Exception type System.Exception is not sufficiently specific
+#pragma warning disable CA2201 // Exception type System.Exception is not sufficiently specific
          throw new Exception("Input is null or empty");
 #pragma warning restore CA2201
       }
