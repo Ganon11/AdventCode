@@ -35,41 +35,14 @@ internal sealed class Solution : SolutionBase<Monkey[]>
       long commonFactor = 1;
       foreach (var monkey in allMonkeys)
       {
-         Console.WriteLine($"Multiplying {commonFactor} by {monkey.TestValue} to get commonFactor");
          commonFactor *= monkey.TestValue;
       }
-
-      var checkRounds = new HashSet<int>()
-      {
-         1,
-         20,
-         1000,
-         2000,
-         3000,
-         4000,
-         5000,
-         6000,
-         7000,
-         8000,
-         9000,
-         10000
-      };
 
       for (var round = 1; round <= 10000; ++round)
       {
          foreach (var monkey in allMonkeys)
          {
             monkey.TakeTurn(allMonkeys, commonFactor: commonFactor, amWorried: true);
-         }
-
-         if (checkRounds.Contains(round))
-         {
-            Console.WriteLine($"== After round {round} ==");
-            foreach (var monkey in allMonkeys)
-            {
-               Console.WriteLine($"Monkey {monkey.Id} inspected items {monkey.InspectionCount} times.");
-            }
-            Console.WriteLine();
          }
       }
 
