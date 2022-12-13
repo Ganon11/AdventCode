@@ -1,6 +1,5 @@
 namespace AdventOfCode.Solutions.Year2022.Day12;
 
-using System.Linq;
 using AdventOfCode.Position;
 
 internal sealed class Solution : SolutionBase<Tuple<Position, Position, Dictionary<Position, char>>>
@@ -34,7 +33,16 @@ internal sealed class Solution : SolutionBase<Tuple<Position, Position, Dictiona
          }
       }
 
-      return new(s, e, map);
+#pragma warning disable CS8604 // Possible null reference argument.
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+      if (s != null && e != null)
+      {
+         return new(s, e, map);
+      }
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+#pragma warning restore CS8604 // Possible null reference argument.
+
+      throw new ArgumentException($"Input is in unexpected format", nameof(input));
    }
 
    private static int FindShortestPath(Position start, Position end, Dictionary<Position, char> map)
