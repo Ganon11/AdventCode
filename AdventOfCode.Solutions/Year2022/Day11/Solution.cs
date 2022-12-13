@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 internal sealed class Solution : SolutionBase<Monkey[]>
 {
-   public Solution() : base(11, 2022, "Monkey in the Middle", true) { }
+   public Solution() : base(11, 2022, "Monkey in the Middle", false) { }
 
    public override Monkey[] ParseInput(string input) => input.SplitByParagraph(shouldTrim: true)
       .Select(paragraph => new Monkey(paragraph))
@@ -12,7 +12,7 @@ internal sealed class Solution : SolutionBase<Monkey[]>
 
    public override string SolvePartOne()
    {
-      Monkey[] allMonkeys = (Monkey[])this.ParsedInput.Clone();
+      Monkey[] allMonkeys = (Monkey[])this.ParsedInput.Copy();
       for (var round = 0; round < 20; ++round)
       {
          foreach (var monkey in allMonkeys)
@@ -30,12 +30,46 @@ internal sealed class Solution : SolutionBase<Monkey[]>
 
    public override string SolvePartTwo()
    {
-      Monkey[] allMonkeys = (Monkey[])this.ParsedInput.Clone();
-      for (var round = 0; round < 10000; ++round)
+      Monkey[] allMonkeys = (Monkey[])this.ParsedInput.Copy();
+
+      long commonFactor = 1;
+      foreach (var monkey in allMonkeys)
+      {
+         Console.WriteLine($"Multiplying {commonFactor} by {monkey.TestValue} to get commonFactor");
+         commonFactor *= monkey.TestValue;
+      }
+
+      var checkRounds = new HashSet<int>()
+      {
+         1,
+         20,
+         1000,
+         2000,
+         3000,
+         4000,
+         5000,
+         6000,
+         7000,
+         8000,
+         9000,
+         10000
+      };
+
+      for (var round = 1; round <= 10000; ++round)
       {
          foreach (var monkey in allMonkeys)
          {
-            monkey.TakeTurn(allMonkeys);
+            monkey.TakeTurn(allMonkeys, commonFactor: commonFactor, amWorried: true);
+         }
+
+         if (checkRounds.Contains(round))
+         {
+            Console.WriteLine($"== After round {round} ==");
+            foreach (var monkey in allMonkeys)
+            {
+               Console.WriteLine($"Monkey {monkey.Id} inspected items {monkey.InspectionCount} times.");
+            }
+            Console.WriteLine();
          }
       }
 
@@ -51,8 +85,9 @@ internal sealed partial class Monkey
 {
    public int Id { get; init; }
    public List<long> Items { get; set; } = new List<long>();
-   public Func<long, long> Operation { get; init; }
-   public Func<long, bool> Test { get; init; }
+   public char Operation { get; init; }
+   public string OperationValue { get; init; }
+   public long TestValue { get; init; }
    public Tuple<int, int> Destinations { get; init; }
 
    public long InspectionCount { get; private set; }
@@ -85,34 +120,15 @@ internal sealed partial class Monkey
       {
          throw new ArgumentException($"Error parsing Operation from line \"{lines[2]}\"", nameof(paragraph));
       }
-      var operationValue = m.Groups["value"].Value;
-      if (operationValue.Equals("old", StringComparison.OrdinalIgnoreCase))
-      {
-         this.Operation = m.Groups["operation"].Value switch
-         {
-            "+" => (x) => x + x,
-            "*" => (x) => x * x,
-            _ => throw new ArgumentException($"Unexpected format of Operation line \"{lines[2]}\"", nameof(paragraph)),
-         };
-      }
-      else
-      {
-         long longValue = long.Parse(operationValue, System.Globalization.CultureInfo.CurrentCulture);
-         this.Operation = m.Groups["operation"].Value switch
-         {
-            "+" => (x) => x + longValue,
-            "*" => (x) => x * longValue,
-            _ => throw new ArgumentException($"Unexpected format of Operation line \"{lines[2]}\"", nameof(paragraph)),
-         };
-      }
+      this.OperationValue = m.Groups["value"].Value;
+      this.Operation = m.Groups["operation"].Value[0];
 
       m = TestRegex().Match(lines[3]);
       if (!m.Success)
       {
          throw new ArgumentException($"Error parsing Test from line \"{lines[3]}\"", nameof(paragraph));
       }
-      var testValue = long.Parse(m.Groups["value"].Value, System.Globalization.CultureInfo.CurrentCulture);
-      this.Test = (x) => x % testValue == 0;
+      this.TestValue = long.Parse(m.Groups["value"].Value, System.Globalization.CultureInfo.CurrentCulture);
 
       m = TrueMonkeyRegex().Match(lines[4]);
       if (!m.Success)
@@ -131,12 +147,13 @@ internal sealed partial class Monkey
       this.Destinations = new(trueMonkey, falseMonkey);
    }
 
-   public void TakeTurn(Monkey[] allMonkeys, bool amWorried = false, bool debugOutput = false)
+   public void TakeTurn(Monkey[] allMonkeys, long commonFactor = 0, bool amWorried = false, bool debugOutput = false)
    {
       if (debugOutput)
       {
          Console.WriteLine($"Monkey {this.Id}:");
       }
+
       foreach (var item in this.Items)
       {
          if (debugOutput)
@@ -144,7 +161,21 @@ internal sealed partial class Monkey
             Console.WriteLine($"\tMonkey inspects an item with a worry level of {item}");
          }
          // Inspect
-         long newItem = this.Operation(item);
+         long newItem;
+         long operand = this.OperationValue.Equals("old", StringComparison.OrdinalIgnoreCase) ? item : int.Parse(OperationValue, System.Globalization.CultureInfo.CurrentCulture);
+         switch (this.Operation)
+         {
+            case '*':
+               newItem = item * operand;
+               break;
+            case '+':
+               newItem = item + operand;
+               break;
+            default:
+               newItem = -1;
+               break;
+         }
+
          if (debugOutput)
          {
             Console.WriteLine($"\t\tWorry level changed to {newItem}");
@@ -159,9 +190,17 @@ internal sealed partial class Monkey
                Console.WriteLine($"\t\tMonkey gets bored with item. Worry level is divided by 3 to {newItem}");
             }
          }
+         else if (commonFactor != 0)
+         {
+            newItem %= commonFactor;
+            if (debugOutput)
+            {
+               Console.WriteLine($"\t\tMonkey gets bored with item. Worry level is modulo'd by {commonFactor} to {newItem}");
+            }
+         }
 
          // Test
-         if (this.Test(newItem))
+         if (newItem % this.TestValue == 0)
          {
             allMonkeys[this.Destinations.Item1].Items.Add(newItem);
             if (debugOutput)
