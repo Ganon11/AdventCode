@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 internal sealed class Solution : SolutionBase<Monkey[]>
 {
-   public Solution() : base(11, 2022, "Monkey in the Middle") { }
+   public Solution() : base(11, 2022, "Monkey in the Middle", true) { }
 
    public override Monkey[] ParseInput(string input) => input.SplitByParagraph(shouldTrim: true)
       .Select(paragraph => new Monkey(paragraph))
@@ -19,12 +19,6 @@ internal sealed class Solution : SolutionBase<Monkey[]>
          {
             monkey.TakeTurn(allMonkeys);
          }
-
-         Console.WriteLine($"After round {round}, the monkeys are holding items with these worry levels:");
-         foreach (var monkey in allMonkeys)
-         {
-            Console.WriteLine($"Monkey {monkey.Id}: {string.Join(", ", monkey.Items)}");
-         }
       }
 
       return allMonkeys.Select(m => m.InspectionCount)
@@ -36,7 +30,20 @@ internal sealed class Solution : SolutionBase<Monkey[]>
 
    public override string SolvePartTwo()
    {
-      return "";
+      Monkey[] allMonkeys = (Monkey[])this.ParsedInput.Clone();
+      for (var round = 0; round < 10000; ++round)
+      {
+         foreach (var monkey in allMonkeys)
+         {
+            monkey.TakeTurn(allMonkeys);
+         }
+      }
+
+      return allMonkeys.Select(m => m.InspectionCount)
+         .OrderByDescending(x => x)
+         .Take(2)
+         .Aggregate((x, y) => x * y)
+         .ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
 }
 
@@ -48,7 +55,7 @@ internal sealed partial class Monkey
    public Func<long, bool> Test { get; init; }
    public Tuple<int, int> Destinations { get; init; }
 
-   public int InspectionCount { get; private set; }
+   public long InspectionCount { get; private set; }
 
    public Monkey(string paragraph)
    {
@@ -124,7 +131,7 @@ internal sealed partial class Monkey
       this.Destinations = new(trueMonkey, falseMonkey);
    }
 
-   public void TakeTurn(Monkey[] allMonkeys, bool debugOutput = false)
+   public void TakeTurn(Monkey[] allMonkeys, bool amWorried = false, bool debugOutput = false)
    {
       if (debugOutput)
       {
@@ -144,10 +151,13 @@ internal sealed partial class Monkey
          }
 
          // Worry Level Decrease
-         newItem /= 3;
-         if (debugOutput)
+         if (!amWorried)
          {
-            Console.WriteLine($"\t\tMonkey gets bored with item. Worry level is divided by 3 to {newItem}");
+            newItem /= 3;
+            if (debugOutput)
+            {
+               Console.WriteLine($"\t\tMonkey gets bored with item. Worry level is divided by 3 to {newItem}");
+            }
          }
 
          // Test
