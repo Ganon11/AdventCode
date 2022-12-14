@@ -28,79 +28,55 @@ internal sealed class Solution : SolutionBase<Dictionary<Position, char>>
       return map;
    }
 
-   private static bool DropSand(Dictionary<Position, char> map, int? floorHeight = null)
+   private static void DropFrom(Dictionary<Position, char> map, Position p, int? floor = null, int? maxY = null)
    {
-      var start = new Position(500, 0);
-      var sand = start.Copy();
-      var maxY = floorHeight ?? map.Keys.Select(p => p.Y).Max();
-      while (sand.Y <= maxY)
-      {
-         var northPosition = sand.North;
-         var northWestPosition = sand.NorthWest;
-         var northEastPosition = sand.NorthEast;
-         Position? nextPosition = null;
-         if (!map.ContainsKey(northPosition))
-         {
-            nextPosition = northPosition;
-         }
-         else if (!map.ContainsKey(northWestPosition))
-         {
-            nextPosition = northWestPosition;
-         }
-         else if (!map.ContainsKey(northEastPosition))
-         {
-            nextPosition = northEastPosition;
-         }
-         else
-         {
-            map[sand] = 'o';
-            return map[start] != 'o';
-         }
-
-         if (floorHeight != null && nextPosition.Y == maxY)
-         {
-            map[sand] = 'o';
-            map[nextPosition] = '#';
-            return true;
-         }
-
-         sand = nextPosition;
-      }
-
-      return false;
-   }
-
-   public override string SolvePartOne()
-   {
-      var map = this.ParsedInput.Copy();
-      while (DropSand(map))
-      { }
-
-      return map.Count(kvp => kvp.Value == 'o').ToString(System.Globalization.CultureInfo.CurrentCulture);
-   }
-
-   private static void DropFrom(Dictionary<Position, char> map, Position p, int floor)
-   {
-      if ((map.TryGetValue(p, out var value) && value != '+') || (p.Y == floor))
+      if (map.TryGetValue(p, out var value) && value != '+')
       {
          return;
+      }
+
+      if (floor != null && p.Y == floor)
+      {
+         return;
+      }
+
+      if (floor == null && maxY != null && p.Y >= maxY)
+      {
+         throw new InfiniteAbyssException();
       }
 
       var deltaXValues = new int[] { 0, -1, 1 };
       foreach (var deltaX in deltaXValues)
       {
-         DropFrom(map, new Position(p.X + deltaX, p.Y + 1), floor);
+         DropFrom(map, new Position(p.X + deltaX, p.Y + 1), floor, maxY);
       }
 
       map[p] = 'o';
+   }
+
+   public override string SolvePartOne()
+   {
+      var map = this.ParsedInput.Copy();
+      var maxY = map.Keys.Select(p => p.Y).Max();
+      try
+      {
+         DropFrom(map, new Position(500, 0), maxY: maxY);
+      }
+      catch (InfiniteAbyssException)
+      { }
+
+      return map.Count(kvp => kvp.Value == 'o').ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
 
    public override string SolvePartTwo()
    {
       var map = this.ParsedInput.Copy();
       var floor = map.Keys.Select(p => p.Y).Max() + 2;
-      DropFrom(map, new Position(500, 0), floor);
+      DropFrom(map, new Position(500, 0), floor: floor);
 
       return map.Count(kvp => kvp.Value == 'o').ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
 }
+
+internal class InfiniteAbyssException : Exception
+{ }
