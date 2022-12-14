@@ -9,7 +9,8 @@ internal sealed class Solution : SolutionBase<Tuple<Position, Position, Dictiona
    public override Tuple<Position, Position, Dictionary<Position, char>> ParseInput(string input)
    {
       var map = new Dictionary<Position, char>();
-      Position? s = null, e = null;
+      Position s = new(-1, -1, -1), e = new(-1, -1, -1);
+      bool startFound = false, endFound = false;
       var lines = input.SplitByNewline(shouldTrim: true);
       for (var row = 0; row < lines.Length; ++row)
       {
@@ -20,11 +21,13 @@ internal sealed class Solution : SolutionBase<Tuple<Position, Position, Dictiona
             {
                s = p;
                map.Add(p, 'a');
+               startFound = true;
             }
             else if (lines[row][col] == 'E')
             {
                e = p;
                map.Add(p, 'z');
+               endFound = true;
             }
             else
             {
@@ -35,14 +38,14 @@ internal sealed class Solution : SolutionBase<Tuple<Position, Position, Dictiona
 
 #pragma warning disable CS8604 // Possible null reference argument.
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-      if (s != null && e != null)
+      if (!startFound || !endFound)
       {
-         return new(s, e, map);
+         throw new ArgumentException($"Input is in unexpected format", nameof(input));
       }
+
+      return new(s, e, map);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 #pragma warning restore CS8604 // Possible null reference argument.
-
-      throw new ArgumentException($"Input is in unexpected format", nameof(input));
    }
 
    private static int FindShortestPath(Position start, Position end, Dictionary<Position, char> map)
