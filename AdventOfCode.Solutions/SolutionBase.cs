@@ -14,14 +14,50 @@ using AdventOfCode.Services;
 
 public abstract class SolutionBase<T> : ISolution
 {
-   public int Day { get; }
-   public int Year { get; }
-   public string Title { get; }
-   public bool Debug { get; set; }
-   public string Input { get; init; }
-   public string DebugInput { get; init; }
-   public T ParsedInput { get; init; }
-   public T ParsedDebugInput { get; init; }
+   public int Day { get; init; }
+   public int Year { get; init; }
+   public string Title { get; init; }
+   public bool Debug { get; init; }
+
+   private string? input;
+   public string Input
+   {
+      get
+      {
+         this.input ??= this.LoadInput(this.Debug);
+         return this.input;
+      }
+   }
+
+   private string? debugInput;
+   public string DebugInput
+   {
+      get
+      {
+         this.debugInput ??= this.LoadInput(debug: true);
+         return this.debugInput;
+      }
+   }
+
+   private T? parsedInput;
+   public T ParsedInput
+   {
+      get
+      {
+         this.parsedInput ??= this.ParseInput(this.Input);
+         return this.parsedInput;
+      }
+   }
+
+   private T? parsedDebugInput;
+   public T ParsedDebugInput
+   {
+      get
+      {
+         this.parsedDebugInput ??= this.ParseInput(this.DebugInput);
+         return this.parsedDebugInput;
+      }
+   }
 
    public SolutionResult Part1 => this.Solve(1);
    public SolutionResult Part2 => this.Solve(2);
@@ -32,12 +68,6 @@ public abstract class SolutionBase<T> : ISolution
       this.Year = year;
       this.Title = title;
       this.Debug = useDebugInput;
-
-      this.Input = this.LoadInput(this.Debug);
-      this.DebugInput = this.LoadInput(true);
-
-      this.ParsedInput = this.ParseInput(this.Input);
-      this.ParsedDebugInput = this.ParseInput(this.DebugInput);
    }
 
    public IEnumerable<SolutionResult> SolveAll()
@@ -67,16 +97,14 @@ public abstract class SolutionBase<T> : ISolution
       {
          if (string.IsNullOrEmpty(this.DebugInput))
          {
-#pragma warning disable CA2201 // Exception type System.Exception is not sufficiently specific
-            throw new Exception("DebugInput is null or empty");
-#pragma warning restore CA2201
+            //throw new InvalidOperationException("DebugInput is null or empty");
+            return new SolutionResult { Answer = "DebugInput is null or empty" };
          }
       }
       else if (string.IsNullOrEmpty(this.Input))
       {
-#pragma warning disable CA2201 // Exception type System.Exception is not sufficiently specific
-         throw new Exception("Input is null or empty");
-#pragma warning restore CA2201
+         //throw new InvalidOperationException("Input is null or empty");
+         return new SolutionResult { Answer = "Input is null or empty" };
       }
 
       try
@@ -112,7 +140,10 @@ public abstract class SolutionBase<T> : ISolution
          return File.ReadAllText(inputFilepath);
       }
 
-      if (debug) return "";
+      if (debug)
+      {
+         return string.Empty;
+      }
 
       try
       {
@@ -149,7 +180,7 @@ public abstract class SolutionBase<T> : ISolution
          Console.ForegroundColor = colour;
       }
 
-      return "";
+      return string.Empty;
    }
 
    public override string ToString() =>
@@ -178,7 +209,6 @@ public interface ISolution
 {
    public string SolvePartOne();
    public string SolvePartTwo();
-
 }
 
 public struct SolutionResult
@@ -186,5 +216,5 @@ public struct SolutionResult
    public string Answer { get; set; }
    public TimeSpan Time { get; set; }
 
-   public static SolutionResult Empty => new SolutionResult();
+   public static SolutionResult Empty => new();
 }

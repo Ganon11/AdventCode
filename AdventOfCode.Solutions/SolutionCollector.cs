@@ -4,9 +4,12 @@ public static class SolutionCollector
 {
    public static IEnumerable<ISolution> FetchSolutions(int year, IEnumerable<int> days)
    {
-      if (days.Sum() == 0) days = Enumerable.Range(1, 25).ToArray();
+      if (days.Sum() == 0)
+      {
+         days = Enumerable.Range(1, 25).ToArray();
+      }
 
-      foreach (int day in days)
+      foreach (var day in days)
       {
          var type = Type.GetType($"AdventOfCode.Solutions.Year{year}.Day{day:D2}.Solution");
          if (type != null)
@@ -21,8 +24,11 @@ public static class SolutionCollector
             {
                throw new InvalidOperationException($"Solution for {year} day {day:D2} does not have one constructor");
             }
-            ISolution? solution = constructor.Invoke(constructor.GetParameters().ToArray()) as ISolution;
-            if (solution != null) yield return solution;
+
+            if (constructor.Invoke(constructor.GetParameters().ToArray()) is ISolution solution)
+            {
+               yield return solution;
+            }
          }
       }
    }
