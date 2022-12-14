@@ -133,12 +133,37 @@ public class Position : IComparable<Position>, IEquatable<Position>
 
    public bool IsAdjacentTo(Position? other = null, bool includeZ = true, bool includeDiagonals = false)
    {
-      if (other is null)
+      other ??= new Position();
+
+      if (this.Equals(other))
       {
-         other = new Position();
+         return false;
       }
 
-      return GetAdjacentPositions(includeZ, includeDiagonals).Any(adj => adj == other);
+      if (!includeZ)
+      {
+         if (!includeDiagonals)
+         {
+            var totalDifference = Math.Abs(this.X - other.X) + Math.Abs(this.Y - other.Y);
+            return totalDifference <= 1;
+         }
+         else
+         {
+            return Math.Abs(this.X - other.X) <= 1 && Math.Abs(this.Y - other.Y) <= 1;
+         }
+      }
+      else
+      {
+         if (!includeDiagonals)
+         {
+            var totalDifference = Math.Abs(this.X - other.X) + Math.Abs(this.Y - other.Y) + Math.Abs(this.Z - other.Z);
+            return totalDifference <= 1;
+         }
+         else
+         {
+            return Math.Abs(this.X - other.X) <= 1 && Math.Abs(this.Y - other.Y) <= 1 && Math.Abs(this.Z - other.Z) <= 1;
+         }
+      }
    }
 
    public Position North => new(this.X, this.Y + 1, this.Z);
