@@ -13,6 +13,32 @@ public class Position : IComparable<Position>, IEquatable<Position>
       this.Z = z;
    }
 
+   public Position(string line)
+   {
+      var tokens = line.Split(',');
+      if (!tokens.Any())
+      {
+         this.X = 0;
+         this.Y = 0;
+         this.Z = 0;
+      }
+
+      if (tokens.Length >= 1)
+      {
+         this.X = int.Parse(tokens[0], System.Globalization.CultureInfo.CurrentCulture);
+      }
+
+      if (tokens.Length >= 2)
+      {
+         this.Y = int.Parse(tokens[1], System.Globalization.CultureInfo.CurrentCulture);
+      }
+
+      if (tokens.Length >= 3)
+      {
+         this.Z = int.Parse(tokens[2], System.Globalization.CultureInfo.CurrentCulture);
+      }
+   }
+
    public static IEnumerable<Position> GetPointsInLine(Position p1, Position p2)
    {
       var good = false;
