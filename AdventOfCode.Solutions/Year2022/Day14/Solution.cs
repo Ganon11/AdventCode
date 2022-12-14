@@ -35,21 +35,28 @@ internal sealed class Solution : SolutionBase<Dictionary<Position, char>>
       var maxY = floorHeight ?? map.Keys.Select(p => p.Y).Max();
       while (sand.Y <= maxY)
       {
-         var nextPosition = sand.North;
-         if (map.ContainsKey(nextPosition))
-         {
-            nextPosition = sand.NorthWest;
-         }
+         var northPosition = sand.North;
+         var northWestPosition = sand.NorthWest;
+         var northEastPosition = sand.NorthEast;
+         Position? nextPosition = null;
 
-         if (map.ContainsKey(nextPosition))
+         if (!map.ContainsKey(northPosition))
          {
-            nextPosition = sand.NorthEast;
+            nextPosition = northPosition;
          }
-
-         if (map.ContainsKey(nextPosition))
+         else if (!map.ContainsKey(northWestPosition))
+         {
+            nextPosition = northWestPosition;
+         }
+         else if (!map.ContainsKey(northEastPosition))
+         {
+            nextPosition = northEastPosition;
+         }
+         else
          {
             map[sand] = 'o';
-            return sand != start;
+
+            return map[start] != 'o';
          }
 
          if (floorHeight != null && nextPosition.Y == maxY)
@@ -65,6 +72,33 @@ internal sealed class Solution : SolutionBase<Dictionary<Position, char>>
       return false;
    }
 
+   public static string DrawMap(Dictionary<Position, char> map)
+   {
+      var sb = new StringBuilder();
+      var minRow = map.Keys.Select(p => p.Y).Min();
+      var maxRow = map.Keys.Select(p => p.Y).Max();
+      var minCol = map.Keys.Select(p => p.X).Min();
+      var maxCol = map.Keys.Select(p => p.X).Max();
+
+      for (var row = minRow; row <= maxRow; ++row)
+      {
+         for (var col = minCol; col <= maxCol; ++col)
+         {
+            if (map.TryGetValue(new Position(col, row), out char value))
+            {
+               _ = sb.Append(value);
+            }
+            else
+            {
+               _ = sb.Append('.');
+            }
+         }
+         _ = sb.AppendLine();
+      }
+
+      return sb.ToString();
+   }
+
    public override string SolvePartOne()
    {
       var map = this.ParsedInput.Copy();
@@ -74,12 +108,28 @@ internal sealed class Solution : SolutionBase<Dictionary<Position, char>>
       return map.Count(kvp => kvp.Value == 'o').ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
 
+   private static void DropFrom(Dictionary<Position, char> map, Position p, int floor)
+   {
+
+      if ((map.TryGetValue(p, out var value) && value != '+') || (p.Y == floor))
+      {
+         return;
+      }
+
+      var deltaXValues = new int[] { 0, -1, 1 };
+      foreach (var deltaX in deltaXValues)
+      {
+         DropFrom(map, new Position(p.X + deltaX, p.Y + 1), floor);
+      }
+
+      map[p] = 'o';
+   }
+
    public override string SolvePartTwo()
    {
       var map = this.ParsedInput.Copy();
       var floor = map.Keys.Select(p => p.Y).Max() + 2;
-      while (DropSand(map, floorHeight: floor))
-      { }
+      DropFrom(map, new Position(500, 0), floor);
 
       return map.Count(kvp => kvp.Value == 'o').ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
