@@ -1,10 +1,8 @@
 namespace AdventOfCode.Solutions.Year2022.Day13;
 
-using System.Diagnostics.CodeAnalysis;
-
 internal sealed class Solution : SolutionBase<Tuple<IPacketData, IPacketData>[]>
 {
-   public Solution() : base(13, 2022, "Distress Signal", true) { }
+   public Solution() : base(13, 2022, "Distress Signal", false) { }
 
    public override Tuple<IPacketData, IPacketData>[] ParseInput(string input)
    {
@@ -26,7 +24,6 @@ internal sealed class Solution : SolutionBase<Tuple<IPacketData, IPacketData>[]>
       for (var index = 0; index < this.ParsedInput.Length; ++index)
       {
          var pair = this.ParsedInput[index];
-         //Console.WriteLine($"== Pair {index + 1} ==");
          if (pair.Item1.CompareTo(pair.Item2) <= 0)
          {
             sum += index + 1;
@@ -60,6 +57,7 @@ internal interface IPacketData : IComparable, IEquatable<IPacketData>
 {
    public int CompareTo(IPacketData other);
 
+#pragma warning disable CS8602,CS8603,CS8604
    public static IPacketData ParsePacket(string packet)
    {
       PacketList? currentList = null;
@@ -109,6 +107,7 @@ internal interface IPacketData : IComparable, IEquatable<IPacketData>
 
       return currentList;
    }
+#pragma warning restore CS8602,CS8603,CS8604
 }
 
 internal sealed record PacketInteger : IPacketData
@@ -117,13 +116,24 @@ internal sealed record PacketInteger : IPacketData
 
    public int CompareTo(IPacketData other)
    {
-      //Console.WriteLine($"Compare {this} vs {other}");
-
       // Comparing two integers
       var otherInt = other as PacketInteger;
       if (otherInt != null)
       {
-         return this.Value.CompareTo(otherInt.Value);
+         if (this.Value < otherInt.Value)
+         {
+            return -1;
+         }
+
+         if (this.Value == otherInt.Value)
+         {
+            return 0;
+         }
+
+         if (this.Value > otherInt.Value)
+         {
+            return 1;
+         }
       }
 
       // Comparing integer to list
@@ -167,8 +177,6 @@ internal sealed record PacketList : IPacketData
 
    public int CompareTo(IPacketData other)
    {
-      //Console.WriteLine($"Compare {this} vs {other}");
-
       var otherList = other as PacketList;
       if (otherList == null)
       {
@@ -180,29 +188,38 @@ internal sealed record PacketList : IPacketData
 
          otherList = new PacketList();
          otherList.Value.Add(otherInt);
+         return this.CompareTo(otherList);
       }
 
-      for (var index = 0; index < this.Value.Count; ++index)
+      var index = 0;
+      while (true)
       {
-         if (index >= otherList.Value.Count)
+         if (index < this.Value.Count && index < otherList.Value.Count)
+         {
+            var ourElement = this.Value[index];
+            var theirElement = otherList.Value[index];
+            var compareVal = ourElement.CompareTo(theirElement);
+
+            if (compareVal != 0)
+            {
+               return compareVal;
+            }
+         }
+         else if (index < this.Value.Count)
          {
             return 1;
          }
-
-         var compareVal = this.Value.ElementAt(index).CompareTo(otherList.Value.ElementAt(index));
-
-         if (compareVal != 0)
+         else if (index < otherList.Value.Count)
          {
-            return compareVal;
+            return -1;
          }
-      }
+         else
+         {
+            return 0;
+         }
 
-      if (Enumerable.SequenceEqual(this.Value, otherList.Value))
-      {
-         return 0;
+         ++index;
       }
-
-      return -1;
    }
 
    public int CompareTo(object? obj)
