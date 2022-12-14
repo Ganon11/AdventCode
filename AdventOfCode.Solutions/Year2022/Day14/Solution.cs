@@ -78,5 +78,5 @@ internal sealed class Solution : SolutionBase<Dictionary<Position, char>>
    }
 }
 
-internal class InfiniteAbyssException : Exception
+internal sealed class InfiniteAbyssException : Exception
 { }
