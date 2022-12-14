@@ -15,15 +15,12 @@ internal sealed class Solution : SolutionBase<Dictionary<Position, char>>
          var positions = barrier.Split(" -> ")
             .Select(p => new Position(p))
             .ToArray();
-         var rocks = new List<Position>();
          for (var index = 0; index < (positions.Length - 1); ++index)
          {
-            rocks.AddRange(Position.GetPointsInLine(positions[index], positions[index + 1]));
-         }
-
-         foreach (var position in rocks)
-         {
-            map[position] = '#';
+            foreach (var position in Position.GetPointsInLine(positions[index], positions[index + 1]))
+            {
+               map[position] = '#';
+            }
          }
       }
 
@@ -39,15 +36,16 @@ internal sealed class Solution : SolutionBase<Dictionary<Position, char>>
       while (sand.Y <= maxY)
       {
          var nextPosition = sand.North;
+         if (map.ContainsKey(nextPosition))
+         {
+            nextPosition = sand.NorthWest;
+         }
 
          if (map.ContainsKey(nextPosition))
          {
-            nextPosition = sand.North.West;
+            nextPosition = sand.NorthEast;
          }
-         if (map.ContainsKey(nextPosition))
-         {
-            nextPosition = sand.North.East;
-         }
+
          if (map.ContainsKey(nextPosition))
          {
             map[sand] = 'o';
@@ -79,7 +77,6 @@ internal sealed class Solution : SolutionBase<Dictionary<Position, char>>
    public override string SolvePartTwo()
    {
       var map = this.ParsedInput.Copy();
-
       var floor = map.Keys.Select(p => p.Y).Max() + 2;
       while (DropSand(map, floorHeight: floor))
       { }
