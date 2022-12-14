@@ -39,7 +39,6 @@ internal sealed class Solution : SolutionBase<Dictionary<Position, char>>
          var northWestPosition = sand.NorthWest;
          var northEastPosition = sand.NorthEast;
          Position? nextPosition = null;
-
          if (!map.ContainsKey(northPosition))
          {
             nextPosition = northPosition;
@@ -55,7 +54,6 @@ internal sealed class Solution : SolutionBase<Dictionary<Position, char>>
          else
          {
             map[sand] = 'o';
-
             return map[start] != 'o';
          }
 
@@ -72,33 +70,6 @@ internal sealed class Solution : SolutionBase<Dictionary<Position, char>>
       return false;
    }
 
-   public static string DrawMap(Dictionary<Position, char> map)
-   {
-      var sb = new StringBuilder();
-      var minRow = map.Keys.Select(p => p.Y).Min();
-      var maxRow = map.Keys.Select(p => p.Y).Max();
-      var minCol = map.Keys.Select(p => p.X).Min();
-      var maxCol = map.Keys.Select(p => p.X).Max();
-
-      for (var row = minRow; row <= maxRow; ++row)
-      {
-         for (var col = minCol; col <= maxCol; ++col)
-         {
-            if (map.TryGetValue(new Position(col, row), out char value))
-            {
-               _ = sb.Append(value);
-            }
-            else
-            {
-               _ = sb.Append('.');
-            }
-         }
-         _ = sb.AppendLine();
-      }
-
-      return sb.ToString();
-   }
-
    public override string SolvePartOne()
    {
       var map = this.ParsedInput.Copy();
@@ -110,7 +81,6 @@ internal sealed class Solution : SolutionBase<Dictionary<Position, char>>
 
    private static void DropFrom(Dictionary<Position, char> map, Position p, int floor)
    {
-
       if ((map.TryGetValue(p, out var value) && value != '+') || (p.Y == floor))
       {
          return;
