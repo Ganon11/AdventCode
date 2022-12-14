@@ -67,7 +67,7 @@ public class AdjacencyTests
    public void Test_NorthEast()
    {
       Position.Position origin = new();
-      var p = origin.North.East;
+      var p = origin.NorthEast;
       Assert.AreEqual(1, p.X);
       Assert.AreEqual(1, p.Y);
       Assert.AreEqual(0, p.Z);
@@ -77,7 +77,7 @@ public class AdjacencyTests
    public void Test_NorthWest()
    {
       Position.Position origin = new();
-      var p = origin.North.West;
+      var p = origin.NorthWest;
       Assert.AreEqual(-1, p.X);
       Assert.AreEqual(1, p.Y);
       Assert.AreEqual(0, p.Z);
@@ -87,7 +87,7 @@ public class AdjacencyTests
    public void Test_NorthUp()
    {
       Position.Position origin = new();
-      var p = origin.North.Up;
+      var p = origin.NorthUp;
       Assert.AreEqual(0, p.X);
       Assert.AreEqual(1, p.Y);
       Assert.AreEqual(1, p.Z);
@@ -97,7 +97,7 @@ public class AdjacencyTests
    public void Test_NorthDown()
    {
       Position.Position origin = new();
-      var p = origin.North.Down;
+      var p = origin.NorthDown;
       Assert.AreEqual(0, p.X);
       Assert.AreEqual(1, p.Y);
       Assert.AreEqual(-1, p.Z);
@@ -107,7 +107,7 @@ public class AdjacencyTests
    public void Test_SouthEast()
    {
       Position.Position origin = new();
-      var p = origin.South.East;
+      var p = origin.SouthEast;
       Assert.AreEqual(1, p.X);
       Assert.AreEqual(-1, p.Y);
       Assert.AreEqual(0, p.Z);
@@ -117,7 +117,7 @@ public class AdjacencyTests
    public void Test_SouthWest()
    {
       Position.Position origin = new();
-      var p = origin.South.West;
+      var p = origin.SouthWest;
       Assert.AreEqual(-1, p.X);
       Assert.AreEqual(-1, p.Y);
       Assert.AreEqual(0, p.Z);
@@ -127,7 +127,7 @@ public class AdjacencyTests
    public void Test_SouthUp()
    {
       Position.Position origin = new();
-      var p = origin.South.Up;
+      var p = origin.SouthUp;
       Assert.AreEqual(0, p.X);
       Assert.AreEqual(-1, p.Y);
       Assert.AreEqual(1, p.Z);
@@ -137,7 +137,7 @@ public class AdjacencyTests
    public void Test_SouthDown()
    {
       Position.Position origin = new();
-      var p = origin.South.Down;
+      var p = origin.SouthDown;
       Assert.AreEqual(0, p.X);
       Assert.AreEqual(-1, p.Y);
       Assert.AreEqual(-1, p.Z);
@@ -147,7 +147,7 @@ public class AdjacencyTests
    public void Test_EastUp()
    {
       Position.Position origin = new();
-      var p = origin.East.Up;
+      var p = origin.EastUp;
       Assert.AreEqual(1, p.X);
       Assert.AreEqual(0, p.Y);
       Assert.AreEqual(1, p.Z);
@@ -157,7 +157,7 @@ public class AdjacencyTests
    public void Test_EastDown()
    {
       Position.Position origin = new();
-      var p = origin.East.Down;
+      var p = origin.EastDown;
       Assert.AreEqual(1, p.X);
       Assert.AreEqual(0, p.Y);
       Assert.AreEqual(-1, p.Z);
@@ -167,7 +167,7 @@ public class AdjacencyTests
    public void Test_WestUp()
    {
       Position.Position origin = new();
-      var p = origin.West.Up;
+      var p = origin.WestUp;
       Assert.AreEqual(-1, p.X);
       Assert.AreEqual(0, p.Y);
       Assert.AreEqual(1, p.Z);
@@ -177,7 +177,7 @@ public class AdjacencyTests
    public void Test_WestDown()
    {
       Position.Position origin = new();
-      var p = origin.West.Down;
+      var p = origin.WestDown;
       Assert.AreEqual(-1, p.X);
       Assert.AreEqual(0, p.Y);
       Assert.AreEqual(-1, p.Z);
@@ -250,14 +250,14 @@ public class AdjacencyTests
       Assert.IsFalse(d.IsAdjacentTo(w));
       Assert.IsFalse(d.IsAdjacentTo(u));
 
-      var ne = origin.North.East;
-      var nw = origin.North.West;
-      var nu = origin.North.Up;
-      var nd = origin.North.Down;
-      var se = origin.South.East;
-      var sw = origin.South.West;
-      var su = origin.South.Up;
-      var sd = origin.South.Down;
+      var ne = origin.NorthEast;
+      var nw = origin.NorthWest;
+      var nu = origin.NorthUp;
+      var nd = origin.NorthDown;
+      var se = origin.SouthEast;
+      var sw = origin.SouthWest;
+      var su = origin.SouthUp;
+      var sd = origin.SouthDown;
 
       Assert.IsFalse(origin.IsAdjacentTo(ne));
       Assert.IsFalse(origin.IsAdjacentTo(nw));
@@ -274,34 +274,34 @@ public class AdjacencyTests
    {
       Position.Position origin = new();
 
-      var unw = origin.Up.North.West;
-      var un = origin.Up.North;
-      var une = origin.Up.North.East;
-      var uw = origin.Up.West;
+      var unw = origin.NorthWestUp;
+      var un = origin.NorthUp;
+      var une = origin.NorthEastUp;
+      var uw = origin.WestUp;
       var u = origin.Up;
-      var ue = origin.Up.East;
-      var usw = origin.Up.South.West;
-      var us = origin.Up.South;
-      var use = origin.Up.East;
+      var ue = origin.EastUp;
+      var usw = origin.SouthWestUp;
+      var us = origin.SouthUp;
+      var use = origin.SouthEastUp;
 
-      var nw = origin.North.West;
+      var nw = origin.NorthWest;
       var n = origin.North;
-      var ne = origin.North.East;
+      var ne = origin.NorthEast;
       var w = origin.West;
       var e = origin.East;
-      var sw = origin.South.West;
+      var sw = origin.SouthWest;
       var s = origin.South;
-      var se = origin.East;
+      var se = origin.SouthEast;
 
-      var dnw = origin.Down.North.West;
-      var dn = origin.Down.North;
-      var dne = origin.Down.North.East;
-      var dw = origin.Down.West;
+      var dnw = origin.NorthWestDown;
+      var dn = origin.NorthDown;
+      var dne = origin.NorthEastDown;
+      var dw = origin.WestDown;
       var d = origin.Down;
-      var de = origin.Down.East;
-      var dsw = origin.Down.South.West;
-      var ds = origin.Down.South;
-      var dse = origin.Down.East;
+      var de = origin.EastDown;
+      var dsw = origin.SouthWestDown;
+      var ds = origin.SouthDown;
+      var dse = origin.SouthEastDown;
 
       Assert.IsTrue(origin.IsAdjacentTo(unw, includeDiagonals: true));
       Assert.IsTrue(origin.IsAdjacentTo(un, includeDiagonals: true));
@@ -367,34 +367,35 @@ public class AdjacencyTests
    public void Test_Diagonal_Adjacent_Positions()
    {
       Position.Position origin = new();
-      var unw = origin.Up.North.West;
-      var un = origin.Up.North;
-      var une = origin.Up.North.East;
-      var uw = origin.Up.West;
-      var u = origin.Up;
-      var ue = origin.Up.East;
-      var usw = origin.Up.South.West;
-      var us = origin.Up.South;
-      var use = origin.Up.East;
 
-      var nw = origin.North.West;
+      var unw = origin.NorthWestUp;
+      var un = origin.NorthUp;
+      var une = origin.NorthEastUp;
+      var uw = origin.WestUp;
+      var u = origin.Up;
+      var ue = origin.EastUp;
+      var usw = origin.SouthWestUp;
+      var us = origin.SouthUp;
+      var use = origin.SouthEastUp;
+
+      var nw = origin.NorthWest;
       var n = origin.North;
-      var ne = origin.North.East;
+      var ne = origin.NorthEast;
       var w = origin.West;
       var e = origin.East;
-      var sw = origin.South.West;
+      var sw = origin.SouthWest;
       var s = origin.South;
-      var se = origin.East;
+      var se = origin.SouthEast;
 
-      var dnw = origin.Down.North.West;
-      var dn = origin.Down.North;
-      var dne = origin.Down.North.East;
-      var dw = origin.Down.West;
+      var dnw = origin.NorthWestDown;
+      var dn = origin.NorthDown;
+      var dne = origin.NorthEastDown;
+      var dw = origin.WestDown;
       var d = origin.Down;
-      var de = origin.Down.East;
-      var dsw = origin.Down.South.West;
-      var ds = origin.Down.South;
-      var dse = origin.Down.East;
+      var de = origin.EastDown;
+      var dsw = origin.SouthWestDown;
+      var ds = origin.SouthDown;
+      var dse = origin.SouthEastDown;
 
       var adjacentPositions = origin.GetAdjacentPositions(includeDiagonals: true);
       Assert.AreEqual(26, adjacentPositions.Count());
