@@ -10,35 +10,31 @@ internal sealed class Solution : SolutionBase
          return -1;
       }
 
-      var marker = new Queue<char>();
+      var marker = 0;
       var answer = 0;
       while (answer < targetLength)
       {
-         marker.Enqueue(input[answer++]);
+         var currentChar = input[answer++];
+         marker ^= 1 << currentChar;
       }
 
       while (answer < input.Length)
       {
-         if (marker.SequenceEqual(marker.Distinct()))
+         if (Convert.ToString(marker, 2).Count(c => c == '1') == targetLength)
          {
             return answer;
          }
 
-         _ = marker.Dequeue();
-         marker.Enqueue(input[answer]);
-         ++answer;
+         var oldChar = input[answer - targetLength];
+         marker ^= 1 << oldChar;
+         var currentChar = input[answer++];
+         marker ^= 1 << currentChar;
       }
 
       return -1;
    }
 
-   public override string SolvePartOne()
-   {
-      return FindMarker(Input, 4).ToString(System.Globalization.CultureInfo.CurrentCulture);
-   }
+   public override string SolvePartOne() => FindMarker(this.Input, 4).ToString(System.Globalization.CultureInfo.CurrentCulture);
 
-   public override string SolvePartTwo()
-   {
-      return FindMarker(Input, 14).ToString(System.Globalization.CultureInfo.CurrentCulture);
-   }
+   public override string SolvePartTwo() => FindMarker(this.Input, 14).ToString(System.Globalization.CultureInfo.CurrentCulture);
 }
