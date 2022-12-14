@@ -1,18 +1,18 @@
-﻿using System.Text.Json;
+namespace AdventOfCode.Services;
+
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using AdventOfCode.Services.Models;
 
-namespace AdventOfCode.Services;
-
 public static class ConfigurationService
 {
-   static Config Config = GetConfig();
+   private static Config config = GetConfig();
 
-   public static string GetCookie() => Config.Cookie;
+   public static string GetCookie() => config.Cookie;
 
-   public static int GetYear() => Config.Year;
+   public static int GetYear() => config.Year;
 
-   public static int[] GetDays() => Config.Days;
+   public static int[] GetDays() => config.Days;
 
    private static Config GetConfig(string path = "config.json")
    {
@@ -26,13 +26,13 @@ public static class ConfigurationService
       if (File.Exists(path))
       {
          config = JsonSerializer.Deserialize<Config>(File.ReadAllText(path), options);
-         config.setDefaults();
+         config.SetDefaults();
       }
       else
       {
          config = new Config();
-         config.setDefaults();
-         File.WriteAllText(path, JsonSerializer.Serialize<Config>(config, options));
+         config.SetDefaults();
+         File.WriteAllText(path, JsonSerializer.Serialize(config, options));
       }
 
       return config;

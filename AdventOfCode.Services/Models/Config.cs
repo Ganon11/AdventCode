@@ -1,9 +1,9 @@
+namespace AdventOfCode.Services.Models;
+
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace AdventOfCode.Services.Models;
-
-struct Config
+internal struct Config
 {
    public string Cookie { get; set; }
 
@@ -12,17 +12,28 @@ struct Config
    [JsonConverter(typeof(DaysConverter))]
    public int[] Days { get; set; }
 
-   public void setDefaults()
+   public void SetDefaults()
    {
       //Make sure we're looking at EST, or it might break for most of the US
       var currentEst = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.Utc).AddHours(-5);
-      if (Cookie == default(string)) Cookie = "";
-      if (Year == default(int)) Year = currentEst.Year;
-      if (Days == default(int[])) Days = (currentEst.Month == 12 && currentEst.Day <= 25) ? new int[] { currentEst.Day } : new int[] { 0 };
+      if (this.Cookie == default)
+      {
+         this.Cookie = "";
+      }
+
+      if (this.Year == default)
+      {
+         this.Year = currentEst.Year;
+      }
+
+      if (this.Days == default(int[]))
+      {
+         this.Days = (currentEst.Month == 12 && currentEst.Day <= 25) ? new int[] { currentEst.Day } : new int[] { 0 };
+      }
    }
 }
 
-class DaysConverter : JsonConverter<int[]>
+internal sealed class DaysConverter : JsonConverter<int[]>
 {
    public override int[] Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
    {
@@ -36,47 +47,50 @@ class DaysConverter : JsonConverter<int[]>
          case JsonTokenType.String:
             tokens = new string[] { reader.GetString() ?? "" };
             break;
-
          default:
             var obj = JsonSerializer
                 .Deserialize<object[]>(ref reader);
 
             tokens = obj != null
-                ? obj.Select<object, string>(o => o.ToString() ?? "")
-                : new string[] { };
+                ? obj.Select(o => o.ToString() ?? "")
+                : Array.Empty<string>();
             break;
       }
 
-      var days = tokens.SelectMany<string, int>(ParseString);
-      if (days.Contains(0)) return new[] { 0 };
+      var days = tokens.SelectMany(this.ParseString);
+      if (days.Contains(0))
+      {
+         return new[] { 0 };
+      }
 
-      return days.Where(v => v < 26 && v > 0).OrderBy(day => day).ToArray();
+      return days.Where(v => v is < 26 and > 0).OrderBy(day => day).ToArray();
    }
 
-   private IEnumerable<int> ParseString(string str)
-   {
-      return str.Split(",").SelectMany<string, int>(str =>
+   private IEnumerable<int> ParseString(string str) => str.Split(",").SelectMany(str =>
       {
          if (str.Contains(".."))
          {
             var split = str.Split("..");
-            int start = int.Parse(split[0]);
-            int stop = int.Parse(split[1]);
+            var start = int.Parse(split[0], System.Globalization.CultureInfo.CurrentCulture);
+            var stop = int.Parse(split[1], System.Globalization.CultureInfo.CurrentCulture);
             return Enumerable.Range(start, stop - start + 1);
          }
-         else if (int.TryParse(str, out int day))
+         else if (int.TryParse(str, out var day))
          {
             return new int[] { day };
          }
 
-         return new int[0];
+         return Array.Empty<int>();
       });
-   }
 
    public override void Write(Utf8JsonWriter writer, int[] value, JsonSerializerOptions options)
    {
       writer.WriteStartArray();
-      foreach (int val in value) writer.WriteNumberValue(val);
+      foreach (var val in value)
+      {
+         writer.WriteNumberValue(val);
+      }
+
       writer.WriteEndArray();
    }
 }

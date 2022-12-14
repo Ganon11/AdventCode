@@ -4,13 +4,13 @@ namespace AdventOfCode.Services;
 
 public static class AdventOfCodeService
 {
-   private static HttpClientHandler handler = new HttpClientHandler
+   private static readonly HttpClientHandler Handler = new()
    {
       CookieContainer = GetCookieContainer(),
       UseCookies = true,
    };
 
-   private static HttpClient client = new HttpClient(handler)
+   private static readonly HttpClient Client = new(Handler)
    {
       BaseAddress = new Uri("https://adventofcode.com/"),
    };
@@ -23,7 +23,7 @@ public static class AdventOfCodeService
          throw new InvalidOperationException("Too early to get puzzle input.");
       }
 
-      var response = await client.GetAsync($"{year}/day/{day}/input");
+      var response = await Client.GetAsync($"{year}/day/{day}/input");
       return await response.EnsureSuccessStatusCode().Content.ReadAsStringAsync();
    }
 
