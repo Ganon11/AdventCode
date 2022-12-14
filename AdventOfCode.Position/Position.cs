@@ -204,6 +204,58 @@ public class Position : IComparable<Position>, IEquatable<Position>
 
    public Position Down => new(this.X, this.Y, this.Z - 1);
 
+   public Position NorthEast => new(this.X + 1, this.Y + 1, this.Z);
+   public Position EastNorth => this.NorthEast;
+
+   public Position SouthEast => new(this.X + 1, this.Y - 1, this.Z);
+   public Position EastSouth => this.SouthEast;
+
+   public Position NorthWest => new(this.X - 1, this.Y + 1, this.Z);
+   public Position WestNorth => this.NorthWest;
+
+   public Position SouthWest => new(this.X - 1, this.Y - 1, this.Z);
+   public Position WestSouth => this.SouthWest;
+
+   public Position NorthUp => new(this.X, this.Y + 1, this.Z + 1);
+   public Position UpNorth => this.NorthUp;
+
+   public Position NorthDown => new(this.X, this.Y + 1, this.Z - 1);
+   public Position DownNorth => this.NorthDown;
+
+   public Position SouthUp => new(this.X, this.Y - 1, this.Z + 1);
+   public Position UpSouth => this.SouthUp;
+
+   public Position SouthDown => new(this.X, this.Y - 1, this.Z - 1);
+   public Position DownSouth => this.SouthDown;
+
+   public Position EastUp => new(this.X + 1, this.Y, this.Z + 1);
+   public Position UpEast => this.EastUp;
+
+   public Position EastDown => new(this.X + 1, this.Y, this.Z - 1);
+   public Position DownEast => this.EastDown;
+
+   public Position WestUp => new(this.X - 1, this.Y, this.Z + 1);
+   public Position UpWest => this.WestUp;
+
+   public Position WestDown => new(this.X - 1, this.Y, this.Z - 1);
+   public Position DownWest => this.WestDown;
+
+   public Position NorthEastUp => new(this.X + 1, this.Y + 1, this.Z + 1);
+
+   public Position NorthEastDown => new(this.X + 1, this.Y + 1, this.Z - 1);
+
+   public Position NorthWestUp => new(this.X - 1, this.Y + 1, this.Z + 1);
+
+   public Position NorthWestDown => new(this.X - 1, this.Y + 1, this.Z - 1);
+
+   public Position SouthEastUp => new(this.X + 1, this.Y - 1, this.Z + 1);
+
+   public Position SouthEastDown => new(this.X + 1, this.Y - 1, this.Z - 1);
+
+   public Position SouthWestUp => new(this.X - 1, this.Y - 1, this.Z + 1);
+
+   public Position SouthWestDown => new(this.X - 1, this.Y - 1, this.Z - 1);
+
    public IEnumerable<Position> GetAdjacentPositions(bool includeZ = true, bool includeDiagonals = false)
    {
       var result = new HashSet<Position>
@@ -222,35 +274,35 @@ public class Position : IComparable<Position>, IEquatable<Position>
 
       if (includeDiagonals)
       {
-         _ = result.Add(this.North.West);
-         _ = result.Add(this.North.East);
-         _ = result.Add(this.South.West);
-         _ = result.Add(this.South.East);
+         _ = result.Add(this.NorthWest);
+         _ = result.Add(this.NorthEast);
+         _ = result.Add(this.SouthWest);
+         _ = result.Add(this.SouthEast);
       }
 
       if (includeZ && includeDiagonals)
       {
-         _ = result.Add(this.North.Up);
-         _ = result.Add(this.North.Down);
+         _ = result.Add(this.NorthUp);
+         _ = result.Add(this.NorthDown);
 
-         _ = result.Add(this.South.Up);
-         _ = result.Add(this.South.Down);
+         _ = result.Add(this.SouthUp);
+         _ = result.Add(this.SouthDown);
 
-         _ = result.Add(this.East.Up);
-         _ = result.Add(this.East.Down);
+         _ = result.Add(this.EastUp);
+         _ = result.Add(this.EastDown);
 
-         _ = result.Add(this.West.Up);
-         _ = result.Add(this.West.Down);
+         _ = result.Add(this.WestUp);
+         _ = result.Add(this.WestDown);
 
-         _ = result.Add(this.Up.North.West);
-         _ = result.Add(this.Up.North.East);
-         _ = result.Add(this.Up.South.West);
-         _ = result.Add(this.Up.South.East);
+         _ = result.Add(this.NorthWestUp);
+         _ = result.Add(this.NorthEastUp);
+         _ = result.Add(this.SouthWestUp);
+         _ = result.Add(this.SouthEastUp);
 
-         _ = result.Add(this.Down.North.West);
-         _ = result.Add(this.Down.North.East);
-         _ = result.Add(this.Down.South.West);
-         _ = result.Add(this.Down.South.East);
+         _ = result.Add(this.NorthWestDown);
+         _ = result.Add(this.NorthEastDown);
+         _ = result.Add(this.SouthWestDown);
+         _ = result.Add(this.SouthEastDown);
       }
 
       return result;
