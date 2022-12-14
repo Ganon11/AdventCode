@@ -73,7 +73,8 @@ internal sealed class Solution : SolutionBase<char[][]>
       return visibleTrees.Count;
    }
 
-   public override string SolvePartOne() => CountVisible(this.ParsedInput).ToString(System.Globalization.CultureInfo.CurrentCulture);
+   public override string SolvePartOne() => CountVisible(this.ParsedInput)
+      .ToString(System.Globalization.CultureInfo.CurrentCulture);
 
    private static int CalculateScenicScore(char[][] trees)
    {
@@ -109,7 +110,7 @@ internal sealed class Solution : SolutionBase<char[][]>
             var leftScore = CalculateScore(trees, row, col, 0, -1);
             var rightScore = CalculateScore(trees, row, col, 0, 1);
 
-            int scenicScore = upScore * downScore * leftScore * rightScore;
+            var scenicScore = upScore * downScore * leftScore * rightScore;
             if (scenicScore > bestScenicScore)
             {
                bestScenicScore = scenicScore;
