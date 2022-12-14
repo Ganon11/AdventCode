@@ -1,16 +1,16 @@
-using System.Text.RegularExpressions;
-
 namespace AdventOfCode.Solutions.Year2022.Day05;
 
-sealed partial class Solution : SolutionBase<Tuple<Stack<char>[], Solution.Instruction[]>>
+using System.Text.RegularExpressions;
+
+internal sealed partial class Solution : SolutionBase<Tuple<Stack<char>[], Solution.Instruction[]>>
 {
    public Solution() : base(05, 2022, "Supply Stacks") { }
 
    public override string SolvePartOne()
    {
-      Stack<char>[] stacks = (Stack<char>[])ParsedInput.Item1.Clone();
+      var stacks = this.ParsedInput.Item1.Copy();
 
-      foreach (var instruction in ParsedInput.Item2)
+      foreach (var instruction in this.ParsedInput.Item2)
       {
          for (var i = 0; i < instruction.Count; ++i)
          {
@@ -23,9 +23,9 @@ sealed partial class Solution : SolutionBase<Tuple<Stack<char>[], Solution.Instr
 
    public override string SolvePartTwo()
    {
-      Stack<char>[] stacks = (Stack<char>[])ParsedInput.Item1.Clone();
+      var stacks = this.ParsedInput.Item1.Copy();
 
-      foreach (var instruction in ParsedInput.Item2)
+      foreach (var instruction in this.ParsedInput.Item2)
       {
          var temp = new Stack<char>();
          for (var i = 0; i < instruction.Count; ++i)
@@ -70,7 +70,11 @@ sealed partial class Solution : SolutionBase<Tuple<Stack<char>[], Solution.Instr
    }
    public override Tuple<Stack<char>[], Instruction[]> ParseInput(string input)
    {
-      //input = input.Replace("\r", "");
+      if (string.IsNullOrEmpty(input))
+      {
+         return new(Array.Empty<Stack<char>>(), Array.Empty<Instruction>());
+      }
+
       var tokens = input.SplitByParagraph(shouldTrim: false);
 
       var reversedLines = tokens[0].SplitByNewline(shouldTrim: false).Reverse();
