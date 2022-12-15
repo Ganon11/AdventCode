@@ -94,7 +94,7 @@ public class Position : IComparable<Position>, IEquatable<Position>
 
       if (!good)
       {
-         return Enumerable.Empty<Position>();
+         yield break;
       }
 
       List<Position> points = new List<Position>();
@@ -104,7 +104,7 @@ public class Position : IComparable<Position>, IEquatable<Position>
 
       for (int index = 0; index < numPoints; index++)
       {
-         points.Add(new Position(x, y, z));
+         yield return new Position(x, y, z);
 
          if (x < p2.X)
          {
@@ -133,8 +133,6 @@ public class Position : IComparable<Position>, IEquatable<Position>
             --z;
          }
       }
-
-      return points;
    }
 
    public int ManhattanDistance(Position? other = null)
