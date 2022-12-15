@@ -31,48 +31,6 @@ internal sealed partial class Solution : SolutionBase<Sensor[]>
       return sensors.ToArray();
    }
 
-   public static string DrawMap(Dictionary<Position, char> map, int? targetRow = null, int? bound = null)
-   {
-      int minX, maxX, minY, maxY;
-      if (bound.HasValue)
-      {
-         minX = 0;
-         maxX = bound.Value;
-         minY = 0;
-         maxY = bound.Value;
-      }
-      else
-      {
-         minX = map.Keys.Select(p => p.X).Min();
-         maxX = map.Keys.Select(p => p.X).Max();
-         minY = map.Keys.Select(p => p.Y).Min();
-         maxY = map.Keys.Select(p => p.Y).Max();
-      }
-
-      var sb = new StringBuilder();
-      for (var row = minY; row <= maxY; row++)
-      {
-         for (var col = minX; col <= maxX; col++)
-         {
-            if (map.TryGetValue(new Position(col, row), out var value))
-            {
-               _ = sb.Append(value);
-            }
-            else
-            {
-               _ = sb.Append(' ');
-            }
-         }
-         if (targetRow != null && row == targetRow)
-         {
-            _ = sb.Append("<-- RIGHT HERE");
-         }
-         _ = sb.AppendLine();
-      }
-
-      return sb.ToString();
-   }
-
    public override string SolvePartOne()
    {
       var targetRow = this.Debug ? 10 : 2000000;
@@ -101,7 +59,6 @@ internal sealed partial class Solution : SolutionBase<Sensor[]>
          }
       }
 
-      //Console.WriteLine(DrawMap(map, targetRow: targetRow));
       var targetPositions = map.Keys.Where(p => p.Y == targetRow);
       var minCol = targetPositions.Select(p => p.X).Min();
       var maxCol = targetPositions.Select(p => p.X).Max();
@@ -123,7 +80,7 @@ internal sealed partial class Solution : SolutionBase<Sensor[]>
       Position? emptyTarget = null;
       foreach (var source in this.ParsedInput)
       {
-         foreach (var boundingPosition in source.BoundingLines)
+         foreach (var boundingPosition in source.GetBoundingLines(bound))
          {
             if (boundingPosition.X < 0 || boundingPosition.X > bound || boundingPosition.Y < 0 || boundingPosition.Y > bound)
             {
@@ -165,8 +122,7 @@ internal sealed partial class Solution : SolutionBase<Sensor[]>
 
       if (emptyTarget != null)
       {
-         //Console.WriteLine(emptyTarget);
-         var tuningFrequency = ((long)emptyTarget.X * 4000000) + (long)emptyTarget.Y;
+         var tuningFrequency = ((long)emptyTarget.X * 4000000) + emptyTarget.Y;
          return tuningFrequency.ToString(System.Globalization.CultureInfo.CurrentCulture);
       }
 
@@ -182,35 +138,59 @@ internal sealed record Sensor
    public Position Position { get; init; }
    public Position ClosestBeacon { get; init; }
    public int Distance { get; init; }
-   public HashSet<Position> BoundingLines { get; init; }
 
    public Sensor(Position p, Position b)
    {
       this.Position = p;
       this.ClosestBeacon = b;
-
-      this.BoundingLines = new HashSet<Position>();
       this.Distance = this.Position.ManhattanDistance(this.ClosestBeacon);
+   }
 
+   public IEnumerable<Position> GetBoundingLines(int bound)
+   {
       var top = new Position(this.Position.X, this.Position.Y + this.Distance + 1);
       var left = new Position(this.Position.X - this.Distance - 1, this.Position.Y);
+
+      foreach (var p in Position.GetPointsInLine(top, left))
+      {
+         if (p.X < 0 || p.X > bound || p.Y < 0 || p.Y > bound)
+         {
+            continue;
+         }
+
+         yield return p;
+      }
+
       var bottom = new Position(this.Position.X, this.Position.Y - this.Distance - 1);
+      foreach (var p in Position.GetPointsInLine(left, bottom))
+      {
+         if (p.X < 0 || p.X > bound || p.Y < 0 || p.Y > bound)
+         {
+            continue;
+         }
+
+         yield return p;
+      }
+
       var right = new Position(this.Position.X + this.Distance + 1, this.Position.Y);
-      foreach (var p1 in Position.GetPointsInLine(top, left))
+      foreach (var p in Position.GetPointsInLine(bottom, right))
       {
-         _ = this.BoundingLines.Add(p1);
+         if (p.X < 0 || p.X > bound || p.Y < 0 || p.Y > bound)
+         {
+            continue;
+         }
+
+         yield return p;
       }
-      foreach (var p1 in Position.GetPointsInLine(left, bottom))
+
+      foreach (var p in Position.GetPointsInLine(right, top))
       {
-         _ = this.BoundingLines.Add(p1);
-      }
-      foreach (var p1 in Position.GetPointsInLine(bottom, right))
-      {
-         _ = this.BoundingLines.Add(p1);
-      }
-      foreach (var p1 in Position.GetPointsInLine(right, top))
-      {
-         _ = this.BoundingLines.Add(p1);
+         if (p.X < 0 || p.X > bound || p.Y < 0 || p.Y > bound)
+         {
+            continue;
+         }
+
+         yield return p;
       }
    }
 }
