@@ -76,7 +76,7 @@ internal sealed partial class Solution : SolutionBase<Sensor[]>
 
       var duplicateFormulas = new HashSet<Line>();
       var formulaCache = new HashSet<Line>();
-      foreach (var line in this.ParsedInput.SelectMany(sensor => sensor.GetLines()))
+      foreach (var line in this.ParsedInput.SelectMany(sensor => sensor.GetBoundingLines()))
       {
          if (formulaCache.Contains(line))
          {
@@ -93,13 +93,9 @@ internal sealed partial class Solution : SolutionBase<Sensor[]>
       {
          for (var index2 = index1 + 1; index2 < duplicateFormulas.Count; ++index2)
          {
-            Position? intersection = Line.Intersection(duplicateFormulas.ElementAt(index1), duplicateFormulas.ElementAt(index2));
-            if (intersection == null)
-            {
-               continue;
-            }
-
-            if (intersection.X < 0 || intersection.X > bound || intersection.Y < 0 || intersection.Y > bound)
+            var intersection = Line.Intersection(duplicateFormulas.ElementAt(index1), duplicateFormulas.ElementAt(index2));
+            if (intersection == null || intersection.X < 0 || intersection.X > bound
+               || intersection.Y < 0 || intersection.Y > bound)
             {
                continue;
             }
@@ -107,7 +103,7 @@ internal sealed partial class Solution : SolutionBase<Sensor[]>
             _ = intersections.Add(intersection);
          }
       }
-      
+
       foreach (var intersection in intersections)
       {
          var clearIntersection = true;
@@ -133,7 +129,7 @@ internal sealed partial class Solution : SolutionBase<Sensor[]>
          return tuningFrequency.ToString(System.Globalization.CultureInfo.CurrentCulture);
       }
 
-      return "";
+      return string.Empty;
    }
 #pragma warning restore CS8604, CS8625
 
@@ -141,7 +137,6 @@ internal sealed partial class Solution : SolutionBase<Sensor[]>
    private static partial Regex SensorBeaconRegex();
 }
 
-// Line of the form y = mx + b
 internal sealed record Line
 {
    public long Slope { get; init; }
@@ -156,8 +151,6 @@ internal sealed record Line
    public Line(Position p1, Position p2)
    {
       this.Slope = (p2.Y - p1.Y) / (p2.X - p1.X);
-      // y = mx + b
-      // y - mx = b
       this.Intercept = p1.Y - (this.Slope * p1.X);
    }
 
@@ -168,15 +161,14 @@ internal sealed record Line
          return null;
       }
 
-      // y = m1x + b1
-      // y = m2x + b2
-      // m1x + b1 = m2x + b2
-      // m1x = m2x + b2 - b1
-      // m1x - m2x = b2 - b1
-      // x(m1 - m2) = b2 - b1
-      // x = (b2 - b1) / (m1 - m2)
-      long x = (l2.Intercept - l1.Intercept) / (l1.Slope - l2.Slope);
-      long y = (l1.Slope * x) + l1.Intercept;
+      // Line 1: y = m1x + b1
+      // Line 2: y = m2x + b2
+      // Intersection is where y and x values are equal, so m1x + b1 = m2x + b2
+      // Solve for X: x = (b2 - b1) / (m1 - m2)
+      var x = (l2.Intercept - l1.Intercept) / (l1.Slope - l2.Slope);
+
+      // Then use one of the line formulas, using our discovered X value
+      var y = (l1.Slope * x) + l1.Intercept;
 
       return new Position(x, y);
    }
@@ -195,12 +187,13 @@ internal sealed class Sensor
       this.Distance = this.Position.ManhattanDistance(this.ClosestBeacon);
    }
 
-   public IEnumerable<Line> GetLines()
+   public IEnumerable<Line> GetBoundingLines()
    {
       var top = new Position(this.Position.X, this.Position.Y + this.Distance + 1);
       var left = new Position(this.Position.X - this.Distance - 1, this.Position.Y);
       var bottom = new Position(this.Position.X, this.Position.Y - this.Distance - 1);
       var right = new Position(this.Position.X + this.Distance + 1, this.Position.Y);
+
       yield return new Line(top, left);
       yield return new Line(left, bottom);
       yield return new Line(bottom, right);
