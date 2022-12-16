@@ -34,106 +34,148 @@ internal sealed partial class Solution : SolutionBase<Sensor[]>
    public override string SolvePartOne()
    {
       var targetRow = this.Debug ? 10 : 2000000;
-      var map = new Dictionary<Position, char>();
+      var blocked = new HashSet<Position>();
       foreach (var sensor in this.ParsedInput)
       {
-         map[sensor.Position] = 'S';
-         map[sensor.ClosestBeacon] = 'B';
-         var manhattanDistance = sensor.Position.ManhattanDistance(sensor.ClosestBeacon);
-
          // Does the generated diamond intersect the target row?
          var distanceToTargetRow = sensor.Position.ManhattanDistance(new Position(sensor.Position.X, targetRow));
-         if (distanceToTargetRow <= manhattanDistance)
+         if (distanceToTargetRow <= sensor.Distance)
          {
             // Points could contribute to solution
-            var horizontalRange = manhattanDistance - distanceToTargetRow;
+            var horizontalRange = sensor.Distance - distanceToTargetRow;
             var left = new Position(sensor.Position.X - horizontalRange, targetRow);
             var right = new Position(sensor.Position.X + horizontalRange, targetRow);
             foreach (var p in Position.GetPointsInLine(left, right))
             {
-               if (!map.ContainsKey(p))
-               {
-                  map[p] = '#';
-               }
+               _ = blocked.Add(p);
             }
          }
       }
 
-      var targetPositions = map.Keys.Where(p => p.Y == targetRow);
-      var minCol = targetPositions.Select(p => p.X).Min();
-      var maxCol = targetPositions.Select(p => p.X).Max();
-      var sum = 0;
-      for (var col = minCol; col <= maxCol; ++col)
+      foreach (var sensor in this.ParsedInput.Where(sensor => sensor.ClosestBeacon.Y == targetRow))
       {
-         if (map.TryGetValue(new Position(col, targetRow), out var value) && value == '#')
-         {
-            ++sum;
-         }
+         _ = blocked.Remove(sensor.ClosestBeacon);
       }
 
-      return sum.ToString(System.Globalization.CultureInfo.CurrentCulture);
+      return blocked.Count.ToString(System.Globalization.CultureInfo.CurrentCulture);
+      //return "";
    }
 
+#pragma warning disable CS8604,CS8625
    public override string SolvePartTwo()
    {
       var bound = this.Debug ? 20 : 4000000;
       Position? emptyTarget = null;
-      foreach (var source in this.ParsedInput)
+
+      var duplicateFormulas = new HashSet<Line>();
+      var formulaCache = new HashSet<Line>();
+      foreach (var line in this.ParsedInput.SelectMany(sensor => sensor.GetLines()))
       {
-         foreach (var boundingPosition in source.GetBoundingLines(bound))
+         if (formulaCache.Contains(line))
          {
-            if (boundingPosition.X < 0 || boundingPosition.X > bound || boundingPosition.Y < 0 || boundingPosition.Y > bound)
+            _ = duplicateFormulas.Add(line);
+         }
+         else
+         {
+            _ = formulaCache.Add(line);
+         }
+      }
+
+      var intersections = new HashSet<Position>();
+      for (var index1 = 0; index1 < duplicateFormulas.Count; ++index1)
+      {
+         for (var index2 = index1 + 1; index2 < duplicateFormulas.Count; ++index2)
+         {
+            Position? intersection = Line.Intersection(duplicateFormulas.ElementAt(index1), duplicateFormulas.ElementAt(index2));
+            if (intersection == null)
             {
                continue;
             }
 
-            if (this.ParsedInput.Any(sensor => boundingPosition == sensor.ClosestBeacon))
+            if (intersection.X < 0 || intersection.X > bound || intersection.Y < 0 || intersection.Y > bound)
             {
                continue;
             }
 
-            var inRange = false;
-            foreach (var otherSensor in this.ParsedInput)
+            _ = intersections.Add(intersection);
+         }
+      }
+      
+      foreach (var intersection in intersections)
+      {
+         var clearIntersection = true;
+         foreach (var sensor in this.ParsedInput)
+         {
+            if (sensor.Position.ManhattanDistance(intersection) <= sensor.Distance)
             {
-               if (source.Position == otherSensor.Position)
-               {
-                  continue;
-               }
-
-               if (otherSensor.Position.ManhattanDistance(boundingPosition) <= otherSensor.Distance)
-               {
-                  inRange = true;
-                  break;
-               }
-            }
-
-            if (!inRange)
-            {
-               emptyTarget = boundingPosition;
+               clearIntersection = false;
                break;
             }
          }
 
-         if (emptyTarget != null)
+         if (clearIntersection)
          {
+            emptyTarget = intersection;
             break;
          }
       }
 
       if (emptyTarget != null)
       {
-         var tuningFrequency = ((long)emptyTarget.X * 4000000) + emptyTarget.Y;
+         var tuningFrequency = (emptyTarget.X * 4000000) + emptyTarget.Y;
          return tuningFrequency.ToString(System.Globalization.CultureInfo.CurrentCulture);
       }
 
       return "";
    }
+#pragma warning restore CS8604, CS8625
 
    [GeneratedRegex("Sensor at x=(?<sensorX>.+), y=(?<sensorY>.+): closest beacon is at x=(?<beaconX>.+), y=(?<beaconY>.+)")]
    private static partial Regex SensorBeaconRegex();
 }
 
-internal sealed record Sensor
+// Line of the form y = mx + b
+internal sealed record Line
+{
+   public long Slope { get; init; }
+   public long Intercept { get; init; }
+
+   public Line(int slope, long intercept)
+   {
+      this.Slope = slope;
+      this.Intercept = intercept;
+   }
+
+   public Line(Position p1, Position p2)
+   {
+      this.Slope = (p2.Y - p1.Y) / (p2.X - p1.X);
+      // y = mx + b
+      // y - mx = b
+      this.Intercept = p1.Y - (this.Slope * p1.X);
+   }
+
+   public static Position? Intersection(Line l1, Line l2)
+   {
+      if (l1.Slope == l2.Slope)
+      {
+         return null;
+      }
+
+      // y = m1x + b1
+      // y = m2x + b2
+      // m1x + b1 = m2x + b2
+      // m1x = m2x + b2 - b1
+      // m1x - m2x = b2 - b1
+      // x(m1 - m2) = b2 - b1
+      // x = (b2 - b1) / (m1 - m2)
+      long x = (l2.Intercept - l1.Intercept) / (l1.Slope - l2.Slope);
+      long y = (l1.Slope * x) + l1.Intercept;
+
+      return new Position(x, y);
+   }
+}
+
+internal sealed class Sensor
 {
    public Position Position { get; init; }
    public Position ClosestBeacon { get; init; }
@@ -146,51 +188,15 @@ internal sealed record Sensor
       this.Distance = this.Position.ManhattanDistance(this.ClosestBeacon);
    }
 
-   public IEnumerable<Position> GetBoundingLines(int bound)
+   public IEnumerable<Line> GetLines()
    {
       var top = new Position(this.Position.X, this.Position.Y + this.Distance + 1);
       var left = new Position(this.Position.X - this.Distance - 1, this.Position.Y);
-
-      foreach (var p in Position.GetPointsInLine(top, left))
-      {
-         if (p.X < 0 || p.X > bound || p.Y < 0 || p.Y > bound)
-         {
-            continue;
-         }
-
-         yield return p;
-      }
-
       var bottom = new Position(this.Position.X, this.Position.Y - this.Distance - 1);
-      foreach (var p in Position.GetPointsInLine(left, bottom))
-      {
-         if (p.X < 0 || p.X > bound || p.Y < 0 || p.Y > bound)
-         {
-            continue;
-         }
-
-         yield return p;
-      }
-
       var right = new Position(this.Position.X + this.Distance + 1, this.Position.Y);
-      foreach (var p in Position.GetPointsInLine(bottom, right))
-      {
-         if (p.X < 0 || p.X > bound || p.Y < 0 || p.Y > bound)
-         {
-            continue;
-         }
-
-         yield return p;
-      }
-
-      foreach (var p in Position.GetPointsInLine(right, top))
-      {
-         if (p.X < 0 || p.X > bound || p.Y < 0 || p.Y > bound)
-         {
-            continue;
-         }
-
-         yield return p;
-      }
+      yield return new Line(top, left);
+      yield return new Line(left, bottom);
+      yield return new Line(bottom, right);
+      yield return new Line(right, top);
    }
 }
