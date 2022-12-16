@@ -137,7 +137,7 @@ internal sealed record Sensor
 {
    public Position Position { get; init; }
    public Position ClosestBeacon { get; init; }
-   public int Distance { get; init; }
+   public long Distance { get; init; }
 
    public Sensor(Position p, Position b)
    {

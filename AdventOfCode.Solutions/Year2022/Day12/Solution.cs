@@ -49,16 +49,16 @@ internal sealed class Solution : SolutionBase<Tuple<Position, Position, Dictiona
       return new(s, e, map);
    }
 
-   private static int FindShortestPath(Position start, Position end, Dictionary<Position, char> map)
+   private static long FindShortestPath(Position start, Position end, Dictionary<Position, char> map)
    {
-      var frontier = new PriorityQueue<Position, int>();
+      var frontier = new PriorityQueue<Position, long>();
       frontier.Enqueue(start, 0);
 
       var cameFrom = new Dictionary<Position, Position?>
       {
          { start, null }
       };
-      var costSoFar = new Dictionary<Position, int>
+      var costSoFar = new Dictionary<Position, long>
       {
          { start, 0 }
       };

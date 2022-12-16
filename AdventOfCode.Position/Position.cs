@@ -2,11 +2,11 @@ namespace AdventOfCode.Position;
 
 public class Position : IComparable<Position>, IEquatable<Position>
 {
-   public int X { get; set; }
-   public int Y { get; set; }
-   public int Z { get; set; }
+   public long X { get; set; }
+   public long Y { get; set; }
+   public long Z { get; set; }
 
-   public Position(int x = 0, int y = 0, int z = 0)
+   public Position(long x = 0, long y = 0, long z = 0)
    {
       this.X = x;
       this.Y = y;
@@ -42,7 +42,7 @@ public class Position : IComparable<Position>, IEquatable<Position>
    public static IEnumerable<Position> GetPointsInLine(Position p1, Position p2)
    {
       var good = false;
-      var numPoints = 0;
+      long numPoints = 0;
 
       if (p1.Equals(p2))
       {
@@ -97,12 +97,11 @@ public class Position : IComparable<Position>, IEquatable<Position>
          yield break;
       }
 
-      List<Position> points = new List<Position>();
-      int x = p1.X;
-      int y = p1.Y;
-      int z = p1.Z;
+      var x = p1.X;
+      var y = p1.Y;
+      var z = p1.Z;
 
-      for (int index = 0; index < numPoints; index++)
+      for (long index = 0; index < numPoints; index++)
       {
          yield return new Position(x, y, z);
 
@@ -135,7 +134,7 @@ public class Position : IComparable<Position>, IEquatable<Position>
       }
    }
 
-   public int ManhattanDistance(Position? other = null)
+   public long ManhattanDistance(Position? other = null)
    {
       other ??= new Position();
 
@@ -148,9 +147,9 @@ public class Position : IComparable<Position>, IEquatable<Position>
    {
       other ??= new Position();
 
-      int deltaX = Math.Abs(other.X - this.X);
-      int deltaY = Math.Abs(other.Y - this.Y);
-      int deltaZ = Math.Abs(other.Z - this.Z);
+      var deltaX = Math.Abs(other.X - this.X);
+      var deltaY = Math.Abs(other.Y - this.Y);
+      var deltaZ = Math.Abs(other.Z - this.Z);
 
       return Math.Sqrt(Math.Pow(deltaX, 2) + Math.Pow(deltaY, 2) + Math.Pow(deltaZ, 2));
    }
@@ -308,7 +307,7 @@ public class Position : IComparable<Position>, IEquatable<Position>
 
    public override int GetHashCode()
    {
-      Tuple<int, int, int> us = new(this.X, this.Y, this.Z);
+      Tuple<long, long, long> us = new(this.X, this.Y, this.Z);
       return us.GetHashCode();
    }
 
