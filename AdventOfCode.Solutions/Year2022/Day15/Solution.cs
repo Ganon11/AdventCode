@@ -34,7 +34,8 @@ internal sealed partial class Solution : SolutionBase<Sensor[]>
    public override string SolvePartOne()
    {
       var targetRow = this.Debug ? 10 : 2000000;
-      var blocked = new HashSet<Position>();
+      long minX = long.MaxValue;
+      long maxX = long.MinValue;
       foreach (var sensor in this.ParsedInput)
       {
          // Does the generated diamond intersect the target row?
@@ -43,21 +44,25 @@ internal sealed partial class Solution : SolutionBase<Sensor[]>
          {
             // Points could contribute to solution
             var horizontalRange = sensor.Distance - distanceToTargetRow;
-            var left = new Position(sensor.Position.X - horizontalRange, targetRow);
-            var right = new Position(sensor.Position.X + horizontalRange, targetRow);
-            foreach (var p in Position.GetPointsInLine(left, right))
+            var left = sensor.Position.X - horizontalRange;
+            var right = sensor.Position.X + horizontalRange;
+            if (left < minX)
             {
-               _ = blocked.Add(p);
+               minX = left;
+            }
+
+            if (right > maxX)
+            {
+               maxX = right;
             }
          }
       }
 
-      foreach (var sensor in this.ParsedInput.Where(sensor => sensor.ClosestBeacon.Y == targetRow))
-      {
-         _ = blocked.Remove(sensor.ClosestBeacon);
-      }
+      long blocked = maxX - minX - this.ParsedInput
+         .Where(sensor => sensor.ClosestBeacon.Y == targetRow)
+         .Count();
 
-      return blocked.Count.ToString(System.Globalization.CultureInfo.CurrentCulture);
+      return blocked.ToString(System.Globalization.CultureInfo.CurrentCulture);
       //return "";
    }
 
