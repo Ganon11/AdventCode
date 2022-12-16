@@ -4,82 +4,90 @@ using System.Text.RegularExpressions;
 
 internal sealed class Solution : SolutionBase<Dictionary<string, Valve>>
 {
-   public Solution() : base(16, 2022, "Proboscidea Volcanium", true) { }
+   public Solution() : base(16, 2022, "Proboscidea Volcanium", false) { }
 
-   //public override Dictionary<string, Valve> ParseInput(string input) => input.SplitByNewline(shouldTrim: true)
-   //   .Select(line => new Valve(line))
-   //   .ToDictionary(valve => valve.Name);
-   public override Dictionary<string, Valve> ParseInput(string input)
-   {
-      return input.SplitByNewline(shouldTrim: true)
+   public override Dictionary<string, Valve> ParseInput(string input) => input.SplitByNewline(shouldTrim: true)
          .Select(line => new Valve(line))
          .ToDictionary(valve => valve.Name);
-   }
 
-   public override string SolvePartOne()
+   private static readonly Dictionary<(string, string), int> PrecomputedCosts = new();
+   private static int CostToActivate(string source, string destination, Dictionary<string, Valve> valves)
    {
-      var startState = new SearchState("AA", Enumerable.Empty<Valve>(), pressure: 0, time: 0);
-      var frontier = new Queue<SearchState>();
-      frontier.Enqueue(startState);
-      var reached = new HashSet<SearchState>
+      if (PrecomputedCosts.TryGetValue((source, destination), out var value))
       {
-         startState
+         return value;
+      }
+
+      var frontier = new Queue<string>();
+      frontier.Enqueue(source);
+      var cameFrom = new Dictionary<string, string>
+      {
+         { source, string.Empty }
       };
 
       while (frontier.Any())
       {
-         var currentState = frontier.Dequeue();
-         var newTime = currentState.Time + 1;
-         if (newTime > 30)
+         var current = frontier.Dequeue();
+         foreach (var next in valves[current].AdjacentValves)
          {
-            continue;
-         }
-
-         var currentValve = this.ParsedInput[currentState.CurrentValve];
-         var newPressure = currentState.TotalPressure + currentState.OpenValves.Sum(valve => valve.FlowRate);
-
-         var adjacentStates = new HashSet<SearchState>();
-
-         // See if we can open this valve
-         if (!currentState.OpenValves.Contains(currentValve) && this.ParsedInput[currentState.CurrentValve].FlowRate > 0)
-         {
-            var openValves = new HashSet<Valve>();
-            openValves.UnionWith(currentState.OpenValves);
-            openValves.Add(currentValve);
-            adjacentStates.Add(new SearchState(currentState.CurrentValve, openValves, newPressure, newTime));
-         }
-
-         // Which valves can we move to?
-         foreach (var neighbor in currentValve.AdjacentValves)
-         {
-            if (currentState.CameFrom != null && currentState.CameFrom.Equals(neighbor, StringComparison.OrdinalIgnoreCase))
+            if (!cameFrom.ContainsKey(next))
             {
-               continue;
-            }
-
-            adjacentStates.Add(new SearchState(neighbor, currentState.OpenValves, newPressure, newTime, currentState.CurrentValve));
-         }
-
-         // Filter out states
-         foreach (var newState in adjacentStates)
-         {
-            if (reached.TryGetValue(newState, out var alreadyVisitedState))
-            {
-               if (newState.TotalPressure <= alreadyVisitedState.TotalPressure)
-               {
-                  reached.Remove(alreadyVisitedState);
-                  reached.Add(newState);
-               }
-            }
-            else
-            {
-               frontier.Enqueue(newState);
-               reached.Add(newState);
+               frontier.Enqueue(next);
+               cameFrom[next] = current;
             }
          }
       }
 
-      return "";
+      var cost = 1;
+      var currentUnwind = destination;
+      while (!currentUnwind.Equals(source, StringComparison.OrdinalIgnoreCase))
+      {
+         ++cost;
+         currentUnwind = cameFrom[currentUnwind];
+      }
+
+      PrecomputedCosts.Add((source, destination), cost);
+      PrecomputedCosts.Add((destination, source), cost);
+      return cost;
+   }
+
+   private static long Score(IEnumerable<string> valveOrder, Dictionary<string, Valve> valves)
+   {
+      var score = 0;
+      var timeLeft = 30;
+      for (var index = 1; index < valveOrder.Count(); ++index)
+      {
+         timeLeft -= CostToActivate(valveOrder.ElementAt(index - 1), valveOrder.ElementAt(index), valves);
+         if (timeLeft < 0)
+         {
+            return score;
+         }
+
+         score += valves[valveOrder.ElementAt(index)].FlowRate * timeLeft;
+      }
+
+      return score;
+   }
+
+   public override string SolvePartOne()
+   {
+      var maxScore = long.MinValue;
+      var usefulValves = this.ParsedInput
+         .Where(kvp => kvp.Value.FlowRate > 0)
+         .Select(kvp => kvp.Key)
+         .ToList();
+      var permutations = usefulValves.Permutations().ToList();
+      foreach (var permutation in permutations)
+      {
+         var order = permutation.Prepend("AA");
+         var score = Score(order, this.ParsedInput);
+         if (score > maxScore)
+         {
+            maxScore = score;
+         }
+      }
+
+      return maxScore.ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
 
    public override string SolvePartTwo()
@@ -121,35 +129,4 @@ internal sealed partial record Valve : IEquatable<Valve>
 
    [GeneratedRegex("Valve (?<name>..) has flow rate=(?<flowRate>\\d+); tunnels? leads? to valves? (?<valves>.+)")]
    private static partial Regex ValveRegex();
-}
-
-internal sealed record SearchState : IEquatable<SearchState>
-{
-   public string CurrentValve { get; init; }
-   public HashSet<Valve> OpenValves { get; init; }
-   public int TotalPressure { get; init; }
-   public int Time { get; init; }
-   public string? CameFrom { get; init; }
-
-   public SearchState(string current, IEnumerable<Valve> openValves, int pressure, int time, string? cameFrom = null)
-   {
-      this.CurrentValve = current;
-      this.TotalPressure = pressure;
-      this.OpenValves = new HashSet<Valve>();
-      this.OpenValves.UnionWith(openValves);
-      this.Time = time;
-      this.CameFrom = cameFrom;
-   }
-
-   bool IEquatable<SearchState>.Equals(SearchState? other)
-   {
-      if (other == null)
-      {
-         return false;
-      }
-
-      return this.CurrentValve.Equals(other.CurrentValve, StringComparison.OrdinalIgnoreCase)
-         && Enumerable.SequenceEqual(this.OpenValves, other.OpenValves)
-         && this.Time == other.Time;
-   }
 }
