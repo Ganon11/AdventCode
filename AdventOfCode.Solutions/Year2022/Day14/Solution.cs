@@ -28,7 +28,7 @@ internal sealed class Solution : SolutionBase<Dictionary<Position, char>>
       return map;
    }
 
-   private static void DropFrom(Dictionary<Position, char> map, Position p, int? floor = null, int? maxY = null)
+   private static void DropFrom(Dictionary<Position, char> map, Position p, long? floor = null, long? maxY = null)
    {
       if (map.TryGetValue(p, out var value) && value != '+')
       {
