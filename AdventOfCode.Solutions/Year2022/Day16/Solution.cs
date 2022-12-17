@@ -51,39 +51,61 @@ internal sealed class Solution : SolutionBase<Dictionary<string, Valve>>
       return cost;
    }
 
-   private static long Score(IEnumerable<string> valveOrder, Dictionary<string, Valve> valves)
-   {
-      var score = 0;
-      var timeLeft = 30;
-      for (var index = 1; index < valveOrder.Count(); ++index)
-      {
-         timeLeft -= CostToActivate(valveOrder.ElementAt(index - 1), valveOrder.ElementAt(index), valves);
-         if (timeLeft < 0)
-         {
-            return score;
-         }
-
-         score += valves[valveOrder.ElementAt(index)].FlowRate * timeLeft;
-      }
-
-      return score;
-   }
-
    public override string SolvePartOne()
    {
       var maxScore = long.MinValue;
       var usefulValves = this.ParsedInput
          .Where(kvp => kvp.Value.FlowRate > 0)
          .Select(kvp => kvp.Key)
-         .ToList();
-      var permutations = usefulValves.Permutations().ToList();
-      foreach (var permutation in permutations)
+         .ToHashSet();
+
+      var start = new SearchState("AA", new HashSet<string>(), 0);
+
+      var frontier = new PriorityQueue<SearchState, long>(new IntMaxCompare());
+      frontier.Enqueue(start, 0);
+
+      var cameFrom = new Dictionary<SearchState, SearchState?>
       {
-         var order = permutation.Prepend("AA");
-         var score = Score(order, this.ParsedInput);
-         if (score > maxScore)
+         { start, null }
+      };
+
+      var costSoFar = new Dictionary<SearchState, int>
+      {
+         { start, 0 }
+      };
+
+      while (frontier.Count > 0)
+      {
+         var current = frontier.Dequeue();
+
+         if (current.TotalPressure > maxScore)
          {
-            maxScore = score;
+            maxScore = current.TotalPressure;
+         }
+
+         foreach (var usefulValve in usefulValves.Except(current.OpenValves))
+         {
+            var newCost = costSoFar[current] + CostToActivate(current.CurrentValve, usefulValve, this.ParsedInput);
+            if (newCost > 30)
+            {
+               continue;
+            }
+
+            long remainingTime = 30 - newCost;
+
+            var newOpenValves = new HashSet<string>(current.OpenValves);
+            _ = newOpenValves.Add(usefulValve);
+
+            var newScore = current.TotalPressure + (this.ParsedInput[usefulValve].FlowRate * remainingTime);
+
+            var newState = new SearchState(usefulValve, newOpenValves, newScore);
+            if (!costSoFar.TryGetValue(newState, out var existingCost) || newCost < existingCost)
+            {
+               costSoFar[newState] = newCost;
+               var newPriority = newCost;
+               frontier.Enqueue(newState, newPriority);
+               cameFrom[newState] = current;
+            }
          }
       }
 
@@ -94,6 +116,11 @@ internal sealed class Solution : SolutionBase<Dictionary<string, Valve>>
    {
       return "";
    }
+}
+
+internal sealed class IntMaxCompare : IComparer<long>
+{
+   public int Compare(long x, long y) => y.CompareTo(x);
 }
 
 internal sealed partial record Valve : IEquatable<Valve>
@@ -129,4 +156,29 @@ internal sealed partial record Valve : IEquatable<Valve>
 
    [GeneratedRegex("Valve (?<name>..) has flow rate=(?<flowRate>\\d+); tunnels? leads? to valves? (?<valves>.+)")]
    private static partial Regex ValveRegex();
+}
+
+internal sealed record SearchState : IEquatable<SearchState>
+{
+   public string CurrentValve { get; init; }
+   public HashSet<string> OpenValves { get; init; }
+   public long TotalPressure { get; init; }
+
+   public SearchState(string current, HashSet<string> valves, long pressure)
+   {
+      this.CurrentValve = current;
+      this.OpenValves = valves;
+      this.TotalPressure = pressure;
+   }
+
+   bool IEquatable<SearchState>.Equals(SearchState? other)
+   {
+      if (other == null)
+      {
+         return false;
+      }
+
+      return this.CurrentValve.Equals(other.CurrentValve, StringComparison.OrdinalIgnoreCase)
+         && Enumerable.SequenceEqual(this.OpenValves, other.OpenValves);
+   }
 }
