@@ -12,7 +12,7 @@ internal sealed class Solution : SolutionBase<Monkey[]>
 
    public override string SolvePartOne()
    {
-      Monkey[] allMonkeys = (Monkey[])this.ParsedInput.Copy();
+      var allMonkeys = this.ParsedInput.Copy();
       for (var round = 0; round < 20; ++round)
       {
          foreach (var monkey in allMonkeys)
@@ -30,7 +30,7 @@ internal sealed class Solution : SolutionBase<Monkey[]>
 
    public override string SolvePartTwo()
    {
-      Monkey[] allMonkeys = (Monkey[])this.ParsedInput.Copy();
+      var allMonkeys = this.ParsedInput.Copy();
 
       long commonFactor = 1;
       foreach (var monkey in allMonkeys)
@@ -133,22 +133,14 @@ internal sealed partial class Monkey
          {
             Console.WriteLine($"\tMonkey inspects an item with a worry level of {item}");
          }
-         // Inspect
-         long newItem;
-         long operand = this.OperationValue.Equals("old", StringComparison.OrdinalIgnoreCase) ? item : int.Parse(OperationValue, System.Globalization.CultureInfo.CurrentCulture);
-         switch (this.Operation)
-         {
-            case '*':
-               newItem = item * operand;
-               break;
-            case '+':
-               newItem = item + operand;
-               break;
-            default:
-               newItem = -1;
-               break;
-         }
 
+         var operand = this.OperationValue.Equals("old", StringComparison.OrdinalIgnoreCase) ? item : int.Parse(this.OperationValue, System.Globalization.CultureInfo.CurrentCulture);
+         var newItem = this.Operation switch
+         {
+            '*' => item * operand,
+            '+' => item + operand,
+            _ => -1,
+         };
          if (debugOutput)
          {
             Console.WriteLine($"\t\tWorry level changed to {newItem}");

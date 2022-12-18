@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 internal sealed class Solution : SolutionBase<Dictionary<string, Valve>>
 {
-   public Solution() : base(16, 2022, "Proboscidea Volcanium", false) { }
+   public Solution() : base(16, 2022, "Proboscidea Volcanium", true) { }
 
    public override Dictionary<string, Valve> ParseInput(string input) => input.SplitByNewline(shouldTrim: true)
          .Select(line => new Valve(line))
@@ -51,11 +51,10 @@ internal sealed class Solution : SolutionBase<Dictionary<string, Valve>>
       return cost;
    }
 
-   public override string SolvePartOne()
+   private static HashSet<SearchState> CalculateScores(Dictionary<string, Valve> valves, int timeLimit)
    {
       var maxScore = long.MinValue;
-      var usefulValves = this.ParsedInput
-         .Where(kvp => kvp.Value.FlowRate > 0)
+      var usefulValves = valves.Where(kvp => kvp.Value.FlowRate > 0)
          .Select(kvp => kvp.Key)
          .ToHashSet();
 
@@ -85,18 +84,18 @@ internal sealed class Solution : SolutionBase<Dictionary<string, Valve>>
 
          foreach (var usefulValve in usefulValves.Except(current.OpenValves))
          {
-            var newCost = costSoFar[current] + CostToActivate(current.CurrentValve, usefulValve, this.ParsedInput);
-            if (newCost > 30)
+            var newCost = costSoFar[current] + CostToActivate(current.CurrentValve, usefulValve, valves);
+            if (newCost > timeLimit)
             {
                continue;
             }
 
-            long remainingTime = 30 - newCost;
+            long remainingTime = timeLimit - newCost;
 
             var newOpenValves = new HashSet<string>(current.OpenValves);
             _ = newOpenValves.Add(usefulValve);
 
-            var newScore = current.TotalPressure + (this.ParsedInput[usefulValve].FlowRate * remainingTime);
+            var newScore = current.TotalPressure + (valves[usefulValve].FlowRate * remainingTime);
 
             var newState = new SearchState(usefulValve, newOpenValves, newScore);
             if (!costSoFar.TryGetValue(newState, out var existingCost) || newCost < existingCost)
@@ -109,12 +108,39 @@ internal sealed class Solution : SolutionBase<Dictionary<string, Valve>>
          }
       }
 
-      return maxScore.ToString(System.Globalization.CultureInfo.CurrentCulture);
+      return cameFrom.Keys.ToHashSet();
+   }
+
+   public override string SolvePartOne()
+   {
+      var scores = CalculateScores(this.ParsedInput, 30);
+      return scores.Max(s => s.TotalPressure).ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
 
    public override string SolvePartTwo()
    {
-      return "";
+      var scores = CalculateScores(this.ParsedInput, 26).OrderByDescending(s => s.TotalPressure);
+      var maxScore = long.MinValue;
+      for (var index = 0; index < scores.Count(); ++index)
+      {
+         for (var index2 = index + 1; index2 < scores.Count(); ++index2)
+         {
+            var state1 = scores.ElementAt(index);
+            var state2 = scores.ElementAt(index2);
+            if (state1.OpenValves.Intersect(state2.OpenValves).Any())
+            {
+               continue;
+            }
+
+            if (state1.TotalPressure + state2.TotalPressure > maxScore)
+            {
+               maxScore = state1.TotalPressure + state2.TotalPressure;
+            }
+         }
+      }
+
+      return maxScore.ToString(System.Globalization.CultureInfo.CurrentCulture);
+      //return "";
    }
 }
 

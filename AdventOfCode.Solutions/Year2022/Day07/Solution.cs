@@ -6,30 +6,30 @@ internal sealed class Solution : SolutionBase<Solution.ElfDirectory?>
 
    public override string SolvePartOne()
    {
-      if (ParsedInput == null)
+      if (this.ParsedInput == null)
       {
          return "ERROR";
       }
 
-      return GetAllDirectories(ParsedInput).Where(d => d.GetSize() < 100000)
+      return GetAllDirectories(this.ParsedInput).Where(d => d.GetSize() < 100000)
          .Sum(d => d.GetSize())
          .ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
 
    public override string SolvePartTwo()
    {
-      if (ParsedInput == null)
+      if (this.ParsedInput == null)
       {
          return "ERROR";
       }
 
       const int TOTAL_DISK_SPACE = 70000000;
       const int TARGET_FREE_SPACE = 30000000;
-      var currentFreeSpace = TOTAL_DISK_SPACE - ParsedInput.GetSize();
+      var currentFreeSpace = TOTAL_DISK_SPACE - this.ParsedInput.GetSize();
       var amountToDelete = TARGET_FREE_SPACE - currentFreeSpace;
 
       ElfDirectory? toDelete = null;
-      foreach (var dir in GetAllDirectories(ParsedInput))
+      foreach (var dir in GetAllDirectories(this.ParsedInput))
       {
          var currentDirSize = dir.GetSize();
          if (currentDirSize >= amountToDelete)
@@ -82,12 +82,12 @@ internal sealed class Solution : SolutionBase<Solution.ElfDirectory?>
       private int? size;
       public int GetSize()
       {
-         if (!size.HasValue)
+         if (!this.size.HasValue)
          {
-            size = this.Files.Sum(f => f.Size) + this.Subdirectories.Sum(d => d.Value.GetSize());
+            this.size = this.Files.Sum(f => f.Size) + this.Subdirectories.Sum(d => d.Value.GetSize());
          }
 
-         return size.Value;
+         return this.size.Value;
       }
    }
 
@@ -121,9 +121,9 @@ internal sealed class Solution : SolutionBase<Solution.ElfDirectory?>
                   {
                      current = current.Parent;
                   }
-                  else if (current.Subdirectories.ContainsKey(tokens[2]))
+                  else if (current.Subdirectories.TryGetValue(tokens[2], out var newDir))
                   {
-                     current = current.Subdirectories[tokens[2]];
+                     current = newDir;
                   }
                   else
                   {
@@ -144,7 +144,7 @@ internal sealed class Solution : SolutionBase<Solution.ElfDirectory?>
                Console.Error.WriteLine($"Tried to parse cd output without a current directory");
             }
             // Directory name
-            else if (tokens[0] == "dir")
+            else if (tokens[0].Equals("dir", StringComparison.OrdinalIgnoreCase))
             {
                current.Subdirectories.Add(tokens[1], new ElfDirectory(tokens[1], current));
             }

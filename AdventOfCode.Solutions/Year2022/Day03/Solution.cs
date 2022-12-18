@@ -19,7 +19,7 @@ internal sealed class Solution : SolutionBase
    public override string SolvePartOne()
    {
       var sum = 0;
-      foreach (var rucksack in Input.SplitByNewline(shouldTrim: true))
+      foreach (var rucksack in this.Input.SplitByNewline(shouldTrim: true))
       {
          var comp1 = new HashSet<char>();
          var comp2 = new HashSet<char>();
@@ -45,7 +45,7 @@ internal sealed class Solution : SolutionBase
    public override string SolvePartTwo()
    {
       var sum = 0;
-      string[] groups = Input.SplitByNewline(shouldTrim: true);
+      var groups = this.Input.SplitByNewline(shouldTrim: true);
       var numGroups = groups.Length / 3;
       for (var group = 0; group < numGroups; ++group)
       {
