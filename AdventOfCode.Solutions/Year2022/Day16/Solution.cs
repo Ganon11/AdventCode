@@ -2,41 +2,37 @@ namespace AdventOfCode.Solutions.Year2022.Day16;
 
 using System.Text.RegularExpressions;
 
-internal sealed class Solution : SolutionBase<Dictionary<long, Valve>>
+internal sealed class Solution : SolutionBase<Dictionary<string, Valve>>
 {
-   public Solution() : base(16, 2022, "Proboscidea Volcanium", true) { }
+   public Solution() : base(16, 2022, "Proboscidea Volcanium", false) { }
 
-   public override Dictionary<long, Valve> ParseInput(string input)
+   public override Dictionary<string, Valve> ParseInput(string input)
    {
-      var lines = input.SplitByNewline(shouldTrim: true);
-      var valves = lines.Select(l => new Valve(l));
-      var valveNames = valves.Select(v => v.Name).ToList();
-      valveNames.Sort();
-      foreach (var valve in valves)
+      var lines = input.SplitByNewline(shouldTrim: true).ToList();
+      lines.Sort();
+
+      var valves = new List<Valve>();
+      for (var index = 0; index < lines.Count; ++index)
       {
-         valve.Id = (long)1 << valveNames.IndexOf(valve.Name);
-         foreach (var adjacent in valve.AdjacentValveNames)
-         {
-            _ = valve.AdjacentValves.Add((long)1 << valveNames.IndexOf(adjacent));
-         }
+         valves.Add(new Valve(lines[index], 1 << index));
       }
 
-      return valves.ToDictionary(v => v.Id);
+      return valves.ToDictionary(v => v.Name);
    }
 
-   private static readonly Dictionary<(long, long), int> PrecomputedCosts = new();
-   private static int CostToActivate(long source, long destination, Dictionary<long, Valve> valves)
+   private static readonly Dictionary<(string, string), int> PrecomputedCosts = new();
+   private static int CostToActivate(string source, string destination, Dictionary<string, Valve> valves)
    {
       if (PrecomputedCosts.TryGetValue((source, destination), out var value))
       {
          return value;
       }
 
-      var frontier = new Queue<long>();
+      var frontier = new Queue<string>();
       frontier.Enqueue(source);
-      var cameFrom = new Dictionary<long, long>
+      var cameFrom = new Dictionary<string, string>
       {
-         { source, -1 }
+         { source, string.Empty }
       };
 
       while (frontier.Any())
@@ -54,7 +50,7 @@ internal sealed class Solution : SolutionBase<Dictionary<long, Valve>>
 
       var cost = 1;
       var currentUnwind = destination;
-      while (!currentUnwind.Equals(source))
+      while (!currentUnwind.Equals(source, StringComparison.OrdinalIgnoreCase))
       {
          ++cost;
          currentUnwind = cameFrom[currentUnwind];
@@ -65,14 +61,14 @@ internal sealed class Solution : SolutionBase<Dictionary<long, Valve>>
       return cost;
    }
 
-   private static IEnumerable<SearchState> CalculateScores(Dictionary<long, Valve> valves, int timeLimit)
+   private static SearchState[] CalculateScores(Dictionary<string, Valve> valves, int timeLimit)
    {
       var maxScore = long.MinValue;
       var usefulValves = valves.Where(kvp => kvp.Value.FlowRate > 0)
          .Select(kvp => kvp.Key)
          .ToHashSet();
 
-      var start = new SearchState(1, 0, 0);
+      var start = new SearchState("AA", 0, 0);
 
       var frontier = new PriorityQueue<SearchState, long>(new IntMaxCompare());
       frontier.Enqueue(start, 0);
@@ -98,7 +94,7 @@ internal sealed class Solution : SolutionBase<Dictionary<long, Valve>>
 
          foreach (var usefulValve in usefulValves)
          {
-            if ((usefulValve & current.OpenValves) > 0)
+            if ((valves[usefulValve].Id & current.OpenValves) > 0)
             {
                continue;
             }
@@ -111,9 +107,7 @@ internal sealed class Solution : SolutionBase<Dictionary<long, Valve>>
 
             long remainingTime = timeLimit - newCost;
 
-            //var newOpenValves = new HashSet<string>(current.OpenValves);
-            //_ = newOpenValves.Add(usefulValve);
-            var newOpenValves = current.OpenValves | usefulValve;
+            var newOpenValves = current.OpenValves | valves[usefulValve].Id;
 
             var newScore = current.TotalPressure + (valves[usefulValve].FlowRate * remainingTime);
 
@@ -128,7 +122,10 @@ internal sealed class Solution : SolutionBase<Dictionary<long, Valve>>
          }
       }
 
-      return cameFrom.Keys.OrderByDescending(state => state.TotalPressure).ToArray();
+      return cameFrom.Keys
+         .Where(state => state.TotalPressure > 0)
+         .OrderByDescending(state => state.TotalPressure)
+         .ToArray();
    }
 
    public override string SolvePartOne()
@@ -141,29 +138,23 @@ internal sealed class Solution : SolutionBase<Dictionary<long, Valve>>
    {
       var scores = CalculateScores(this.ParsedInput, 26);
       var maxScore = long.MinValue;
-      // Search top % of scores
-      var scoreFactor = this.Debug ? 1.0 : 0.1;
-      var maxScoreIndex = scoreFactor * scores.Count();
-      for (var index = 0; index < maxScoreIndex; ++index)
+      for (var index = 0; index < scores.Length; ++index)
       {
-         for (var index2 = index + 1; index2 < maxScoreIndex; ++index2)
+         for (var index2 = index + 1; index2 < scores.Length; ++index2)
          {
-            var state1 = scores.ElementAt(index);
-            var state2 = scores.ElementAt(index2);
-            if ((state1.OpenValves & state2.OpenValves) > 0)
+            if ((scores[index].OpenValves & scores[index2].OpenValves) > 0)
             {
                continue;
             }
 
-            if (state1.TotalPressure + state2.TotalPressure > maxScore)
+            if (scores[index].TotalPressure + scores[index2].TotalPressure > maxScore)
             {
-               maxScore = state1.TotalPressure + state2.TotalPressure;
+               maxScore = scores[index].TotalPressure + scores[index2].TotalPressure;
             }
          }
       }
 
       return maxScore.ToString(System.Globalization.CultureInfo.CurrentCulture);
-      //return "";
    }
 }
 
@@ -174,21 +165,20 @@ internal sealed class IntMaxCompare : IComparer<long>
 
 internal sealed partial class Valve : IEquatable<Valve>
 {
-   public long Id { get; set; }
+   public long Id { get; init; }
    public string Name { get; init; }
    public int FlowRate { get; init; }
-   public HashSet<string> AdjacentValveNames { get; init; }
-   public HashSet<long> AdjacentValves { get; set; }
+   public string[] AdjacentValves { get; init; }
 
-   public Valve(string line)
+   public Valve(string line, long id)
    {
       var m = ValveRegex().Match(line);
       if (m.Success)
       {
+         this.Id = id;
          this.Name = m.Groups["name"].Value;
          this.FlowRate = int.Parse(m.Groups["flowRate"].Value, System.Globalization.CultureInfo.CurrentCulture);
-         this.AdjacentValveNames = m.Groups["valves"].Value.Split(", ").ToHashSet();
-         this.AdjacentValves = new HashSet<long>();
+         this.AdjacentValves = m.Groups["valves"].Value.Split(", ").ToArray();
       }
       else
       {
@@ -209,16 +199,18 @@ internal sealed partial class Valve : IEquatable<Valve>
    [GeneratedRegex("Valve (?<name>..) has flow rate=(?<flowRate>\\d+); tunnels? leads? to valves? (?<valves>.+)")]
    private static partial Regex ValveRegex();
 
-   public override bool Equals(object obj) => ((IEquatable<Valve>)this).Equals(obj as Valve);
+   public override bool Equals(object? obj) => ((IEquatable<Valve>)this).Equals(obj as Valve);
+
+   public override int GetHashCode() => this.Name.GetHashCode();
 }
 
 internal sealed record SearchState : IEquatable<SearchState>
 {
-   public long CurrentValve { get; init; }
+   public string CurrentValve { get; init; }
    public long OpenValves { get; init; }
    public long TotalPressure { get; init; }
 
-   public SearchState(long current, long valves, long pressure)
+   public SearchState(string current, long valves, long pressure)
    {
       this.CurrentValve = current;
       this.OpenValves = valves;
