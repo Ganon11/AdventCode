@@ -21,17 +21,11 @@ internal sealed class Solution : SolutionBase<IEnumerable<RangePair>>
             return new RangePair(ConvertRangeStringToSet(ranges[0]), ConvertRangeStringToSet(ranges[1]));
          });
 
-   public override string SolvePartOne()
-   {
-      return ParsedInput
+   public override string SolvePartOne() => this.ParsedInput
          .Count(pair => pair.Item1.IsProperSubsetOf(pair.Item2) || pair.Item1.IsProperSupersetOf(pair.Item2) || pair.Item1.SetEquals(pair.Item2))
          .ToString(System.Globalization.CultureInfo.CurrentCulture);
-   }
 
-   public override string SolvePartTwo()
-   {
-      return ParsedInput
+   public override string SolvePartTwo() => this.ParsedInput
          .Count(pair => pair.Item1.Intersect(pair.Item2).Any())
          .ToString(System.Globalization.CultureInfo.CurrentCulture);
-   }
 }
