@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 internal sealed class Solution : SolutionBase<Dictionary<string, Valve>>
 {
-   public Solution() : base(16, 2022, "Proboscidea Volcanium", false) { }
+   public Solution() : base(16, 2022, "Proboscidea Volcanium", true) { }
 
    public override Dictionary<string, Valve> ParseInput(string input)
    {
@@ -63,7 +63,6 @@ internal sealed class Solution : SolutionBase<Dictionary<string, Valve>>
 
    private static SearchState[] CalculateScores(Dictionary<string, Valve> valves, int timeLimit)
    {
-      var maxScore = long.MinValue;
       var usefulValves = valves.Where(kvp => kvp.Value.FlowRate > 0)
          .Select(kvp => kvp.Key)
          .ToHashSet();
@@ -86,11 +85,6 @@ internal sealed class Solution : SolutionBase<Dictionary<string, Valve>>
       while (frontier.Count > 0)
       {
          var current = frontier.Dequeue();
-
-         if (current.TotalPressure > maxScore)
-         {
-            maxScore = current.TotalPressure;
-         }
 
          foreach (var usefulValve in usefulValves)
          {
@@ -123,7 +117,7 @@ internal sealed class Solution : SolutionBase<Dictionary<string, Valve>>
       }
 
       return cameFrom.Keys
-         .Where(state => state.TotalPressure > 0)
+         //.Where(state => state.TotalPressure > 0)
          .OrderByDescending(state => state.TotalPressure)
          .ToArray();
    }
