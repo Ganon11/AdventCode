@@ -7,11 +7,12 @@ internal sealed class Solution : SolutionBase<long[]>
       .Select(line => long.Parse(line, System.Globalization.CultureInfo.CurrentCulture))
       .ToArray();
 
-   private static void Mix(List<MyLinkedListNode> allNodes)
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+   private static void Mix(List<NumberNode> allNodes)
    {
       foreach (var node in allNodes)
       {
-         long effectiveVal = node.Data % (allNodes.Count - 1);
+         var effectiveVal = node.Data % (allNodes.Count - 1);
          if (effectiveVal == 0)
          {
             continue;
@@ -46,7 +47,7 @@ internal sealed class Solution : SolutionBase<long[]>
       }
    }
 
-   private static long CalculateSum(MyLinkedListNode zeroNode)
+   private static long CalculateSum(NumberNode zeroNode)
    {
       var current = zeroNode;
       long sum = 0;
@@ -65,8 +66,10 @@ internal sealed class Solution : SolutionBase<long[]>
 
    public override string SolvePartOne()
    {
-      var (allNodes, zeroNode) = MyLinkedListNode.Create(this.ParsedInput);
+      var (allNodes, zeroNode) = NumberNode.CreateList(this.ParsedInput);
+
       Mix(allNodes);
+
       return CalculateSum(zeroNode).ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
 
@@ -74,7 +77,7 @@ internal sealed class Solution : SolutionBase<long[]>
 
    public override string SolvePartTwo()
    {
-      var (allNodes, zeroNode) = MyLinkedListNode.Create(this.ParsedInput);
+      var (allNodes, zeroNode) = NumberNode.CreateList(this.ParsedInput);
 
       foreach (var node in allNodes)
       {
@@ -90,26 +93,26 @@ internal sealed class Solution : SolutionBase<long[]>
    }
 }
 
-internal class MyLinkedListNode
+internal class NumberNode
 {
    public long Data { get; set; }
-   public MyLinkedListNode? Previous { get; set; }
-   public MyLinkedListNode? Next { get; set; }
+   public NumberNode? Previous { get; set; }
+   public NumberNode? Next { get; set; }
 
-   public MyLinkedListNode(long data)
+   public NumberNode(long data)
    {
       this.Data = data;
       this.Previous = null;
       this.Next = null;
    }
 
-   public static (List<MyLinkedListNode>, MyLinkedListNode) Create(long[] data)
+   public static (List<NumberNode>, NumberNode) CreateList(long[] data)
    {
-      var allNodes = new List<MyLinkedListNode>();
-      MyLinkedListNode zeroNode = null;
+      var allNodes = new List<NumberNode>();
+      NumberNode zeroNode = null;
       foreach (var number in data)
       {
-         var newNode = new MyLinkedListNode(number);
+         var newNode = new NumberNode(number);
          allNodes.Add(newNode);
          if (number == 0)
          {
@@ -136,3 +139,4 @@ internal class MyLinkedListNode
       return (allNodes, zeroNode);
    }
 }
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
