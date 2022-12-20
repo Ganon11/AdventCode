@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 internal sealed class Solution : SolutionBase<Dictionary<string, Valve>>
 {
-   public Solution() : base(16, 2022, "Proboscidea Volcanium", true) { }
+   public Solution() : base(16, 2022, "Proboscidea Volcanium", false) { }
 
    public override Dictionary<string, Valve> ParseInput(string input)
    {
@@ -82,6 +82,8 @@ internal sealed class Solution : SolutionBase<Dictionary<string, Valve>>
          { start, 0 }
       };
 
+      var endStates = new HashSet<SearchState>();
+
       while (frontier.Count > 0)
       {
          var current = frontier.Dequeue();
@@ -96,6 +98,7 @@ internal sealed class Solution : SolutionBase<Dictionary<string, Valve>>
             var newCost = costSoFar[current] + CostToActivate(current.CurrentValve, usefulValve, valves);
             if (newCost > timeLimit)
             {
+               endStates.Add(current);
                continue;
             }
 
@@ -116,21 +119,23 @@ internal sealed class Solution : SolutionBase<Dictionary<string, Valve>>
          }
       }
 
-      return cameFrom.Keys
-         //.Where(state => state.TotalPressure > 0)
-         .OrderByDescending(state => state.TotalPressure)
+      return endStates
+         .Where(state => state.TotalPressure > 0)
          .ToArray();
    }
 
    public override string SolvePartOne()
    {
       var scores = CalculateScores(this.ParsedInput, 30);
-      return scores.First().TotalPressure.ToString(System.Globalization.CultureInfo.CurrentCulture);
+      return scores.Max(state => state.TotalPressure).ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
 
    public override string SolvePartTwo()
    {
-      var scores = CalculateScores(this.ParsedInput, 26);
+      var scores = CalculateScores(this.ParsedInput, 26)
+         .OrderByDescending(state => state.TotalPressure)
+         .ToArray();
+      Console.WriteLine($"Scores to check: {scores.Length}");
       var maxScore = long.MinValue;
       for (var index = 0; index < scores.Length; ++index)
       {
@@ -143,6 +148,9 @@ internal sealed class Solution : SolutionBase<Dictionary<string, Valve>>
 
             if (scores[index].TotalPressure + scores[index2].TotalPressure > maxScore)
             {
+               Console.WriteLine($"Found pair:");
+               Console.WriteLine($"\t{scores[index]}");
+               Console.WriteLine($"\t{scores[index2]}");
                maxScore = scores[index].TotalPressure + scores[index2].TotalPressure;
             }
          }
@@ -220,4 +228,6 @@ internal sealed record SearchState : IEquatable<SearchState>
 
       return this.CurrentValve == other.CurrentValve && this.OpenValves == other.OpenValves;
    }
+
+   public override string ToString() => $"({this.CurrentValve}, {Convert.ToString(this.OpenValves, 2).PadLeft(26, '0')}, {this.TotalPressure})";
 }
