@@ -48,9 +48,12 @@ internal sealed class Solution : SolutionBase<char[]>
       var settledCount = 0;
       var step = 0;
       var settledBlocks = new HashSet<Position>();
+
+      var cycleDetection = new Dictionary<TetrisState, long>();
+
       while (settledCount < blockCount)
       {
-         _ = currentShape.Move((Direction)this.ParsedInput[step], settledBlocks);
+         _ = currentShape.Move((Direction)this.ParsedInput[step % this.ParsedInput.Length], settledBlocks);
          if (!currentShape.Move(Direction.Down, settledBlocks))
          {
             ++settledCount;
@@ -59,24 +62,61 @@ internal sealed class Solution : SolutionBase<char[]>
                _ = settledBlocks.Add(p);
             }
 
-            spawnHeight = settledBlocks.Select(p => p.Y).Max() + 4;
+            var maxHeight = currentShape.Positions.Select(p => p.Y).Max();
+            spawnHeight = maxHeight + 4;
             currentShape = Shape.GetNextShape(spawnHeight, shapeCounter++);
             shapeCounter %= 5;
-            //Console.WriteLine(DrawTetris(currentShape, settledBlocks));
+
+            var state = new TetrisState
+            {
+               TopRows = CalculateTopRows(settledBlocks, maxHeight),
+               ShapeIndex = shapeCounter,
+               JetIndex = step % this.ParsedInput.Length
+            };
+
+            if (cycleDetection.TryGetValue(state, out var previousStep))
+            {
+               Console.WriteLine($"Cycle detected! Previous {previousStep}, current {step}");
+            }
+            else
+            {
+               cycleDetection.Add(state, step);
+            }
          }
 
-         step = (step + 1) % this.ParsedInput.Length;
+         ++step;
       }
 
-      //Console.WriteLine(DrawTetris(currentShape, settledBlocks));
       var height = settledBlocks.Select(p => p.Y).Max() + 1;
       return height;
    }
 
+   private static ulong CalculateTopRows(HashSet<Position> settledBlocks, long maxY)
+   {
+      var bits = string.Empty;
+      for (var deltaY = 0; deltaY < 9; ++deltaY)
+      {
+         for (var col = 0; col < 7; ++col)
+         {
+            var p = new Position(col, maxY - deltaY);
+            if (settledBlocks.Contains(p))
+            {
+               bits += '1';
+            }
+            else
+            {
+               bits += '0';
+            }
+         }
+      }
+
+      return Convert.ToUInt64(bits, 2);
+   }
+
    public override string SolvePartOne() => this.PlayTetris(2022).ToString(System.Globalization.CultureInfo.CurrentCulture);
 
-   //public override string SolvePartTwo() => this.PlayTetris(1000000000000).ToString(System.Globalization.CultureInfo.CurrentCulture);
-   public override string SolvePartTwo() => "";
+   public override string SolvePartTwo() => this.PlayTetris(202200).ToString(System.Globalization.CultureInfo.CurrentCulture);
+   //public override string SolvePartTwo() => "";
 }
 
 internal enum Direction
@@ -234,4 +274,25 @@ internal sealed class Box : Shape
       _ = this.Positions.Add(new Position(2, y + 1));
       _ = this.Positions.Add(new Position(3, y + 1));
    }
+}
+
+internal sealed class TetrisState : IEquatable<TetrisState>
+{
+   public ulong TopRows { get; init; }
+   public int ShapeIndex { get; init; }
+   public int JetIndex { get; init; }
+
+   public bool Equals(TetrisState? other)
+   {
+      if (other == null)
+      {
+         return false;
+      }
+
+      return this.TopRows == other.TopRows && this.ShapeIndex == other.ShapeIndex && this.JetIndex == other.JetIndex;
+   }
+
+   public override bool Equals(object? obj) => this.Equals(obj as TetrisState);
+
+   public override int GetHashCode() => new Tuple<ulong, int, int>(this.TopRows, this.ShapeIndex, this.JetIndex).GetHashCode();
 }
