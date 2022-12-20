@@ -1,126 +1,138 @@
 namespace AdventOfCode.Solutions.Year2022.Day20;
-
-internal sealed class Solution : SolutionBase<int[]>
+internal sealed class Solution : SolutionBase<long[]>
 {
    public Solution() : base(20, 2022, "Grove Positioning System", false) { }
 
-   public override int[] ParseInput(string input) => input.SplitByNewline(shouldTrim: true)
-      .Select(line => int.Parse(line, System.Globalization.CultureInfo.CurrentCulture))
+   public override long[] ParseInput(string input) => input.SplitByNewline(shouldTrim: true)
+      .Select(line => long.Parse(line, System.Globalization.CultureInfo.CurrentCulture))
       .ToArray();
 
-   public override string SolvePartOne()
+   private static void Mix(List<MyLinkedListNode> allNodes)
    {
-      var head = MyLinkedListNode.Create(this.ParsedInput);
-      foreach (var number in this.ParsedInput)
+      foreach (var node in allNodes)
       {
-         if (number == 0)
+         long effectiveVal = node.Data % (allNodes.Count - 1);
+         if (effectiveVal == 0)
          {
             continue;
          }
 
-         var current = head;
-         while (current.Data != number)
-         {
-            current = current.Next;
-         }
+         // Remove from current spot
+         node.Previous.Next = node.Next;
+         node.Next.Previous = node.Previous;
 
-         var actualNumber = number % this.ParsedInput.Length;
-
-         var newPrev = current;
-         if (number < 0)
+         // Move through the list
+         var newPrev = node.Previous;
+         if (node.Data < 0)
          {
-            for (var index = 0; index <= Math.Abs(actualNumber); ++index)
+            for (var index = 0; index > effectiveVal; --index)
             {
                newPrev = newPrev.Previous;
             }
          }
-         else if (number > 0)
+         else if (node.Data > 0)
          {
-            for (var index = 0; index < actualNumber; ++index)
+            for (var index = 0; index < effectiveVal; ++index)
             {
                newPrev = newPrev.Next;
             }
          }
-         // Remove from current spot
-         var oldPrev = current.Previous;
-         var oldNext = current.Next;
-         oldPrev.Next = oldNext;
-         oldNext.Previous = oldPrev;
 
          // Insert at new spot
-         var newNext = newPrev.Next;
-         newPrev.Next = current;
-         current.Previous = newPrev;
-         current.Next = newNext;
-         newNext.Previous = current;
+         node.Next = newPrev.Next;
+         node.Previous = newPrev;
+         node.Next.Previous = node;
+         node.Previous.Next = node;
       }
+   }
 
-      // Find 0 node
-      var zeroNode = head;
-      while (zeroNode.Data != 0)
+   private static long CalculateSum(MyLinkedListNode zeroNode)
+   {
+      var current = zeroNode;
+      long sum = 0;
+      for (var count = 0; count <= 3000; ++count)
       {
-         zeroNode = zeroNode.Next;
-      }
-
-      var sum = 0;
-      var counts = new int[]
-      {
-         1000 % this.ParsedInput.Length,
-         2000 % this.ParsedInput.Length,
-         3000 % this.ParsedInput.Length
-      };
-
-      for (var count = 0; count <= counts.Max(); ++count)
-      {
-         if (counts.Contains(count))
+         if (count % 1000 == 0)
          {
-            sum += zeroNode.Data;
+            sum += current.Data;
          }
 
-         zeroNode = zeroNode.Next;
+         current = current.Next;
       }
 
-      return sum.ToString(System.Globalization.CultureInfo.CurrentCulture);
+      return sum;
    }
+
+   public override string SolvePartOne()
+   {
+      var (allNodes, zeroNode) = MyLinkedListNode.Create(this.ParsedInput);
+      Mix(allNodes);
+      return CalculateSum(zeroNode).ToString(System.Globalization.CultureInfo.CurrentCulture);
+   }
+
+   private const long ENCRYPTION_KEY = 811589153;
 
    public override string SolvePartTwo()
    {
-      return "";
+      var (allNodes, zeroNode) = MyLinkedListNode.Create(this.ParsedInput);
+
+      foreach (var node in allNodes)
+      {
+         node.Data *= ENCRYPTION_KEY;
+      }
+
+      for (var index = 0; index < 10; ++index)
+      {
+         Mix(allNodes);
+      }
+
+      return CalculateSum(zeroNode).ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
 }
 
 internal class MyLinkedListNode
 {
-   public int Data { get; init; }
+   public long Data { get; set; }
    public MyLinkedListNode? Previous { get; set; }
    public MyLinkedListNode? Next { get; set; }
 
-   public MyLinkedListNode(int data)
+   public MyLinkedListNode(long data)
    {
       this.Data = data;
       this.Previous = null;
       this.Next = null;
    }
 
-   public static MyLinkedListNode? Create(int[] data)
+   public static (List<MyLinkedListNode>, MyLinkedListNode) Create(long[] data)
    {
-      MyLinkedListNode? head = null;
-      MyLinkedListNode? current = null;
+      var allNodes = new List<MyLinkedListNode>();
+      MyLinkedListNode zeroNode = null;
       foreach (var number in data)
       {
          var newNode = new MyLinkedListNode(number);
-         head ??= newNode;
-         if (current != null)
+         allNodes.Add(newNode);
+         if (number == 0)
          {
-            current.Next = newNode;
-            newNode.Previous = current;
+            zeroNode = newNode;
          }
-
-         current = newNode;
       }
 
-      current.Next = head;
-      head.Previous = current;
-      return head;
+      if (zeroNode == null)
+      {
+         throw new ArgumentException($"Where's the 0!?", nameof(data));
+      }
+
+      allNodes.First().Previous = allNodes.Last();
+      for (var i = 1; i < allNodes.Count; ++i)
+      {
+         allNodes.ElementAt(i).Previous = allNodes.ElementAt(i - 1);
+      }
+      for (var i = 0; i < allNodes.Count - 1; ++i)
+      {
+         allNodes.ElementAt(i).Next = allNodes.ElementAt(i + 1);
+      }
+      allNodes.Last().Next = allNodes.First();
+
+      return (allNodes, zeroNode);
    }
 }
