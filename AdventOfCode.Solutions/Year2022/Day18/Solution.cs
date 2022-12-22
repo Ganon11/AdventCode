@@ -2,21 +2,20 @@ namespace AdventOfCode.Solutions.Year2022.Day18;
 
 using AdventOfCode.Position;
 
-internal sealed class Solution : SolutionBase<Position[]>
+internal sealed class Solution : SolutionBase<HashSet<Position>>
 {
    public Solution() : base(18, 2022, "Boiling Boulders", false) { }
 
-   public override Position[] ParseInput(string input) => input.SplitByNewline(shouldTrim: true).Select(line => new Position(line)).ToArray();
+   public override HashSet<Position> ParseInput(string input) => input.SplitByNewline(shouldTrim: true).Select(line => new Position(line)).ToHashSet();
 
    public override string SolvePartOne()
    {
-      var set = this.ParsedInput.ToHashSet();
       var sum = 0;
       foreach (var cube in this.ParsedInput)
       {
          foreach (var adjacentPosition in cube.GetAdjacentPositions(includeZ: true, includeDiagonals: false))
          {
-            if (!set.Contains(adjacentPosition))
+            if (!this.ParsedInput.Contains(adjacentPosition))
             {
                ++sum;
             }
@@ -78,40 +77,21 @@ internal sealed class Solution : SolutionBase<Position[]>
 
    public override string SolvePartTwo()
    {
-      var set = this.ParsedInput.ToHashSet();
       var sum = 0;
-      var emptyPositions = new HashSet<Position>();
-      foreach (var cube in this.ParsedInput)
+
+      // Find the outside "air pocket"
+      var minX = this.ParsedInput.Select(p => p.X).Min() - 1;
+      var minY = this.ParsedInput.Select(p => p.Y).Min() - 1;
+      var minZ = this.ParsedInput.Select(p => p.Z).Min() - 1;
+      var outside = ReachableFrom(new Position(minX, minY, minZ), this.ParsedInput);
+
+      foreach (var cube in outside)
       {
          foreach (var adjacentPosition in cube.GetAdjacentPositions(includeZ: true, includeDiagonals: false))
          {
-            if (!set.Contains(adjacentPosition))
+            if (this.ParsedInput.Contains(adjacentPosition))
             {
-               _ = emptyPositions.Add(adjacentPosition);
                ++sum;
-            }
-         }
-      }
-
-      var airPockets = new List<HashSet<Position>>();
-      while (emptyPositions.Any())
-      {
-         var reachable = ReachableFrom(emptyPositions.First(), set);
-         airPockets.Add(reachable);
-         emptyPositions = emptyPositions.Except(reachable).ToHashSet();
-      }
-
-      // Assume the biggest air pocket is "the outside"
-      foreach (var airPocket in airPockets.OrderByDescending(pocket => pocket.Count).Skip(1))
-      {
-         foreach (var cube in airPocket)
-         {
-            foreach (var adjacentPosition in cube.GetAdjacentPositions(includeZ: true, includeDiagonals: false))
-            {
-               if (set.Contains(adjacentPosition))
-               {
-                  --sum;
-               }
             }
          }
       }
