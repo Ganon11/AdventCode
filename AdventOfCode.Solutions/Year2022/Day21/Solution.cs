@@ -62,13 +62,13 @@ internal abstract class Monkey
    {
       if (AllMonkeys.TryGetValue(name, out var monkey) && monkey != null)
       {
-         return monkey.ToString();
+         return monkey.ToString()!;
       }
       return string.Empty;
    }
 }
 
-internal class SimpleMonkey : Monkey
+internal sealed class SimpleMonkey : Monkey
 {
    private readonly long value;
 
@@ -87,7 +87,7 @@ internal class SimpleMonkey : Monkey
    }
 }
 
-internal class ComplexMonkey : Monkey
+internal sealed class ComplexMonkey : Monkey
 {
    private readonly string monkey1;
    private readonly string monkey2;

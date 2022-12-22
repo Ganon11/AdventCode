@@ -93,7 +93,7 @@ internal sealed class Solution : SolutionBase<long[]>
    }
 }
 
-internal class NumberNode
+internal sealed class NumberNode
 {
    public long Data { get; set; }
    public NumberNode? Previous { get; set; }
@@ -109,7 +109,7 @@ internal class NumberNode
    public static (List<NumberNode>, NumberNode) CreateList(long[] data)
    {
       var allNodes = new List<NumberNode>();
-      NumberNode zeroNode = null;
+      NumberNode? zeroNode = null;
       foreach (var number in data)
       {
          var newNode = new NumberNode(number);
