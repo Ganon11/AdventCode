@@ -265,5 +265,5 @@ internal sealed class ProductionState : IComparable<ProductionState>
       return result.Where(state => state.Time <= timeBudget);
    }
 
-   public int CompareTo(ProductionState? other) => other.Cache[Resource.Geode].CompareTo(this.Cache[Resource.Geode]);
+   public int CompareTo(ProductionState? other) => other == null ? -1 : other.Cache[Resource.Geode].CompareTo(this.Cache[Resource.Geode]);
 }
