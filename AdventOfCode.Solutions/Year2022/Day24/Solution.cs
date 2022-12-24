@@ -2,11 +2,11 @@ namespace AdventOfCode.Solutions.Year2022.Day24;
 
 using AdventOfCode.Position;
 
-internal sealed class Solution : SolutionBase<Blizzard[]>
+internal sealed class Solution : SolutionBase<Tuple<Dictionary<long, HashSet<Position>>, long, long>>
 {
    public Solution() : base(24, 2022, "Blizzard Basin", false) { }
 
-   public override Blizzard[] ParseInput(string input)
+   public override Tuple<Dictionary<long, HashSet<Position>>, long, long> ParseInput(string input)
    {
       var blizzards = new List<Blizzard>();
 
@@ -38,42 +38,42 @@ internal sealed class Solution : SolutionBase<Blizzard[]>
          --row;
       }
 
-      Blizzard.MaxCol = lines.First().Length - 1;
-      Blizzard.MaxRow = lines.Length - 1;
+      var maxCol = lines.First().Length - 1;
+      var maxRow = lines.Length - 1;
 
-      return blizzards.ToArray();
+      return new(GetBlizzardPositions(blizzards, maxRow, maxCol), maxRow, maxCol);
    }
 
-   private static void MoveBlizzards(Blizzard[] blizzards)
+   private static void MoveBlizzards(IEnumerable<Blizzard> blizzards, long maxRow, long maxCol)
    {
       foreach (var blizzard in blizzards)
       {
-         blizzard.Move();
+         blizzard.Move(maxRow, maxCol);
       }
    }
 
-   private static (long, Dictionary<long, Blizzard[]>) GetBlizzardPositions(Blizzard[] blizzards)
+   private static Dictionary<long, HashSet<Position>> GetBlizzardPositions(IEnumerable<Blizzard> blizzards, long maxRow, long maxCol)
    {
-      var positions = new Dictionary<long, Blizzard[]>
+      var positions = new Dictionary<long, HashSet<Position>>
       {
-         [0] = blizzards.Copy()
+         { 0, blizzards.Select(b => b.Position).ToHashSet() }
       };
 
-      var rowCount = Blizzard.MaxRow - 1;
-      var colCount = Blizzard.MaxCol - 1;
+      var rowCount = maxRow - 1;
+      var colCount = maxCol - 1;
       var cycleLength = (long)CalculationUtils.FindLCM(rowCount, colCount);
       for (var index = 1; index < cycleLength; ++index)
       {
-         MoveBlizzards(blizzards);
-         positions[index] = blizzards.Copy();
+         MoveBlizzards(blizzards, maxRow, maxCol);
+         positions[index] = blizzards.Select(b => b.Position).ToHashSet();
       }
 
-      return (cycleLength, positions);
+      return positions;
    }
 
-   private static (long, long) BFS(Position start, Position end, long cycleLength, Dictionary<long, Blizzard[]> blizzardPositions, long startTime = 0)
+   private static long ShortestPath(Position start, Position end, long maxRow, long maxCol, Dictionary<long, HashSet<Position>> blizzardPositions, long startTime = 0)
    {
-      Console.WriteLine(PrintBlizzards(start, end, blizzardPositions[startTime % cycleLength]));
+      long cycleLength = blizzardPositions.Keys.Count;
 
       var startState = new BlizzardState { Position = start, BlizzardCycle = startTime % cycleLength };
       var frontier = new PriorityQueue<BlizzardState, long>();
@@ -95,7 +95,7 @@ internal sealed class Solution : SolutionBase<Blizzard[]>
 
          if (current.Position == end)
          {
-            return (costSoFar[current], current.BlizzardCycle);
+            return costSoFar[current];
          }
 
          var newCost = costSoFar[current] + 1;
@@ -104,17 +104,17 @@ internal sealed class Solution : SolutionBase<Blizzard[]>
             var nextState = new BlizzardState
             {
                Position = neighbor,
-               BlizzardCycle = newCost % cycleLength
+               BlizzardCycle = (current.BlizzardCycle + 1) % cycleLength
             };
 
             // Blizzard occupies the space
-            if (blizzardPositions[nextState.BlizzardCycle].Any(b => b.Position == neighbor))
+            if (blizzardPositions[nextState.BlizzardCycle].Contains(neighbor))
             {
                continue;
             }
 
             // Out of bounds Col
-            if (neighbor.X <= 0 || neighbor.X >= Blizzard.MaxCol)
+            if (neighbor.X <= 0 || neighbor.X >= maxCol)
             {
                continue;
             }
@@ -124,7 +124,7 @@ internal sealed class Solution : SolutionBase<Blizzard[]>
                continue;
             }
 
-            if (neighbor.Y >= Blizzard.MaxRow && neighbor != end && neighbor != start)
+            if (neighbor.Y >= maxRow && neighbor != end && neighbor != start)
             {
                continue;
             }
@@ -138,82 +138,29 @@ internal sealed class Solution : SolutionBase<Blizzard[]>
          }
       }
 
-      return (int.MaxValue, 0);
-   }
-
-   private static string PrintBlizzards(Position start, Position end, Blizzard[] blizzards)
-   {
-      var sb = new StringBuilder();
-      for (var row = Blizzard.MaxRow; row >= 0; --row)
-      {
-         for (var col = 0; col <= Blizzard.MaxCol; ++col)
-         {
-            var p = new Position(col, row);
-            if (p == start)
-            {
-               _ = sb.Append('S');
-               continue;
-            }
-
-            if (p == end)
-            {
-               _ = sb.Append('E');
-               continue;
-            }
-
-            if (p.X == 0 || p.Y == 0 || p.X == Blizzard.MaxCol || p.Y == Blizzard.MaxRow)
-            {
-               _ = sb.Append('#');
-               continue;
-            }
-
-            var blizzardsAtPosition = blizzards.Where(b => b.Position == p);
-            if (blizzardsAtPosition.Count() >= 2)
-            {
-               _ = sb.Append(blizzardsAtPosition.Count());
-            }
-            else if (blizzardsAtPosition.Any())
-            {
-               _ = blizzardsAtPosition.First().Direction switch
-               {
-                  Direction.Up => sb.Append('^'),
-                  Direction.Down => sb.Append('v'),
-                  Direction.Left => sb.Append('<'),
-                  Direction.Right => sb.Append('>'),
-                  _ => sb.Append('?'),
-               };
-            }
-            else
-            {
-               _ = sb.Append('.');
-            }
-         }
-         _ = sb.AppendLine();
-      }
-
-      return sb.ToString();
+      return long.MaxValue;
    }
 
    public override string SolvePartOne()
    {
-      var blizzardInfo = GetBlizzardPositions(this.ParsedInput.Copy());
-      var start = new Position(1, Blizzard.MaxRow);
-      var end = new Position(Blizzard.MaxCol - 1, 0);
+      var (blizzardInfo, maxRow, maxCol) = this.ParsedInput;
+      var start = new Position(1, maxRow);
+      var end = new Position(maxCol - 1, 0);
 
-      var cost = BFS(start, end, blizzardInfo.Item1, blizzardInfo.Item2);
-      return cost.Item1.ToString(System.Globalization.CultureInfo.CurrentCulture);
+      var cost = ShortestPath(start, end, maxRow, maxCol, blizzardInfo);
+      return cost.ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
 
    public override string SolvePartTwo()
    {
-      var blizzardInfo = GetBlizzardPositions(this.ParsedInput.Copy());
-      var start = new Position(1, Blizzard.MaxRow);
-      var end = new Position(Blizzard.MaxCol - 1, 0);
+      var (blizzardInfo, maxRow, maxCol) = this.ParsedInput;
+      var start = new Position(1, maxRow);
+      var end = new Position(maxCol - 1, 0);
 
-      var result1 = BFS(start, end, blizzardInfo.Item1, blizzardInfo.Item2);
-      var result2 = BFS(end, start, blizzardInfo.Item1, blizzardInfo.Item2, result1.Item2);
-      var result3 = BFS(start, end, blizzardInfo.Item1, blizzardInfo.Item2, result2.Item2);
-      return (result1.Item1 + result2.Item1 + result3.Item1).ToString(System.Globalization.CultureInfo.CurrentCulture);
+      var result1 = ShortestPath(start, end, maxRow, maxCol, blizzardInfo);
+      var result2 = ShortestPath(end, start, maxRow, maxCol, blizzardInfo, result1);
+      var result3 = ShortestPath(start, end, maxRow, maxCol, blizzardInfo, result1 + result2);
+      return (result1 + result2 + result3).ToString(System.Globalization.CultureInfo.CurrentCulture);
    }
 }
 
@@ -230,23 +177,20 @@ internal sealed class Blizzard
    public Position Position { get; private set; }
    public Direction Direction { get; init; }
 
-   public static long MaxRow { get; set; }
-   public static long MaxCol { get; set; }
-
    public Blizzard(long row, long col, Direction direction)
    {
       this.Position = new Position(col, row);
       this.Direction = direction;
    }
 
-   public void Move()
+   public void Move(long maxRow, long maxCol)
    {
       Position nextPosition;
       switch (this.Direction)
       {
          case Direction.Up:
             nextPosition = this.Position.North;
-            if (nextPosition.Y >= MaxRow)
+            if (nextPosition.Y >= maxRow)
             {
                nextPosition.Y = 1;
             }
@@ -255,19 +199,19 @@ internal sealed class Blizzard
             nextPosition = this.Position.South;
             if (nextPosition.Y <= 0)
             {
-               nextPosition.Y = MaxRow - 1;
+               nextPosition.Y = maxRow - 1;
             }
             break;
          case Direction.Left:
             nextPosition = this.Position.West;
             if (nextPosition.X <= 0)
             {
-               nextPosition.X = MaxCol - 1;
+               nextPosition.X = maxCol - 1;
             }
             break;
          case Direction.Right:
             nextPosition = this.Position.East;
-            if (nextPosition.X >= MaxCol)
+            if (nextPosition.X >= maxCol)
             {
                nextPosition.X = 1;
             }
@@ -283,6 +227,6 @@ internal sealed class Blizzard
 
 internal sealed record BlizzardState
 {
-   public Position Position { get; init; }
+   public Position Position { get; init; } = new();
    public long BlizzardCycle { get; init; }
 }
