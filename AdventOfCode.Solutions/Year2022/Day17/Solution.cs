@@ -4,7 +4,7 @@ using AdventOfCode.Position;
 
 internal sealed class Solution : SolutionBase<char[]>
 {
-   public Solution() : base(17, 2022, "Pyroclastic Flow", false) { }
+   public Solution() : base(17, 2022, "Pyroclastic Flow", true) { }
 
    public override char[] ParseInput(string input) => input.Trim().ToCharArray();
 
@@ -45,11 +45,13 @@ internal sealed class Solution : SolutionBase<char[]>
       long spawnHeight = 3;
       var shapeCounter = 0;
       var currentShape = Shape.GetNextShape(spawnHeight, shapeCounter++);
-      var settledCount = 0;
-      var step = 0;
+      long settledCount = 0;
+      long step = 0;
       var settledBlocks = new HashSet<Position>();
 
-      var cycleDetection = new Dictionary<TetrisState, long>();
+      long extraHeight = 0;
+
+      var cycleDetection = new HashSet<TetrisState>();
 
       while (settledCount < blockCount)
       {
@@ -71,23 +73,32 @@ internal sealed class Solution : SolutionBase<char[]>
             {
                TopRows = CalculateTopRows(settledBlocks, maxHeight),
                ShapeIndex = shapeCounter,
-               JetIndex = step % this.ParsedInput.Length
+               JetIndex = (int)step % this.ParsedInput.Length,
+               BlockCount = settledCount,
+               MaxHeight = maxHeight
             };
 
-            if (cycleDetection.TryGetValue(state, out var previousStep))
+            if (cycleDetection.TryGetValue(state, out var previousState))
             {
-               Console.WriteLine($"Cycle detected! Previous {previousStep}, current {step}");
+               //Console.WriteLine($"Cycle detected! Previous {previousState.BlockCount}, current {settledCount}");
+               var blockChange = settledCount - previousState.BlockCount;
+               var heightChange = maxHeight - previousState.MaxHeight;
+
+               var blockDifference = blockCount - settledCount;
+               var cyclesToApply = blockDifference / blockChange;
+               extraHeight = heightChange * cyclesToApply;
+               settledCount += blockDifference * cyclesToApply;
             }
             else
             {
-               cycleDetection.Add(state, step);
+               _ = cycleDetection.Add(state);
             }
          }
 
          ++step;
       }
 
-      var height = settledBlocks.Select(p => p.Y).Max() + 1;
+      long height = settledBlocks.Select(p => p.Y).Max() + 1 + extraHeight;
       return height;
    }
 
@@ -115,7 +126,7 @@ internal sealed class Solution : SolutionBase<char[]>
 
    public override string SolvePartOne() => this.PlayTetris(2022).ToString(System.Globalization.CultureInfo.CurrentCulture);
 
-   public override string SolvePartTwo() => this.PlayTetris(202200).ToString(System.Globalization.CultureInfo.CurrentCulture);
+   public override string SolvePartTwo() => this.PlayTetris(1000000000000).ToString(System.Globalization.CultureInfo.CurrentCulture);
    //public override string SolvePartTwo() => "";
 }
 
@@ -130,29 +141,15 @@ internal abstract class Shape
 {
    public static Shape GetNextShape(long y, int shapeCounter)
    {
-      Shape? newShape;
-      switch (shapeCounter)
+      Shape? newShape = shapeCounter switch
       {
-         case 0:
-            newShape = new Minus(y);
-            break;
-         case 1:
-            newShape = new Plus(y);
-            break;
-         case 2:
-            newShape = new Ell(y);
-            break;
-         case 3:
-            newShape = new Vert(y);
-            break;
-         case 4:
-            newShape = new Box(y);
-            break;
-         default:
-            newShape = new Minus(y);
-            break;
-      }
-
+         0 => new Minus(y),
+         1 => new Plus(y),
+         2 => new Ell(y),
+         3 => new Vert(y),
+         4 => new Box(y),
+         _ => new Minus(y),
+      };
       return newShape;
    }
 
@@ -281,6 +278,9 @@ internal sealed class TetrisState : IEquatable<TetrisState>
    public ulong TopRows { get; init; }
    public int ShapeIndex { get; init; }
    public int JetIndex { get; init; }
+
+   public long BlockCount { get; init; }
+   public long MaxHeight { get; init; }
 
    public bool Equals(TetrisState? other)
    {
