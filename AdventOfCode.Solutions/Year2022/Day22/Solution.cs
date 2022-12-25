@@ -29,6 +29,41 @@ internal sealed partial class Solution : SolutionBase<Tuple<Dictionary<Position,
       return new(map, tokens[1].Trim());
    }
 
+   private static Dictionary<CubeState, CubeState> GetTeleports(bool debug)
+   {
+      var statePairs = new List<Tuple<CubeState, CubeState>>();
+      if (debug)
+      {
+         // 1 to 2
+         statePairs.Add(new(new CubeState(new(8, 1), Direction.North), new CubeState(new(4, 5), Direction.South)));
+         statePairs.Add(new(new CubeState(new(9, 1), Direction.North), new CubeState(new(3, 5), Direction.South)));
+         statePairs.Add(new(new CubeState(new(10, 1), Direction.North), new CubeState(new(2, 5), Direction.South)));
+         statePairs.Add(new(new CubeState(new(11, 1), Direction.North), new CubeState(new(1, 5), Direction.South)));
+         // 1 to 3
+         statePairs.Add(new(new CubeState(new(8, 1), Direction.West), new CubeState(new(5, 5), Direction.South)));
+         statePairs.Add(new(new CubeState(new(8, 2), Direction.West), new CubeState(new(6, 5), Direction.South)));
+         statePairs.Add(new(new CubeState(new(8, 3), Direction.West), new CubeState(new(7, 5), Direction.South)));
+         statePairs.Add(new(new CubeState(new(8, 4), Direction.West), new CubeState(new(8, 5), Direction.South)));
+         // 1 to 6
+         statePairs.Add(new(new CubeState(new(11, 1), Direction.East), new CubeState(new(12, 16), Direction.West)));
+         statePairs.Add(new(new CubeState(new(11, 2), Direction.East), new CubeState(new(12, 15), Direction.West)));
+         statePairs.Add(new(new CubeState(new(11, 3), Direction.East), new CubeState(new(12, 14), Direction.West)));
+         statePairs.Add(new(new CubeState(new(11, 4), Direction.East), new CubeState(new(12, 13), Direction.West)));
+      }
+      else
+      {
+
+      }
+
+      var teleports = new Dictionary<CubeState, CubeState>();
+      foreach (var pair in statePairs)
+      {
+         teleports.Add(pair.Item1, pair.Item2);
+         teleports.Add(pair.Item2, pair.Item1);
+      }
+      return teleports;
+   }
+
    private static string PrintMap(Dictionary<Position, char> map)
    {
       var minRow = map.Keys.Select(p => p.Y).Min();
@@ -188,4 +223,16 @@ internal enum Direction
    South = 1,
    West = 2,
    North = 3
+}
+
+internal sealed record CubeState
+{
+   public Position Position { get; set; }
+   public Direction Direction { get; set; }
+
+   public CubeState(Position position, Direction direction)
+   {
+      this.Position = position;
+      this.Direction = direction;
+   }
 }
