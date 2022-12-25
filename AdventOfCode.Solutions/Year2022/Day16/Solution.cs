@@ -135,7 +135,6 @@ internal sealed class Solution : SolutionBase<Dictionary<string, Valve>>
       var scores = CalculateScores(this.ParsedInput, 26)
          .OrderByDescending(state => state.TotalPressure)
          .ToArray();
-      Console.WriteLine($"Scores to check: {scores.Length}");
       var maxScore = long.MinValue;
       for (var index = 0; index < scores.Length; ++index)
       {
@@ -148,9 +147,6 @@ internal sealed class Solution : SolutionBase<Dictionary<string, Valve>>
 
             if (scores[index].TotalPressure + scores[index2].TotalPressure > maxScore)
             {
-               Console.WriteLine($"Found pair:");
-               Console.WriteLine($"\t{scores[index]}");
-               Console.WriteLine($"\t{scores[index2]}");
                maxScore = scores[index].TotalPressure + scores[index2].TotalPressure;
             }
          }
