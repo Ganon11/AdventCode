@@ -66,22 +66,22 @@ bool advent_of_code::Position::operator!=(const Position& other) const
 
 bool advent_of_code::Position::is_adjacent_to(const Position& other) const
 {
-  if (m_x == other.m_x && m_y == other.m_y && m_z == other.m_z && 1 == abs(m_a - other.m_a))
+  if (m_x == other.m_x && m_y == other.m_y && m_z == other.m_z && 1 == llabs(m_a - other.m_a))
   {
     return true;
   }
 
-  if (m_x == other.m_x && m_y == other.m_y && 1 == abs(m_z - other.m_z) && m_a == other.m_a)
+  if (m_x == other.m_x && m_y == other.m_y && 1 == llabs(m_z - other.m_z) && m_a == other.m_a)
   {
     return true;
   }
 
-  if (m_x == other.m_x && 1 == abs(m_y - other.m_y) && m_z == other.m_z && m_a == other.m_a)
+  if (m_x == other.m_x && 1 == llabs(m_y - other.m_y) && m_z == other.m_z && m_a == other.m_a)
   {
     return true;
   }
 
-  if (1 == abs(m_x - other.m_x) && m_y == other.m_y && m_z == other.m_z && m_a == other.m_a)
+  if (1 == llabs(m_x - other.m_x) && m_y == other.m_y && m_z == other.m_z && m_a == other.m_a)
   {
     return true;
   }
@@ -133,18 +133,18 @@ std::vector<advent_of_code::Position> advent_of_code::Position::get_adjacent_pos
 {
   return std::vector<Position>{
     above(),
-      north(),
-      west(),
-      east(),
-      south(),
-      below()
+    north(),
+    west(),
+    east(),
+    south(),
+    below()
   };
 }
 
 size_t advent_of_code::Position::distance_to(const Position& other) const
 {
-  return static_cast<size_t>(abs(m_x - other.m_x)
-                           + abs(m_y - other.m_y)
-                           + abs(m_z - other.m_z)
-                           + abs(m_a - other.m_a));
+  return static_cast<size_t>(llabs(m_x - other.m_x)
+                           + llabs(m_y - other.m_y)
+                           + llabs(m_z - other.m_z)
+                           + llabs(m_a - other.m_a));
 }

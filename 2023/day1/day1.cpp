@@ -7,17 +7,17 @@
 namespace {
 static short PART = 1;
 static std::vector<std::string> DIGIT_WORDS{
-    "zero",
-    "one",
-    "two",
-    "three",
-    "four",
-    "five",
-    "six",
-    "seven",
-    "eight",
-    "nine"
-  };
+  "zero",
+  "one",
+  "two",
+  "three",
+  "four",
+  "five",
+  "six",
+  "seven",
+  "eight",
+  "nine"
+};
 }
 
 short find_digit_word_at_index(const std::string& line, const size_t index)
