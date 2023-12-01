@@ -1,0 +1,10 @@
+[
+  {
+    "name": "GCC FDS 11.4.0-1",
+    "compilers": {
+      "C": "/home/fds/build/gcc-11/bin/gcc",
+      "CXX": "/home/fds/build/gcc-11/bin/g++"
+    },
+    "isTrusted": true
+  }
+]
