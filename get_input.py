@@ -9,7 +9,7 @@ import requests
 
 def create_input_file(year, day, path=None):
   """Fetches my input from Advent of Code."""
-  daystr = 'Day' + str(day)
+  daystr = 'day' + str(day)
   url = 'https://adventofcode.com/' + str(year) + '/day/' + str(day) + '/input'
 
   cookies = dict()

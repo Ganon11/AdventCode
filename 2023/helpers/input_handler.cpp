@@ -51,7 +51,10 @@ std::vector<std::string> advent_of_code::InputHandler::read_all_lines() const
   while (input.good())
   {
     getline(input, line);
-    lines.push_back(line);
+    if (!line.empty())
+    {
+      lines.push_back(line);
+    }
   }
 
   return lines;

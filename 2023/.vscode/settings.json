@@ -3,7 +3,7 @@
     "cwd": "${fileDirname}",
     "args": [
       "-filename",
-      "sample.txt"
+      "input/sample.txt"
     ]
   }
 }

@@ -9,7 +9,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/bin/${fileBasenameNoExtension}",
-      "args": ["-filename", "sample.txt", "-p", "1"],
+      "args": ["-filename", "input/sample.txt", "-p", "1"],
       "environment": [
         {
           "name": "LD_LIBRARY_PATH",
@@ -23,7 +23,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/bin/${fileBasenameNoExtension}",
-      "args": ["-filename", "input.txt", "-p", "1"],
+      "args": ["-filename", "input/input.txt", "-p", "1"],
       "environment": [
         {
           "name": "LD_LIBRARY_PATH",
@@ -37,7 +37,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/bin/${fileBasenameNoExtension}",
-      "args": ["-filename", "sample.txt", "-p", "2"],
+      "args": ["-filename", "input/sample.txt", "-p", "2"],
       "environment": [
         {
           "name": "LD_LIBRARY_PATH",
@@ -51,7 +51,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/bin/${fileBasenameNoExtension}",
-      "args": ["-filename", "input.txt", "-p", "2"],
+      "args": ["-filename", "input/input.txt", "-p", "2"],
       "environment": [
         {
           "name": "LD_LIBRARY_PATH",
