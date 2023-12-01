@@ -22,7 +22,8 @@
         "kind": "build",
         "isDefault": true
       },
-      "detail": "Build a day's code."
+      "detail": "Build a day's code.",
+      "dependsOn": [ "Build Helpers Library" ],
     },
     {
       "type": "shell",
