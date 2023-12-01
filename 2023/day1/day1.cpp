@@ -1,75 +1,34 @@
 #include <cctype>
 #include <iostream>
+#include <vector>
 
 #include "../helpers/input_handler.h"
 
 namespace {
 static short PART = 1;
-}
-
-bool find_string_at_index(const std::string& line, const std::string& word, const size_t index)
-{
-  if (word.length() + index > line.length())
-  {
-    return false;
-  }
-
-  for (size_t word_index = 0; word_index < word.length(); ++word_index)
-  {
-    if (word[word_index] != line[index + word_index])
-    {
-      return false;
-    }
-  }
-
-  return true;
+static std::vector<std::string> DIGIT_WORDS{
+    "zero",
+    "one",
+    "two",
+    "three",
+    "four",
+    "five",
+    "six",
+    "seven",
+    "eight",
+    "nine"
+  };
 }
 
 short find_digit_word_at_index(const std::string& line, const size_t index)
 {
-  if (find_string_at_index(line, "one", index))
+  for (size_t word_index = 0; word_index < DIGIT_WORDS.size(); ++word_index)
   {
-    return 1;
-  }
-  
-  if (find_string_at_index(line, "two", index))
-  {
-    return 2;
-  }
-  
-  if (find_string_at_index(line, "three", index))
-  {
-    return 3;
-  }
-  
-  if (find_string_at_index(line, "four", index))
-  {
-    return 4;
-  }
-  
-  if (find_string_at_index(line, "five", index))
-  {
-    return 5;
-  }
-  
-  if (find_string_at_index(line, "six", index))
-  {
-    return 6;
-  }
-  
-  if (find_string_at_index(line, "seven", index))
-  {
-    return 7;
-  }
-  
-  if (find_string_at_index(line, "eight", index))
-  {
-    return 8;
-  }
-  
-  if (find_string_at_index(line, "nine", index))
-  {
-    return 9;
+    const std::string& word{ DIGIT_WORDS[word_index] };
+    if (line.compare(index, word.length(), word) == 0)
+    {
+      return word_index;
+    }
   }
 
   return -1;
