@@ -34,6 +34,9 @@ advent_of_code::InputHandler::InputHandler(const int argc, char** argv)
   }
 }
 
+advent_of_code::InputHandler::InputHandler(const std::string& filename) : m_filename{ filename }
+{}
+
 std::string advent_of_code::InputHandler::read_single_line() const
 {
   std::vector<std::string> lines;

@@ -2,7 +2,8 @@
 #include <iostream>
 #include <vector>
 
-#include "../helpers/input_handler.h"
+#include "input_handler.h"
+#include "cxxopts.hpp"
 
 namespace {
 static short PART = 1;
@@ -94,16 +95,25 @@ short find_last_digit(const std::string& line)
 
 int main(int argc, char* argv[])
 {
-  advent_of_code::InputHandler input{ argc, argv };
-  std::string part;
-  if (input.get_argument("-p", part))
+  cxxopts::Options options("d1", "Day 1 of Advent of Code");
+
+  options.add_options()
+    ("f,filename", "Input Filename", cxxopts::value<std::string>())
+    ("p,part", "Part 1 or 2", cxxopts::value<short>()->default_value("1"))
+  ;
+
+  auto result = options.parse(argc, argv);
+  if (!result.count("filename"))
   {
-    if (part == "1")
-      ::PART = 1;
-    else if (part == "2")
-      ::PART = 2;
+    return -1;
   }
 
+  if (result.count("part"))
+  {
+    ::PART = result["part"].as<short>();
+  }
+
+  advent_of_code::InputHandler input{ result["filename"].as<std::string>() };
   int total{ 0 };
   for (const auto& line : input.read_all_lines())
   {
