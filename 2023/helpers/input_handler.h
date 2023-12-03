@@ -16,4 +16,7 @@ public:
 private:
   std::string m_filename;
 };
+
+std::vector<std::string> tokenize(const std::string& line, const char separator);
+std::vector<std::string> tokenize(const std::string& line, const std::string& separator);
 }
