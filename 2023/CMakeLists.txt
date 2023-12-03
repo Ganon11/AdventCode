@@ -9,3 +9,5 @@ OPTION(CMAKE_COMPILE_WARNING_AS_ERROR "Treat warnings as errors during compilati
 
 add_subdirectory(helpers)
 add_subdirectory(day1)
+add_subdirectory(day2)
+add_subdirectory(day3)
