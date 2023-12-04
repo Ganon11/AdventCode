@@ -6,7 +6,6 @@
 #include "cxxopts.hpp"
 
 namespace {
-static short PART = 1;
 static std::vector<std::string> DIGIT_WORDS{
   "zero",
   "one",
@@ -35,7 +34,7 @@ short find_digit_word_at_index(const std::string& line, const size_t index)
   return -1;
 }
 
-short find_first_digit(const std::string& line)
+short find_first_digit(const std::string& line, const bool include_words = false)
 {
   for (size_t index = 0; index < line.length(); ++index)
   {
@@ -44,7 +43,7 @@ short find_first_digit(const std::string& line)
       return line[index] - '0';
     }
 
-    if (PART == 2)
+    if (include_words)
     {
       short word_digit = find_digit_word_at_index(line, index);
       if (word_digit != -1)
@@ -57,7 +56,7 @@ short find_first_digit(const std::string& line)
   return -1;
 }
 
-short find_last_digit(const std::string& line)
+short find_last_digit(const std::string& line, const bool include_words = false)
 {
   for (size_t index = line.length() - 1; index > 0; --index)
   {
@@ -66,7 +65,7 @@ short find_last_digit(const std::string& line)
       return line[index] - '0';
     }
 
-    if (PART == 2)
+    if (include_words)
     {
       short word_digit = find_digit_word_at_index(line, index);
       if (word_digit != -1)
@@ -81,7 +80,7 @@ short find_last_digit(const std::string& line)
     return line[0] - '0';
   }
 
-  if (PART == 2)
+  if (include_words)
   {
     short word_digit = find_digit_word_at_index(line, 0);
     if (word_digit != -1)
@@ -99,7 +98,6 @@ int main(int argc, char* argv[])
 
   options.add_options()
     ("f,filename", "Input Filename", cxxopts::value<std::string>())
-    ("p,part", "Part 1 or 2", cxxopts::value<short>()->default_value("1"))
   ;
 
   auto result = options.parse(argc, argv);
@@ -108,21 +106,16 @@ int main(int argc, char* argv[])
     return -1;
   }
 
-  if (result.count("part"))
-  {
-    ::PART = result["part"].as<short>();
-  }
-
   advent_of_code::InputHandler input{ result["filename"].as<std::string>() };
-  int total{ 0 };
+  int total_part_1{ 0 };
+  int total_part_2{ 0 };
   for (const auto& line : input.read_all_lines())
   {
-    int first = find_first_digit(line);
-    int last = find_last_digit(line);
-
-    total += (first * 10) + last;
+    total_part_1 += (find_first_digit(line) * 10) + find_last_digit(line);
+    total_part_2 += (find_first_digit(line, true) * 10) + find_last_digit(line, true);
   }
 
-  std::cout << "Calibration sum: " << total << std::endl;
+  std::cout << "Calibration sum (p1): " << total_part_1 << std::endl;
+  std::cout << "Calibration sum (p2): " << total_part_2 << std::endl;
   return 0;
 }
