@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """
 Scaffolds an Advent of Code day.
 """
@@ -54,7 +56,9 @@ def add_day_to_root_cmake(daystr):
 
 def create_entry_point(basedir, day):
   text = """#include <iostream>
-#include "../helpers/input_handler.h"
+
+#include "cxxopts.hpp"
+#include "input_handler.h"
 
 namespace {
 static short PART = 1;
@@ -62,15 +66,26 @@ static short PART = 1;
 
 int main(int argc, char* argv[])
 {
-  advent_of_code::InputHandler input{ argc, argv };
-  std::string part;
-  if (input.get_argument("-p", part))
+  cxxopts::Options options("d1", "Day 1 of Advent of Code");
+
+  options.add_options()
+    ("f,filename", "Input Filename", cxxopts::value<std::string>())
+    ("p,part", "Part 1 or 2", cxxopts::value<short>()->default_value("1"))
+  ;
+
+  auto result = options.parse(argc, argv);
+  if (!result.count("filename"))
   {
-    if (part == "1")
-      ::PART = 1;
-    else if (part == "2")
-      ::PART = 2;
+    return -1;
   }
+
+  if (result.count("part"))
+  {
+    ::PART = result["part"].as<short>();
+  }
+
+  advent_of_code::InputHandler input{ result["filename"].as<std::string>() };
+
   return 0;
 }
 """
@@ -90,6 +105,7 @@ def main():
   parser.add_argument('-d', '--day', default=None, type=int)
   parser.add_argument('-s', '--samples', default=1, type=int)
   parser.add_argument('-e', '--delete', action='store_true')
+  parser.add_argument('-i', '--input-only', action='store_true')
   args = parser.parse_args()
 
   day = get_day(args.day)
@@ -103,6 +119,11 @@ def main():
       print(f'{basedir} does not exist.')
     else:
       shutil.rmtree(basedir)
+  elif args.input_only: 
+    if not os.path.exists(basedir):
+      os.mkdir(basedir)
+
+    create_input_file(basedir, day, year)
   else:
     if os.path.exists(basedir):
       print(f'{basedir} already exists.')
