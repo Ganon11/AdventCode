@@ -220,7 +220,7 @@ int main(int argc, char* argv[])
   {
     for (size_t col = 0; col < lines[row].size(); ++col)
     {
-      advent_of_code::Position p{ col, row };
+      advent_of_code::Position p{ static_cast<unsigned long long>(col), static_cast<unsigned long long>(row) };
       SchematicSquare square;
       square.position = p;
       square.character = lines[row][col];
