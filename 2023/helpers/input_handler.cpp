@@ -39,26 +39,34 @@ std::vector<std::string> advent_of_code::InputHandler::read_all_lines() const
 std::vector<std::string> advent_of_code::tokenize(const std::string& line, const char separator = ' ')
 {
   std::vector<std::string> tokens;
+  size_t index = 0;
 
-  const char* str = &line[0];
-  do
+  while (index < line.size())
   {
-    const char* begin = str;
-
-    while (*str != separator && *str)
+    std::string temp;
+    size_t position = line.find(separator, index);
+    if (position == std::string::npos)
     {
-      ++str;
+      temp = line.substr(index);
+      index = line.size();
+    }
+    else
+    {
+      temp = line.substr(index, position - index);
+      index = position + 1;
     }
 
-    tokens.push_back(std::string{ begin, str });
-  } while ('\0' != *str++);
+    if (!temp.empty())
+    {
+      tokens.push_back(temp);
+    }
+  }
 
   return tokens;
 }
 
 std::vector<std::string> advent_of_code::tokenize(const std::string& line, const std::string& separator)
 {
-  //std::cout << "Tokenizing string \"" << line << "\" by delimiter \"" << separator << "\"" << std::endl;
   std::vector<std::string> tokens;
   size_t index = 0;
 
@@ -68,21 +76,17 @@ std::vector<std::string> advent_of_code::tokenize(const std::string& line, const
     size_t position = line.find(separator, index);
     if (position == std::string::npos)
     {
-      //std::cout << "\tDelimiter not found, taking the rest of the string." << std::endl;
       temp = line.substr(index);
       index = line.size();
     }
     else
     {
-      //std::cout << "\tDelimiter found at " << position << ", taking substring." << std::endl;
       temp = line.substr(index, position - index);
       index = position + separator.size();
-      //std::cout << "\tIndex updated to " << index << std::endl;
     }
 
     if (!temp.empty())
     {
-      //std::cout << "\tAdding token \"" << temp << "\"" << std::endl;
       tokens.push_back(temp);
     }
   }

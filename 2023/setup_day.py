@@ -52,7 +52,7 @@ def add_day_to_root_cmake(daystr):
       if new_day in line:
         break
     else:
-      file.write(new_day)
+      file.write(f'{new_day}\n')
 
 def create_entry_point(basedir, day):
   text = """#include <iostream>
