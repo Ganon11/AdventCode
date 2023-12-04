@@ -7,7 +7,6 @@
 #include "cxxopts.hpp"
 
 namespace {
-static short PART = 1;
 static std::map<std::string, unsigned short> LIMITS =
 {
   { "red", 12 },
@@ -29,11 +28,6 @@ int main(int argc, char* argv[])
   if (!result.count("filename"))
   {
     return -1;
-  }
-
-  if (result.count("part"))
-  {
-    ::PART = result["part"].as<short>();
   }
 
   advent_of_code::InputHandler input{ result["filename"].as<std::string>() };

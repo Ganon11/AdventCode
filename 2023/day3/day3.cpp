@@ -6,23 +6,7 @@
 #include "cxxopts.hpp"
 #include "input_handler.h"
 #include "position.h"
-
-namespace {
-static short PART = 1;
-enum POSITION_TYPE {
-  SPACE = 0,
-  NUMBER = 1,
-  SYMBOL = 2
-};
-}
-
-struct SchematicSquare
-{
-public:
-  advent_of_code::Position position;
-  char character;
-  POSITION_TYPE type;
-};
+#include "schematic.h"
 
 unsigned long long part_1(const std::map<advent_of_code::Position, SchematicSquare>& schematic)
 {
@@ -198,18 +182,12 @@ int main(int argc, char* argv[])
 
   options.add_options()
     ("f,filename", "Input Filename", cxxopts::value<std::string>())
-    ("p,part", "Part 1 or 2", cxxopts::value<short>()->default_value("1"))
   ;
 
   auto result = options.parse(argc, argv);
   if (!result.count("filename"))
   {
     return -1;
-  }
-
-  if (result.count("part"))
-  {
-    ::PART = result["part"].as<short>();
   }
 
   advent_of_code::InputHandler input{ result["filename"].as<std::string>() };
@@ -221,23 +199,7 @@ int main(int argc, char* argv[])
     for (size_t col = 0; col < lines[row].size(); ++col)
     {
       advent_of_code::Position p{ static_cast<unsigned long long>(col), static_cast<unsigned long long>(row) };
-      SchematicSquare square;
-      square.position = p;
-      square.character = lines[row][col];
-      if (std::isdigit(lines[row][col]))
-      {
-        square.type = POSITION_TYPE::NUMBER;
-      }
-      else if (lines[row][col] == '.')
-      {
-        square.type = POSITION_TYPE::SPACE;
-      }
-      else
-      {
-        square.type = POSITION_TYPE::SYMBOL;
-      }
-
-      schematic[p] = square;
+      schematic[p] = SchematicSquare{ p, lines[row][col] };
     }
   }
 
