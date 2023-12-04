@@ -3,7 +3,17 @@
 #include <vector>
 
 advent_of_code::Position::Position(const long long x, const long long y, const long long z, const long long a)
-  : m_x{ x }, m_y{ y }, m_z{ z }, m_a{ a }
+  : m_x{ x },
+    m_y{ y },
+    m_z{ z },
+    m_a{ a }
+{}
+
+advent_of_code::Position::Position(const unsigned long long x, const unsigned long long y, const unsigned long long z, const unsigned long long a)
+  : m_x{ static_cast<long long>(x) },
+    m_y{ static_cast<long long>(y) },
+    m_z{ static_cast<long long>(z) },
+    m_a{ static_cast<long long>(a) }
 {}
 
 advent_of_code::Position::Position(const std::string& line)
@@ -170,14 +180,24 @@ advent_of_code::Position advent_of_code::Position::future() const
   return Position{ m_x, m_y, m_z, m_a + 1 };
 }
 
-std::vector<advent_of_code::Position> advent_of_code::Position::get_adjacent_positions() const
+std::vector<advent_of_code::Position> advent_of_code::Position::get_adjacent_positions(const bool diagonal) const
 {
-  return std::vector<Position>{
+  std::vector<Position> positions{
     north(),
     west(),
     east(),
     south()
   };
+
+  if (diagonal)
+  {
+    positions.push_back(north().west());
+    positions.push_back(north().east());
+    positions.push_back(south().west());
+    positions.push_back(south().east());
+  }
+
+  return positions;
 }
 
 std::vector<advent_of_code::Position> advent_of_code::Position::get_adjacent_positions_3D() const
@@ -212,6 +232,12 @@ size_t advent_of_code::Position::distance_to(const Position& other) const
                            + llabs(m_y - other.m_y)
                            + llabs(m_z - other.m_z)
                            + llabs(m_a - other.m_a));
+}
+
+std::ostream& advent_of_code::operator<<(std::ostream& out, const advent_of_code::Position& p)
+{
+  out << p.x() << ", " << p.y() << ", " << p.z() << ", " << p.a();
+  return out;
 }
 
 std::vector<advent_of_code::Position> advent_of_code::Position::getPositionsInLine(const advent_of_code::Position& p1, const advent_of_code::Position& p2)
