@@ -4,49 +4,12 @@
 #include <set>
 #include <string>
 
+#include "card.h"
 #include "cxxopts.hpp"
 #include "input_handler.h"
 
 namespace {
 static short PART = 1;
-struct Card
-{
-public:
-  Card() = default;
-  Card(const std::string& line) : matching_numbers{ 0 }
-  {
-    std::vector<std::string> tokens = advent_of_code::tokenize(line, ": ");
-    std::string name = tokens[0];
-    id = std::stoi(advent_of_code::tokenize(name, ' ')[1]);
-
-    std::string data = tokens[1];
-    tokens = advent_of_code::tokenize(data, " | ");
-    std::string winners_str = tokens[0];
-    std::string numbers_str = tokens[1];
-
-    std::set<int> winning_numbers;
-    for (const auto& number_str : advent_of_code::tokenize(winners_str, ' '))
-    {
-      winners.insert(std::stoi(number_str));
-    }
-
-    for (const auto& number_str : advent_of_code::tokenize(numbers_str, ' '))
-    {
-      int number{ std::stoi(number_str) };
-      numbers.insert(number);
-      if (winners.contains(number))
-      {
-        ++matching_numbers;
-      }
-    }
-  }
-
-  int id;
-  std::set<int> winners;
-  std::set<int> numbers;
-
-  int matching_numbers;
-};
 }
 
 int main(int argc, char* argv[])
@@ -80,14 +43,7 @@ int main(int argc, char* argv[])
     cards[card.id] = card;
     card_queue.emplace_back(card.id);
 
-    if (card.matching_numbers == 1)
-    {
-      total += 1;
-    }
-    else if (card.matching_numbers > 1)
-    {
-      total += 1 << (card.matching_numbers - 1);
-    }
+    total += 1 << (card.matching_numbers - 1);
   }
 
   std::cout << "Total points: " << total << std::endl;
