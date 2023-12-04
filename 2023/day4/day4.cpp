@@ -1,6 +1,6 @@
+#include <deque>
 #include <iostream>
 #include <map>
-#include <queue>
 #include <set>
 #include <string>
 
@@ -73,12 +73,12 @@ int main(int argc, char* argv[])
   std::vector<std::string> lines = input.read_all_lines();
   std::map<int, Card> cards;
   unsigned int total{0};
-  std::queue<int> card_queue;
+  std::deque<int> card_queue;
   for (const auto& line : lines)
   {
     Card card{ line };
     cards[card.id] = card;
-    card_queue.emplace(card.id);
+    card_queue.emplace_back(card.id);
 
     if (card.matching_numbers == 1)
     {
@@ -93,25 +93,30 @@ int main(int argc, char* argv[])
   std::cout << "Total points: " << total << std::endl;
 
   unsigned int pile{0};
+  std::map<int, int> score_map;
+
   while (!card_queue.empty())
   {
-    int id = card_queue.front();
-    card_queue.pop();
-    ++pile;
-
-    //std::cout << "Processing card id " << id << std::endl;
-    if (!cards.contains(id))
-    {
-      //std::cout << "\tCard doesn't exist" << std::endl;
-      continue;
-    }
+    int id = card_queue.back();
+    card_queue.pop_back();
+    int card_total = 1;
 
     Card card = cards.at(id);
     for (auto count = 1; count <= card.matching_numbers; ++count)
     {
-      //std::cout << "\tAdding card with id " << id + count << " to processing queue." << std::endl;
-      card_queue.emplace(id + count);
+      int new_id = id + count;
+      if (!cards.contains(new_id))
+      {
+        continue;
+      }
+      else
+      {
+        card_total += score_map.at(new_id);
+      }
     }
+
+    score_map[id] = card_total;
+    pile += card_total;
   }
 
   std::cout << "Card pile contains " << pile << " cards." << std::endl;
