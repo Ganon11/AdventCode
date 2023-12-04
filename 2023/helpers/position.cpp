@@ -2,21 +2,23 @@
 
 #include <vector>
 
-advent_of_code::Position::Position(const long long x, const long long y, const long long z, const long long a)
+namespace advent_of_code
+{
+Position::Position(const long long x, const long long y, const long long z, const long long a)
   : m_x{ x },
     m_y{ y },
     m_z{ z },
     m_a{ a }
 {}
 
-advent_of_code::Position::Position(const unsigned long long x, const unsigned long long y, const unsigned long long z, const unsigned long long a)
+Position::Position(const unsigned long long x, const unsigned long long y, const unsigned long long z, const unsigned long long a)
   : m_x{ static_cast<long long>(x) },
     m_y{ static_cast<long long>(y) },
     m_z{ static_cast<long long>(z) },
     m_a{ static_cast<long long>(a) }
 {}
 
-advent_of_code::Position::Position(const std::string& line)
+Position::Position(const std::string& line)
 {
   std::vector<std::string> tokens;
 
@@ -55,7 +57,7 @@ advent_of_code::Position::Position(const std::string& line)
   }
 }
 
-bool advent_of_code::Position::operator<(const Position& other) const
+bool Position::operator<(const Position& other) const
 {
   if (m_a < other.m_a)
   {
@@ -80,7 +82,7 @@ bool advent_of_code::Position::operator<(const Position& other) const
   return false;
 }
 
-bool advent_of_code::Position::operator>(const Position& other) const
+bool Position::operator>(const Position& other) const
 {
   if (m_a > other.m_a)
   {
@@ -105,17 +107,17 @@ bool advent_of_code::Position::operator>(const Position& other) const
   return false;
 }
 
-bool advent_of_code::Position::operator==(const Position& other) const
+bool Position::operator==(const Position& other) const
 {
   return m_x == other.m_x && m_y == other.m_y && m_z == other.m_z && m_a == other.m_a;
 }
 
-bool advent_of_code::Position::operator!=(const Position& other) const
+bool Position::operator!=(const Position& other) const
 {
   return !operator==(other);
 }
 
-bool advent_of_code::Position::is_adjacent_to(const Position& other) const
+bool Position::is_adjacent_to(const Position& other) const
 {
   if (m_x == other.m_x && m_y == other.m_y && m_z == other.m_z && 1 == llabs(m_a - other.m_a))
   {
@@ -140,47 +142,47 @@ bool advent_of_code::Position::is_adjacent_to(const Position& other) const
   return false;
 }
 
-advent_of_code::Position advent_of_code::Position::north() const
+Position Position::north() const
 {
   return Position{ m_x, m_y - 1, m_z, m_a };
 }
 
-advent_of_code::Position advent_of_code::Position::south() const
+Position Position::south() const
 {
   return Position{ m_x, m_y + 1, m_z, m_a };
 }
 
-advent_of_code::Position advent_of_code::Position::east() const
+Position Position::east() const
 {
   return Position{ m_x + 1, m_y, m_z, m_a };
 }
 
-advent_of_code::Position advent_of_code::Position::west() const
+Position Position::west() const
 {
   return Position{ m_x - 1, m_y, m_z, m_a };
 }
 
-advent_of_code::Position advent_of_code::Position::above() const
+Position Position::above() const
 {
   return Position{ m_x, m_y, m_z - 1, m_a };
 }
 
-advent_of_code::Position advent_of_code::Position::below() const
+Position Position::below() const
 {
   return Position{ m_x, m_y, m_z + 1, m_a };
 }
 
-advent_of_code::Position advent_of_code::Position::past() const
+Position Position::past() const
 {
   return Position{ m_x, m_y, m_z, m_a - 1 };
 }
 
-advent_of_code::Position advent_of_code::Position::future() const
+Position Position::future() const
 {
   return Position{ m_x, m_y, m_z, m_a + 1 };
 }
 
-std::vector<advent_of_code::Position> advent_of_code::Position::get_adjacent_positions(const bool diagonal) const
+std::vector<Position> Position::get_adjacent_positions(const bool diagonal) const
 {
   std::vector<Position> positions{
     north(),
@@ -200,7 +202,7 @@ std::vector<advent_of_code::Position> advent_of_code::Position::get_adjacent_pos
   return positions;
 }
 
-std::vector<advent_of_code::Position> advent_of_code::Position::get_adjacent_positions_3D() const
+std::vector<Position> Position::get_adjacent_positions_3D() const
 {
   return std::vector<Position>{
     above(),
@@ -212,7 +214,7 @@ std::vector<advent_of_code::Position> advent_of_code::Position::get_adjacent_pos
   };
 }
 
-std::vector<advent_of_code::Position> advent_of_code::Position::get_adjacent_positions_4D() const
+std::vector<Position> Position::get_adjacent_positions_4D() const
 {
   return std::vector<Position>{
     above(),
@@ -226,7 +228,7 @@ std::vector<advent_of_code::Position> advent_of_code::Position::get_adjacent_pos
   };
 }
 
-size_t advent_of_code::Position::distance_to(const Position& other) const
+size_t Position::distance_to(const Position& other) const
 {
   return static_cast<size_t>(llabs(m_x - other.m_x)
                            + llabs(m_y - other.m_y)
@@ -234,13 +236,13 @@ size_t advent_of_code::Position::distance_to(const Position& other) const
                            + llabs(m_a - other.m_a));
 }
 
-std::ostream& advent_of_code::operator<<(std::ostream& out, const advent_of_code::Position& p)
+std::ostream& operator<<(std::ostream& out, const Position& p)
 {
   out << p.x() << ", " << p.y() << ", " << p.z() << ", " << p.a();
   return out;
 }
 
-std::vector<advent_of_code::Position> advent_of_code::Position::getPositionsInLine(const advent_of_code::Position& p1, const advent_of_code::Position& p2)
+std::vector<Position> Position::getPositionsInLine(const Position& p1, const Position& p2)
 {
   std::vector<Position> positions;
   bool good = false;
@@ -394,3 +396,4 @@ std::vector<advent_of_code::Position> advent_of_code::Position::getPositionsInLi
 
   return positions;
 }
+} // namespace advent_of_code
