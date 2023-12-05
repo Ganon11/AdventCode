@@ -19,7 +19,7 @@ std::string advent_of_code::InputHandler::read_single_line() const
   return line;
 }
 
-std::vector<std::string> advent_of_code::InputHandler::read_all_lines() const
+std::vector<std::string> advent_of_code::InputHandler::read_all_lines(const bool include_blanks) const
 {
   std::vector<std::string> lines;
   std::ifstream input{ m_filename };
@@ -27,7 +27,7 @@ std::vector<std::string> advent_of_code::InputHandler::read_all_lines() const
   while (input.good())
   {
     getline(input, line);
-    if (!line.empty())
+    if (include_blanks || !line.empty())
     {
       lines.push_back(line);
     }

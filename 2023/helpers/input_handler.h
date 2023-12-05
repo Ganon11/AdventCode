@@ -11,7 +11,7 @@ public:
   InputHandler(const std::string& filename);
 
   std::string read_single_line() const;
-  std::vector<std::string> read_all_lines() const;
+  std::vector<std::string> read_all_lines(const bool include_blanks = false) const;
 
 private:
   std::string m_filename;
