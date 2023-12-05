@@ -55,40 +55,30 @@ def add_day_to_root_cmake(daystr):
       file.write(f'{new_day}\n')
 
 def create_entry_point(basedir, day):
-  text = """#include <iostream>
+  text = (
+    f'#include <iostream>\n'
+    f'\n'
+    f'#include "cxxopts.hpp"\n'
+    f'#include "input_handler.h"\n'
+    f'\n'
+    f'int main(int argc, char* argv[])\n'
+    f'{{\n'
+    f'  cxxopts::Options options("d{day}", "Day {day} of Advent of Code");\n'
+    f'  options.add_options()\n'
+    f'    ("f,filename", "Input Filename", cxxopts::value<std::string>())\n'
+    f'  ;\n'
+    f'\n'
+    f'  auto result = options.parse(argc, argv);\n'
+    f'  if (!result.count("filename"))\n'
+    f'  {{\n'
+    f'    return -1;\n'
+    f'  }}\n'
+    f'\n'
+    f'  advent_of_code::InputHandler input{{ result["filename"].as<std::string>() }};\n'
+    f'  return 0;\n'
+    f'}}\n'
+  )
 
-#include "cxxopts.hpp"
-#include "input_handler.h"
-
-namespace {
-static short PART = 1;
-}
-
-int main(int argc, char* argv[])
-{
-  cxxopts::Options options("d1", "Day 1 of Advent of Code");
-
-  options.add_options()
-    ("f,filename", "Input Filename", cxxopts::value<std::string>())
-    ("p,part", "Part 1 or 2", cxxopts::value<short>()->default_value("1"))
-  ;
-
-  auto result = options.parse(argc, argv);
-  if (!result.count("filename"))
-  {
-    return -1;
-  }
-
-  if (result.count("part"))
-  {
-    ::PART = result["part"].as<short>();
-  }
-
-  advent_of_code::InputHandler input{ result["filename"].as<std::string>() };
-
-  return 0;
-}
-"""
   with open(os.path.join(basedir, f'day{day}.cpp'), 'w') as file:
     file.write(text)
 
