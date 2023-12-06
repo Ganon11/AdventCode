@@ -58,7 +58,7 @@ unsigned long long part_1(const Schematic& schematic)
       }
 
       // Find last column with number
-      long long end;
+      long long end{-1};
       for (long long index = adj.x(); index <= max_column; ++index)
       {
         advent_of_code::Position p{ index, adj.y() };
@@ -136,7 +136,7 @@ unsigned long long part_2(const Schematic& schematic)
       }
 
       // Find last column with number
-      long long end;
+      long long end{-1};
       for (long long index = adj.x(); index <= max_column; ++index)
       {
         advent_of_code::Position p{ index, adj.y() };
