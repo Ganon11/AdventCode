@@ -11,9 +11,16 @@ int main(int argc, char* argv[])
   cxxopts::Options options("d6", "Day 6 of Advent of Code");
   options.add_options()
     ("f,filename", "Input Filename", cxxopts::value<std::string>())
+    ("h,help", "Print usage")
   ;
 
   auto result = options.parse(argc, argv);
+  if (result.count("help"))
+  {
+    std::cout << options.help() << std::endl;
+    return 0;
+  }
+
   if (!result.count("filename"))
   {
     return -1;
