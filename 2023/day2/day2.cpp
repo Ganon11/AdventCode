@@ -21,10 +21,16 @@ int main(int argc, char* argv[])
 
   options.add_options()
     ("f,filename", "Input Filename", cxxopts::value<std::string>())
-    ("p,part", "Part 1 or 2", cxxopts::value<short>()->default_value("1"))
+    ("h,help", "Print usage")
   ;
 
   auto result = options.parse(argc, argv);
+  if (result.count("help"))
+  {
+    std::cout << options.help() << std::endl;
+    return 0;
+  }
+
   if (!result.count("filename"))
   {
     return -1;
