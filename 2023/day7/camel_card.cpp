@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -128,51 +129,37 @@ HandType determine_hand_type(const std::map<CamelCardLabel, unsigned short>& han
       joker_count = joker_iterator->second;
     }
 
-    std::map<CamelCardLabel, unsigned short> modified_hand_counts = hand_counts;
-    modified_hand_counts.erase(CamelCardLabel::JACK);
-    HandType modified_hand_type = determine_hand_type_no_jokers(modified_hand_counts);
-
-    switch (joker_count)
+    if (0 == joker_count)
     {
-      case 0:
-        return modified_hand_type;
-      case 1:
-        switch (modified_hand_type)
-        {
-          case HIGH_CARD: return ONE_PAIR;
-          case ONE_PAIR: return THREE_OF_A_KIND;
-          case TWO_PAIR: return FULL_HOUSE;
-          case THREE_OF_A_KIND: return FOUR_OF_A_KIND;
-          case FOUR_OF_A_KIND: return FIVE_OF_A_KIND;
-          default: return HIGH_CARD;
-        }
-      case 2:
-        switch (modified_hand_type)
-        {
-          case HIGH_CARD: return THREE_OF_A_KIND;
-          case ONE_PAIR: return FOUR_OF_A_KIND;
-          case THREE_OF_A_KIND: return FIVE_OF_A_KIND;
-          default: return HIGH_CARD;
-        }
-      case 3:
-        switch (modified_hand_type)
-        {
-          case HIGH_CARD: return FOUR_OF_A_KIND;
-          case ONE_PAIR: return FIVE_OF_A_KIND;
-          default: return HIGH_CARD;
-        }
-      case 4:
-        return FIVE_OF_A_KIND;
-      case 5:
-        return FIVE_OF_A_KIND;
+      return determine_hand_type_no_jokers(hand_counts);
     }
+
+    std::set<HandType> possible_types;
+    for (const auto& kvp : hand_counts)
+    {
+      if (kvp.first == JACK)
+      {
+        continue;
+      }
+
+      std::map<CamelCardLabel, unsigned short> modified_hand_counts = hand_counts;
+      modified_hand_counts.erase(CamelCardLabel::JACK);
+      modified_hand_counts[kvp.first] = kvp.second + joker_count;
+      HandType possible{ determine_hand_type_no_jokers(modified_hand_counts) };
+      //std::cout << "\tcould be " << encode(possible) << std::endl;
+      possible_types.insert(possible);
+    }
+
+    HandType actual = *std::max_element(possible_types.begin(), possible_types.end());
+    //std::cout << "\tbest is " << encode(actual) << std::endl;
+    return actual;
   }
 
   return HIGH_CARD;
 }
 }
 
-CamelCardHand::CamelCardHand(const std::string& line, const bool jokers)
+CamelCardHand::CamelCardHand(const std::string& line, const bool jokers) : m_jokers(jokers)
 {
   std::vector<std::string> tokens = advent_of_code::tokenize(line, ' ');
   for (const char ch : tokens[0])
@@ -190,9 +177,9 @@ CamelCardHand::CamelCardHand(const std::string& line, const bool jokers)
   }
 
   m_bid = std::stoi(tokens[1]);
+  //std::cout << "Card with hand \"" << tokens[0] << "\":" << std::endl;
   m_hand_type = determine_hand_type(m_hand_counts, jokers);
-
-  //std::cout << "Card with hand \"" << tokens[0] << "\" detected hand type " << encode(m_hand_type) << std::endl;
+  //std::cout << std::endl;
 }
 
 unsigned short CamelCardHand::bid() const
@@ -237,11 +224,26 @@ bool CamelCardHand::operator<(const CamelCardHand& other) const
   {
     for (size_t index = 0; index < m_hand.size(); ++index)
     {
-      if (m_hand[index] < other.m_hand[index])
+      int a = static_cast<int>(m_hand[index]);
+      int b = static_cast<int>(other.m_hand[index]);
+      if (m_jokers)
+      {
+        if (a == 11)
+        {
+          a = 1;
+        }
+
+        if (b == 11)
+        {
+          b = 1;
+        }
+      }
+
+      if (a < b)
       {
         return true;
       }
-      else if (m_hand[index] > other.m_hand[index])
+      else if (a > b)
       {
         return false;
       }
@@ -250,29 +252,3 @@ bool CamelCardHand::operator<(const CamelCardHand& other) const
 
   return false;
 }
-
-bool CamelCardHand::operator>(const CamelCardHand& other) const
-{
-  if (m_hand_type > other.m_hand_type)
-  {
-    return true;
-  }
-
-  if (m_hand_type == other.m_hand_type)
-  {
-    for (size_t index = 0; index < m_hand.size(); ++index)
-    {
-      if (m_hand[index] > other.m_hand[index])
-      {
-        return true;
-      }
-      else if (m_hand[index] < other.m_hand[index])
-      {
-        return false;
-      }
-    }
-  }
-
-  return false;
-}
-
