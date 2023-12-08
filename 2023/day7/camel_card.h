@@ -44,11 +44,11 @@ public:
   std::string type() const;
 
   bool operator<(const CamelCardHand& other) const;
-  bool operator>(const CamelCardHand& other) const;
 
 private:
   std::vector<CamelCardLabel> m_hand;
   std::map<CamelCardLabel, unsigned short> m_hand_counts;
   HandType m_hand_type;
   unsigned short m_bid;
+  bool m_jokers;
 };
