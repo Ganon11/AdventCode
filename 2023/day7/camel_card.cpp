@@ -1,6 +1,7 @@
 #include "camel_card.h"
 
 #include <algorithm>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -47,6 +48,21 @@ char encode(const CamelCardLabel c)
     case CamelCardLabel::KING: return 'K';
     case CamelCardLabel::ACE: return 'A';
     default: return '-';
+  }
+}
+
+std::string encode(const HandType t)
+{
+  switch (t)
+  {
+    case HIGH_CARD: return "High Card";
+    case ONE_PAIR: return "One Pair";
+    case TWO_PAIR: return "Two Pairs";
+    case THREE_OF_A_KIND: return "Three of a Kind";
+    case FULL_HOUSE: return "Full House";
+    case FOUR_OF_A_KIND: return "Four of a Kind";
+    case FIVE_OF_A_KIND: return "Five of a Kind";
+    default: return "Bad hand type";
   }
 }
 
@@ -97,27 +113,6 @@ HandType determine_hand_type_no_jokers(const std::map<CamelCardLabel, unsigned s
   return HandType::HIGH_CARD;
 }
 
-HandType determine_hand_type_with_jokers(const std::map<CamelCardLabel, unsigned short>& hand_counts, unsigned short joker_count = 0)
-{
-  if (joker_count == 5 || joker_count == 4)
-  {
-    return HandType::FIVE_OF_A_KIND;
-  }
-
-  if (std::any_of(hand_counts.begin(), hand_counts.end(), [&joker_count](const auto& p){ return p.first != CamelCardLabel::JACK && p.second + joker_count == 4; }))
-  {
-    return HandType::FOUR_OF_A_KIND;
-  }
-
-  if (std::any_of(hand_counts.begin(), hand_counts.end(), [&joker_count](const auto& p){ return p.first != CamelCardLabel::JACK && p.second + joker_count == 3; }) &&
-    std::any_of(hand_counts.begin(), hand_counts.end(), [](const auto& p){ return p.first != CamelCardLabel::JACK && p.second == 2; }))
-  {
-    return HandType::FULL_HOUSE;
-  }
-
-  return HandType::HIGH_CARD;
-}
-
 HandType determine_hand_type(const std::map<CamelCardLabel, unsigned short>& hand_counts, const bool jokers)
 {
   if (!jokers)
@@ -133,8 +128,47 @@ HandType determine_hand_type(const std::map<CamelCardLabel, unsigned short>& han
       joker_count = joker_iterator->second;
     }
 
-    return determine_hand_type_with_jokers(hand_counts, joker_count);
+    std::map<CamelCardLabel, unsigned short> modified_hand_counts = hand_counts;
+    modified_hand_counts.erase(CamelCardLabel::JACK);
+    HandType modified_hand_type = determine_hand_type_no_jokers(modified_hand_counts);
+
+    switch (joker_count)
+    {
+      case 0:
+        return modified_hand_type;
+      case 1:
+        switch (modified_hand_type)
+        {
+          case HIGH_CARD: return ONE_PAIR;
+          case ONE_PAIR: return THREE_OF_A_KIND;
+          case TWO_PAIR: return FULL_HOUSE;
+          case THREE_OF_A_KIND: return FOUR_OF_A_KIND;
+          case FOUR_OF_A_KIND: return FIVE_OF_A_KIND;
+          default: return HIGH_CARD;
+        }
+      case 2:
+        switch (modified_hand_type)
+        {
+          case HIGH_CARD: return THREE_OF_A_KIND;
+          case ONE_PAIR: return FOUR_OF_A_KIND;
+          case THREE_OF_A_KIND: return FIVE_OF_A_KIND;
+          default: return HIGH_CARD;
+        }
+      case 3:
+        switch (modified_hand_type)
+        {
+          case HIGH_CARD: return FOUR_OF_A_KIND;
+          case ONE_PAIR: return FIVE_OF_A_KIND;
+          default: return HIGH_CARD;
+        }
+      case 4:
+        return FIVE_OF_A_KIND;
+      case 5:
+        return FIVE_OF_A_KIND;
+    }
   }
+
+  return HIGH_CARD;
 }
 }
 
@@ -157,6 +191,8 @@ CamelCardHand::CamelCardHand(const std::string& line, const bool jokers)
 
   m_bid = std::stoi(tokens[1]);
   m_hand_type = determine_hand_type(m_hand_counts, jokers);
+
+  //std::cout << "Card with hand \"" << tokens[0] << "\" detected hand type " << encode(m_hand_type) << std::endl;
 }
 
 unsigned short CamelCardHand::bid() const
