@@ -1,9 +1,0 @@
-{
-  "cmake.debugConfig": {
-    "cwd": "${fileDirname}",
-    "args": [
-      "-filename",
-      "input/sample.txt"
-    ]
-  }
-}
