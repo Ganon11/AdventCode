@@ -157,6 +157,8 @@ int main(int argc, char* argv[])
 
   if (!result.count("filename"))
   {
+    std::cout << "ERROR: Missing required argument: <filename>" << std::endl;
+    std::cout << options.help() << std::endl;
     return -1;
   }
 
