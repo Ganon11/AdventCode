@@ -129,30 +129,44 @@ HandType determine_hand_type(const std::map<CamelCardLabel, unsigned short>& han
       joker_count = joker_iterator->second;
     }
 
-    if (0 == joker_count)
+    std::map<CamelCardLabel, unsigned short> modified_hand_counts = hand_counts;
+    modified_hand_counts.erase(CamelCardLabel::JACK);
+    HandType modified_hand_type = determine_hand_type_no_jokers(modified_hand_counts);
+
+    switch (joker_count)
     {
-      return determine_hand_type_no_jokers(hand_counts);
+      case 0:
+        return modified_hand_type;
+      case 1:
+        switch (modified_hand_type)
+        {
+          case HIGH_CARD: return ONE_PAIR;
+          case ONE_PAIR: return THREE_OF_A_KIND;
+          case TWO_PAIR: return FULL_HOUSE;
+          case THREE_OF_A_KIND: return FOUR_OF_A_KIND;
+          case FOUR_OF_A_KIND: return FIVE_OF_A_KIND;
+          default: return HIGH_CARD;
+        }
+      case 2:
+        switch (modified_hand_type)
+        {
+          case HIGH_CARD: return THREE_OF_A_KIND;
+          case ONE_PAIR: return FOUR_OF_A_KIND;
+          case THREE_OF_A_KIND: return FIVE_OF_A_KIND;
+          default: return HIGH_CARD;
+        }
+      case 3:
+        switch (modified_hand_type)
+        {
+          case HIGH_CARD: return FOUR_OF_A_KIND;
+          case ONE_PAIR: return FIVE_OF_A_KIND;
+          default: return HIGH_CARD;
+        }
+      case 4:
+        return FIVE_OF_A_KIND;
+      case 5:
+        return FIVE_OF_A_KIND;
     }
-
-    std::set<HandType> possible_types;
-    for (const auto& kvp : hand_counts)
-    {
-      if (kvp.first == JACK)
-      {
-        continue;
-      }
-
-      std::map<CamelCardLabel, unsigned short> modified_hand_counts = hand_counts;
-      modified_hand_counts.erase(CamelCardLabel::JACK);
-      modified_hand_counts[kvp.first] = kvp.second + joker_count;
-      HandType possible{ determine_hand_type_no_jokers(modified_hand_counts) };
-      //std::cout << "\tcould be " << encode(possible) << std::endl;
-      possible_types.insert(possible);
-    }
-
-    HandType actual = *std::max_element(possible_types.begin(), possible_types.end());
-    //std::cout << "\tbest is " << encode(actual) << std::endl;
-    return actual;
   }
 
   return HIGH_CARD;
