@@ -78,6 +78,8 @@ def create_entry_point(basedir, day):
     f'\n'
     f'  if (!result.count("filename"))\n'
     f'  {{\n'
+    f'    std::cout << "ERROR: Missing required argument: <filename>" << std::endl;\n'
+    f'    std::cout << options.help() << std::endl;\n'
     f'    return -1;\n'
     f'  }}\n'
     f'\n'
