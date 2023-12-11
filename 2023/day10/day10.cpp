@@ -124,40 +124,40 @@ unsigned long long scan_for_ground(const Maze& maze, const std::set<Position>& l
       if (loop.find(p) != loop.end())
       {
         PipeType type{ maze.at(p).type() };
+        // Horizontal pipes do not change the "inside" state
         if (type == HORIZONTAL)
         {
           continue;
         }
 
+        // Vertical lines trivially change the "inside" state
         if (type == VERTICAL)
         {
           in_loop = !in_loop;
           continue;
         }
 
+        // The only remaining types are corners. Two corners _may_ change the "inside" state iff
+        // they form an "S-bend". This takes two corners, so we keep track of the first corner in
+        // last_corner_found.
         if (last_corner_found == NONE)
         {
           last_corner_found = type;
           continue;
         }
 
-        if (NORTH_EAST_BEND == last_corner_found && SOUTH_WEST_BEND == type)
-        {
-          in_loop = !in_loop;
-        }
-        else if (SOUTH_WEST_BEND == last_corner_found && NORTH_EAST_BEND == type)
-        {
-          in_loop = !in_loop;
-        }
-        else if (NORTH_WEST_BEND == last_corner_found && SOUTH_EAST_BEND == type)
-        {
-          in_loop = !in_loop;
-        }
-        else if (SOUTH_EAST_BEND == last_corner_found && NORTH_WEST_BEND == type)
+        // A north-east and south-west pair form an S-bend, and a north-west and south-east pair
+        // also form an S-bend.
+        if ((NORTH_EAST_BEND == last_corner_found && SOUTH_WEST_BEND == type) ||
+          (SOUTH_WEST_BEND == last_corner_found && NORTH_EAST_BEND == type) ||
+          (NORTH_WEST_BEND == last_corner_found && SOUTH_EAST_BEND == type) ||
+          (SOUTH_EAST_BEND == last_corner_found && NORTH_WEST_BEND == type))
         {
           in_loop = !in_loop;
         }
 
+        // Other combinations form a U-bend, which does not change the "inside" state.
+        // In all cases, clear the temporary last_corner_found cache.
         last_corner_found = NONE;
       }
       else if (in_loop)
