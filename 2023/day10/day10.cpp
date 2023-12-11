@@ -4,6 +4,9 @@
 #include <string>
 #include <vector>
 
+#include <io.h>
+#include <fcntl.h>
+
 #include "cxxopts.hpp"
 #include "input_handler.h"
 #include "position.h"
@@ -38,6 +41,50 @@ PipeType convert(const char ch)
       return NONE;
   }
 }
+
+std::wstring convert(const PipeType p, const bool in_loop)
+{
+  switch (p)
+  {
+    case NONE:
+      return L" ";
+    case GROUND:
+      return L".";
+    case START:
+      return L"S";
+    case VERTICAL:
+      return in_loop ? L"║" : L"│";
+    case HORIZONTAL:
+      return in_loop ? L"═" : L"─";
+    case NORTH_EAST_BEND:
+      return in_loop ? L"╚" : L"└";
+    case NORTH_WEST_BEND:
+      return in_loop ? L"╝" : L"┘";
+    case SOUTH_WEST_BEND:
+      return in_loop ? L"╗" : L"┐";
+    case SOUTH_EAST_BEND:
+      return in_loop ? L"╔" : L"┌";
+  }
+}
+
+void print_maze(const Maze& maze, const std::set<Position>& loop)
+{
+  unsigned long long min_row = std::min_element(maze.begin(), maze.end(), [](const auto& a, const auto& b){ return a.first.y() < b.first.y(); })->first.y();
+  unsigned long long min_col = std::min_element(maze.begin(), maze.end(), [](const auto& a, const auto& b){ return a.first.x() < b.first.x(); })->first.x();
+  unsigned long long max_row = std::max_element(maze.begin(), maze.end(), [](const auto& a, const auto& b){ return a.first.y() < b.first.y(); })->first.y();
+  unsigned long long max_col = std::max_element(maze.begin(), maze.end(), [](const auto& a, const auto& b){ return a.first.x() < b.first.x(); })->first.x();
+
+  for (unsigned long long row = min_row; row <= max_row; ++row)
+  {
+    for (unsigned long long col = min_col; col <= max_col; ++col)
+    {
+      Position p{ col, row };
+      //std::cout << "Printing at position " << p << std::endl;
+      std::wcout << convert(maze.at(p).type(), loop.find(p) != loop.end());
+    }
+
+    std::wcout << std::endl;
+  }
 }
 
 bool parse_input(const std::vector<std::string>& lines, Position& start, Maze& maze)
@@ -169,9 +216,11 @@ unsigned long long scan_for_ground(const Maze& maze, const std::set<Position>& l
 
   return total;
 }
+}
 
 int main(int argc, char* argv[])
 {
+
   cxxopts::Options options("d10", "Day 10 of Advent of Code");
   options.add_options()
     ("f,filename", "Input Filename", cxxopts::value<std::string>())
@@ -202,11 +251,15 @@ int main(int argc, char* argv[])
     return 1;
   }
 
+
   std::set<Position> loop;
   explore_loop(maze, start, loop);
   std::cout << "Farthest point is " << loop.size() / 2 << " away." << std::endl;
   unsigned long long enclosed_count = scan_for_ground(maze, loop);
   std::cout << "Loop contains " << enclosed_count << " tiles." << std::endl;
+
+  _setmode(_fileno(stdout), _O_U16TEXT);
+  print_maze(maze, loop);
 
   return 0;
 }
