@@ -3,8 +3,6 @@
 #include <sstream>
 #include <string>
 
-#include <iostream>
-
 #include "input_handler.h"
 
 advent_of_code::InputHandler::InputHandler(const std::string& filename) : m_filename{ filename }
