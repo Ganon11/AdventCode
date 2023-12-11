@@ -54,5 +54,11 @@
     "algorithm": "cpp",
     "set": "cpp",
     "queue": "cpp"
+  },
+  "cmake.debugConfig": {
+    "args": [
+        "-f",
+        "${fileDirname}/input/input.txt"
+    ]
   }
 }
