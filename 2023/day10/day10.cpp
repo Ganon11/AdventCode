@@ -1,3 +1,4 @@
+#include <filesystem>
 #include <iostream>
 #include <queue>
 #include <set>
@@ -220,11 +221,11 @@ unsigned long long scan_for_ground(const Maze& maze, const std::set<Position>& l
 
 int main(int argc, char* argv[])
 {
-
   cxxopts::Options options("d10", "Day 10 of Advent of Code");
   options.add_options()
     ("f,filename", "Input Filename", cxxopts::value<std::string>())
     ("h,help", "Print usage")
+    ("p,print", "Print maze")
   ;
 
   auto result = options.parse(argc, argv);
@@ -251,15 +252,17 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-
   std::set<Position> loop;
   explore_loop(maze, start, loop);
   std::cout << "Farthest point is " << loop.size() / 2 << " away." << std::endl;
   unsigned long long enclosed_count = scan_for_ground(maze, loop);
   std::cout << "Loop contains " << enclosed_count << " tiles." << std::endl;
 
-  _setmode(_fileno(stdout), _O_U16TEXT);
-  print_maze(maze, loop);
+  if (result.count("print"))
+  {
+    _setmode(_fileno(stdout), _O_U16TEXT);
+    print_maze(maze, loop);
+  }
 
   return 0;
 }
