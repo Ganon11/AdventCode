@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include <io.h>
+//#include <io.h>
 #include <fcntl.h>
 
 #include "cxxopts.hpp"
@@ -65,6 +65,8 @@ std::wstring convert(const PipeType p, const bool in_loop)
       return in_loop ? L"╗" : L"┐";
     case SOUTH_EAST_BEND:
       return in_loop ? L"╔" : L"┌";
+    default:
+      return L"?";
   }
 }
 
@@ -260,7 +262,7 @@ int main(int argc, char* argv[])
 
   if (result.count("print"))
   {
-    _setmode(_fileno(stdout), _O_U16TEXT);
+    //_setmode(_fileno(stdout), _O_U16TEXT);
     print_maze(maze, loop);
   }
 
