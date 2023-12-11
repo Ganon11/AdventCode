@@ -167,7 +167,11 @@ int main(int argc, char* argv[])
   unsigned long long sum{ sum_of_distances(expanded) };
   std::cout << "Sum of distances: " << sum << std::endl;
 
-  unsigned long long multiplier{ result["multiplier"].as<unsigned long long>() };
+  // Treat the multiplier as off-by-one. I envisioned this as "how many rows do you need to add",
+  // while the problem envisions this as "how many rows replace each empty row", which leads to the
+  // slight discrepancy. For better interface, let the user pass in 1,000,000, and we'll convert it
+  // ourselves.
+  unsigned long long multiplier{ result["multiplier"].as<unsigned long long>() - 1 };
   std::set<Position> super_expanded{ expand_by(galaxies, multiplier) };
   sum = sum_of_distances(super_expanded);
   std::cout << "Sum of distances: " << sum << std::endl;
