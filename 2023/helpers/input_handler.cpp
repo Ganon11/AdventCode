@@ -5,13 +5,13 @@
 
 #include "input_handler.h"
 
-advent_of_code::InputHandler::InputHandler(const std::string& filename) : m_filename{ filename }
+advent_of_code::InputHandler::InputHandler(const std::filesystem::path& path) : m_path{ path }
 {}
 
 std::string advent_of_code::InputHandler::read_single_line() const
 {
   std::vector<std::string> lines;
-  std::ifstream input{ m_filename };
+  std::ifstream input{ m_path };
   std::string line;
   getline(input, line);
   return line;
@@ -20,7 +20,7 @@ std::string advent_of_code::InputHandler::read_single_line() const
 std::vector<std::string> advent_of_code::InputHandler::read_all_lines(const bool include_blanks) const
 {
   std::vector<std::string> lines;
-  std::ifstream input{ m_filename };
+  std::ifstream input{ m_path };
   std::string line;
   while (input.good())
   {
