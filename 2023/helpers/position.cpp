@@ -4,6 +4,20 @@
 
 namespace advent_of_code
 {
+Position::Position(const long x, const long y, const long z, const long a)
+  : m_x{ static_cast<long long>(x) },
+    m_y{ static_cast<long long>(y) },
+    m_z{ static_cast<long long>(z) },
+    m_a{ static_cast<long long>(a) }
+{}
+
+Position::Position(const unsigned long x, const unsigned long y, const unsigned long z, const unsigned long a)
+  : m_x{ static_cast<long long>(x) },
+    m_y{ static_cast<long long>(y) },
+    m_z{ static_cast<long long>(z) },
+    m_a{ static_cast<long long>(a) }
+{}
+
 Position::Position(const long long x, const long long y, const long long z, const long long a)
   : m_x{ x },
     m_y{ y },

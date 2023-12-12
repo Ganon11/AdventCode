@@ -9,6 +9,8 @@ class Position
 {
 public:
   Position() = default;
+  Position(const long x, const long y, const long z = 0, const long a = 0);
+  Position(const unsigned long x, const unsigned long y, const unsigned long z = 0, const unsigned long a = 0);
   Position(const long long x, const long long y, const long long z = 0, const long long a = 0);
   Position(const unsigned long long x, const unsigned long long y, const unsigned long long z = 0, const unsigned long long a = 0);
   Position(const std::string& line);
