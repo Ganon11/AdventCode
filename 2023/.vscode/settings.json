@@ -53,7 +53,9 @@
     "vector": "cpp",
     "algorithm": "cpp",
     "set": "cpp",
-    "queue": "cpp"
+    "queue": "cpp",
+    "fstream": "cpp",
+    "iomanip": "cpp"
   },
   "cmake.debugConfig": {
     "args": [
