@@ -2,9 +2,32 @@
 
 #include <vector>
 
+#include "input_handler.h"
+
 namespace advent_of_code
 {
-Position::Position(const long x, const long y, const long z, const long a)
+Position::Position(const unsigned short x, const unsigned short y, const unsigned short z, const unsigned short a)
+  : m_x{ static_cast<long long>(x) },
+    m_y{ static_cast<long long>(y) },
+    m_z{ static_cast<long long>(z) },
+    m_a{ static_cast<long long>(a) }
+{}
+
+Position::Position(const short x, const short y, const short z, const short a)
+  : m_x{ static_cast<long long>(x) },
+    m_y{ static_cast<long long>(y) },
+    m_z{ static_cast<long long>(z) },
+    m_a{ static_cast<long long>(a) }
+{}
+
+Position::Position(const unsigned int x, const unsigned int y, const unsigned int z, const unsigned int a)
+  : m_x{ static_cast<long long>(x) },
+    m_y{ static_cast<long long>(y) },
+    m_z{ static_cast<long long>(z) },
+    m_a{ static_cast<long long>(a) }
+{}
+
+Position::Position(const int x, const int y, const int z, const int a)
   : m_x{ static_cast<long long>(x) },
     m_y{ static_cast<long long>(y) },
     m_z{ static_cast<long long>(z) },
@@ -18,11 +41,11 @@ Position::Position(const unsigned long x, const unsigned long y, const unsigned 
     m_a{ static_cast<long long>(a) }
 {}
 
-Position::Position(const long long x, const long long y, const long long z, const long long a)
-  : m_x{ x },
-    m_y{ y },
-    m_z{ z },
-    m_a{ a }
+Position::Position(const long x, const long y, const long z, const long a)
+  : m_x{ static_cast<long long>(x) },
+    m_y{ static_cast<long long>(y) },
+    m_z{ static_cast<long long>(z) },
+    m_a{ static_cast<long long>(a) }
 {}
 
 Position::Position(const unsigned long long x, const unsigned long long y, const unsigned long long z, const unsigned long long a)
@@ -32,42 +55,36 @@ Position::Position(const unsigned long long x, const unsigned long long y, const
     m_a{ static_cast<long long>(a) }
 {}
 
+Position::Position(const long long x, const long long y, const long long z, const long long a)
+  : m_x{ x },
+    m_y{ y },
+    m_z{ z },
+    m_a{ a }
+{}
+
 Position::Position(const std::string& line)
 {
-  std::vector<std::string> tokens;
-
-  const char* str = &line[0];
-  do
-  {
-    const char* begin = str;
-
-    while (*str != ',' && *str)
-    {
-      ++str;
-    }
-
-    tokens.push_back(std::string{ begin, str });
-  } while ('\0' != *str++);
+  std::vector<std::string> tokens{ tokenize(line, ',') };
 
   size_t token_count = tokens.size();
   if (token_count >= 1)
   {
-    m_x = stoi(tokens[0]);
+    m_x = std::stoll(tokens[0]);
   }
 
   if (token_count >= 2)
   {
-    m_y = stoi(tokens[1]);
+    m_y = std::stoll(tokens[1]);
   }
 
   if (token_count >= 3)
   {
-    m_z = stoi(tokens[2]);
+    m_z = std::stoll(tokens[2]);
   }
 
   if (token_count >= 4)
   {
-    m_a = stoi(tokens[3]);
+    m_a = std::stoll(tokens[3]);
   }
 }
 
