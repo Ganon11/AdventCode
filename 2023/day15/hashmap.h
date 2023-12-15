@@ -8,11 +8,6 @@
 
 #include "lens.h"
 
-enum HASHMAPOperation
-{
-  REMOVAL,
-  INSERTION
-};
 
 unsigned int hash(const std::string& text);
 
@@ -33,7 +28,7 @@ private:
   void remove(const unsigned int index, const std::string& label);
 
   typedef std::vector<Lens> Box;
-  typedef std::map<unsigned int, Box> Boxes;
+  typedef std::map<unsigned char, Box> Boxes;
   Boxes m_boxes;
   HashFunc m_hash;
 };
