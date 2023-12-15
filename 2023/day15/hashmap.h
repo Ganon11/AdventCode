@@ -14,11 +14,12 @@ enum HASHMAPOperation
   INSERTION
 };
 
+unsigned int hash(const std::string& text);
+
 class HASHMAP
 {
 public:
-  HASHMAP() = delete;
-  HASHMAP(const std::function<unsigned char(const std::string&)> hash);
+  HASHMAP(const std::function<unsigned char(const std::string&)> hash_func = hash);
 
   void process_command(const std::string& command);
   void insert(const unsigned int index, const Lens& lens);
