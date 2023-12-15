@@ -11,18 +11,15 @@ HASHMAP::HASHMAP(const HashFunc& hash)
 void HASHMAP::process_command(const std::string& command)
 {
   size_t position{ command.find('=') };
-  HASHMAPOperation operation;
   std::string label;
   unsigned focal_length;
   if (std::string::npos == position)
   {
-    operation = REMOVAL;
     label = command.substr(0, command.size() - 1);
     remove(m_hash(label), label);
   }
   else
   {
-    operation = INSERTION;
     label = command.substr(0, position);
     focal_length = command[position + 1] - '0';
     insert(m_hash(label), Lens{ label, focal_length });
