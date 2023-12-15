@@ -4,22 +4,29 @@
 #include <iostream>
 #include <sstream>
 
-#include "command.h"
+HASHMAP::HASHMAP(const std::function<unsigned char(const std::string&)> hash)
+  : m_hash{ hash }
+{ }
 
-void HASHMAP::process_command(const HASHMAPCommand& command)
+void HASHMAP::process_command(const std::string& command)
 {
-  switch (command.operation())
+  size_t position{ command.find('=') };
+  HASHMAPOperation operation;
+  std::string label;
+  unsigned focal_length;
+  if (std::string::npos == position)
   {
-  case INSERTION:
-    insert(command.target(), Lens{ command.label(), command.focal_length() });
-    break;
-  case REMOVAL:
-    remove(command.target(), command.label());
-    break;
+    operation = REMOVAL;
+    label = command.substr(0, command.size() - 1);
+    remove(m_hash(label), label);
   }
-
-  // std::cout << "After \"" << command.to_string() << "\":" << std::endl;
-  // std::cout << to_string() << std::endl;
+  else
+  {
+    operation = INSERTION;
+    label = command.substr(0, position);
+    focal_length = command[position + 1] - '0';
+    insert(m_hash(label), Lens{ label, focal_length });
+  }
 }
 
 void HASHMAP::insert(const unsigned int index, const Lens& lens)
