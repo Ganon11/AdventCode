@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
   std::transform(tokens.begin(), tokens.end(), std::back_inserter(hashes), hash);
   std::cout << "Hash total: " << std::reduce(hashes.begin(), hashes.end()) << std::endl;
 
-  HASHMAP hashmap{ hash };
+  HASHMAP hashmap;
   for (const std::string& command : tokens)
   {
     hashmap.process_command(command);
