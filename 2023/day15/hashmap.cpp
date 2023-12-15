@@ -4,7 +4,7 @@
 #include <iostream>
 #include <sstream>
 
-HASHMAP::HASHMAP(const std::function<unsigned char(const std::string&)> hash)
+HASHMAP::HASHMAP(const HashFunc& hash)
   : m_hash{ hash }
 { }
 
@@ -33,7 +33,7 @@ void HASHMAP::insert(const unsigned int index, const Lens& lens)
 {
   if (m_boxes.end() == m_boxes.find(index))
   {
-    m_boxes.insert(std::map<unsigned int, std::vector<Lens>>::value_type(index, std::vector<Lens>{}));
+    m_boxes.insert(Boxes::value_type(index, Box{}));
   }
 
   std::vector<Lens>& box{ m_boxes.at(index) };

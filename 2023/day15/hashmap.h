@@ -19,18 +19,21 @@ unsigned int hash(const std::string& text);
 class HASHMAP
 {
 public:
-  HASHMAP(const std::function<unsigned char(const std::string&)> hash_func = hash);
+  typedef std::function<unsigned char(const std::string&)> HashFunc;
+
+  HASHMAP(const HashFunc& hash_func = hash);
 
   void process_command(const std::string& command);
 
   unsigned long long focusing_power() const;
-
   std::string to_string() const;
 
 private:
   void insert(const unsigned int index, const Lens& lens);
   void remove(const unsigned int index, const std::string& label);
 
-  std::map<unsigned int, std::vector<Lens>> m_boxes;
-  std::function<unsigned char(const std::string&)> m_hash;
+  typedef std::vector<Lens> Box;
+  typedef std::map<unsigned int, Box> Boxes;
+  Boxes m_boxes;
+  HashFunc m_hash;
 };
