@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <iostream>
 #include <iterator>
+#include <sstream>
 #include <vector>
 
 #include "cxxopts.hpp"
@@ -121,11 +122,24 @@ unsigned long long count_arrangements(const std::string& springs, const std::vec
   return count_arrangements(copy, 0, groups);
 }
 
-unsigned long long count_arrangements(const std::string& line)
+unsigned long long count_arrangements(const std::string& line, const bool folded = false)
 {
   std::vector<std::string> tokens{ advent_of_code::tokenize(line, ' ') };
   std::string springs{ tokens[0] };
-  std::vector<std::string> group_strings{ advent_of_code::tokenize(tokens[1], ',') };
+  std::string groups_string{ tokens[1] };
+
+  if (folded)
+  {
+    std::ostringstream os;
+    os << springs << "?" << springs << "?" << springs << "?" << springs << "?" << springs;
+    springs = os.str();
+
+    os.str(std::string{});
+    os << groups_string << "," << groups_string << "," << groups_string << "," << groups_string << "," << groups_string;
+    groups_string = os.str();
+  }
+
+  std::vector<std::string> group_strings{ advent_of_code::tokenize(groups_string, ',') };
   std::vector<unsigned long long> groups;
   std::transform(group_strings.begin(), group_strings.end(), std::back_inserter(groups), [](const std::string& t){ return std::stoll(t); });
 
@@ -158,15 +172,15 @@ int main(int argc, char* argv[])
   advent_of_code::InputHandler input{ result["filename"].as<std::string>() };
   std::vector<std::string> lines{ input.read_all_lines() };
 
-  unsigned long long sum{0};
+  unsigned long long sum_unfolded{0}, sum_folded{0};
   for (const std::string& line : lines)
   {
-    unsigned long long count{ count_arrangements(line) };
-    //std::cout << "Line \"" << line << "\" arrangements: " << count << std::endl;
-    sum += count;
+    sum_unfolded += count_arrangements(line);
+    sum_folded += count_arrangements(line, true);
   }
 
-  std::cout << sum << " arrangements." << std::endl;
+  std::cout << "Unfolded: " << sum_unfolded << std::endl;
+  std::cout << "Folded: " << sum_folded << std::endl;
 
   return 0;
 }
