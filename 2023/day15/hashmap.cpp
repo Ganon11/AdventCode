@@ -34,7 +34,7 @@ void HASHMAP::insert(const unsigned int index, const Lens& lens)
   }
 
   std::vector<Lens>& box{ m_boxes.at(index) };
-  auto position{ std::find(box.begin(), box.end(), lens) };
+  auto position{ std::find_if(box.begin(), box.end(), [&lens](const Lens& l){ return lens.label.compare(l.label) == 0; }) };
   if (box.end() == position)
   {
     box.push_back(lens);
@@ -53,7 +53,7 @@ void HASHMAP::remove(const unsigned int index, const std::string& label)
   }
 
   std::vector<Lens>& box{ m_boxes.at(index) };
-  auto position{ std::find_if(box.begin(), box.end(), [&label](const Lens& l){ return label.compare(l.label()) == 0; }) };
+  auto position{ std::find_if(box.begin(), box.end(), [&label](const Lens& l){ return label.compare(l.label) == 0; }) };
   if (box.end() == position)
   {
     return;
@@ -72,33 +72,11 @@ unsigned long long HASHMAP::focusing_power() const
     for (size_t lens_index = 0; lens_index < kvp.second.size(); ++lens_index)
     {
       unsigned long long slot_factor{ 1ull + lens_index };
-      sum += box_factor * slot_factor * kvp.second[lens_index].focal_length();
+      sum += box_factor * slot_factor * kvp.second[lens_index].focal_length;
     }
   }
 
   return sum;
-}
-
-std::string HASHMAP::to_string() const
-{
-  std::stringstream str;
-  for (const auto& kvp : m_boxes)
-  {
-    if (kvp.second.empty())
-    {
-      continue;
-    }
-
-    str << "Box " << kvp.first << ": ";
-    for (const Lens& lens : kvp.second)
-    {
-      str << lens.to_string() << " ";
-    }
-
-    str << std::endl;
-  }
-
-  return str.str();
 }
 
 unsigned int hash(const std::string& text)
