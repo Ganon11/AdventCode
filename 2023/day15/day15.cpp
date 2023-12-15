@@ -4,7 +4,6 @@
 #include <map>
 #include <numeric>
 
-#include "command.h"
 #include "cxxopts.hpp"
 #include "hash.h"
 #include "hashmap.h"
@@ -41,10 +40,8 @@ int main(int argc, char* argv[])
 
   std::cout << "Hash total: " << total << std::endl;
 
-  std::vector<HASHMAPCommand> commands;
-  std::transform(tokens.begin(), tokens.end(), std::back_inserter(commands), [](const std::string& text){ return HASHMAPCommand{ text }; });
-  HASHMAP hashmap;
-  for (const HASHMAPCommand& command : commands)
+  HASHMAP hashmap{ hash };
+  for (const std::string& command : tokens)
   {
     hashmap.process_command(command);
   }

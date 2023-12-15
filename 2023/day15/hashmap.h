@@ -1,19 +1,26 @@
 #pragma once
 
+#include "functional"
+#include <functional>
 #include <map>
 #include <string>
 #include <vector>
 
-#include "command.h"
-#include "hash.h"
 #include "lens.h"
+
+enum HASHMAPOperation
+{
+  REMOVAL,
+  INSERTION
+};
 
 class HASHMAP
 {
 public:
-  HASHMAP() = default;
+  HASHMAP() = delete;
+  HASHMAP(const std::function<unsigned char(const std::string&)> hash);
 
-  void process_command(const HASHMAPCommand& command);
+  void process_command(const std::string& command);
   void insert(const unsigned int index, const Lens& lens);
   void remove(const unsigned int index, const std::string& label);
 
@@ -23,4 +30,5 @@ public:
 
 private:
   std::map<unsigned int, std::vector<Lens>> m_boxes;
+  std::function<unsigned char(const std::string&)> m_hash;
 };
