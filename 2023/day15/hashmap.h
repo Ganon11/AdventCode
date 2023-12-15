@@ -6,9 +6,6 @@
 #include <string>
 #include <vector>
 
-#include "lens.h"
-
-
 unsigned int hash(const std::string& text);
 
 class HASHMAP
@@ -21,9 +18,14 @@ public:
   void process_command(const std::string& command);
 
   unsigned long long focusing_power() const;
-  std::string to_string() const;
 
 private:
+  struct Lens
+  {
+    std::string label;
+    unsigned int focal_length;
+  };
+
   void insert(const unsigned int index, const Lens& lens);
   void remove(const unsigned int index, const std::string& label);
 
