@@ -61,6 +61,8 @@ private:
 public:
   static std::vector<Position> getPositionsInLine(const Position& p1, const Position& p2);
   static void get_boundaries(const std::set<Position>& positions, long long& min_row, long long& min_col, long long& max_row, long long& max_col);
+  static bool in_bounds(const long long min_row, const long long min_col, const long long max_row, const long long max_col, const Position& p);
+  static bool in_bounds(const std::set<Position>& positions, const Position& p);
 };
 
 const Position NONE_POSITION{
