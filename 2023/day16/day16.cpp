@@ -123,10 +123,10 @@ Grid parse_grid(const std::vector<std::string>& lines)
     for (unsigned long long col = 0; col < lines[row].size(); ++col)
     {
       GridType type{ convert(lines[row][col] )};
-      //if (type != SPACE)
-      //{
+      if (type != SPACE)
+      {
         grid.insert(Grid::value_type{ Position{ col, row }, type });
-      //}
+      }
     }
   }
 
@@ -146,6 +146,90 @@ bool in_bounds(const Position& p, const long long min_row, const long long min_c
   }
 
   return true;
+}
+
+Position find_terminating_position(const Grid& grid, const Ray& ray, bool& went_out_of_bounds)
+{
+  went_out_of_bounds = false;
+  Position current{ ray.origin };
+  std::set<Position> all_positions;
+  std::transform(grid.begin(), grid.end(), std::inserter(all_positions, all_positions.begin()), [](const auto& kvp){ return kvp.first; });
+
+  if (all_positions.end() != std::find(all_positions.begin(), all_positions.end(), current))
+  {
+    return current;
+  }
+
+  long long min_row, min_col, max_row, max_col;
+  Position::get_boundaries(all_positions, min_row, min_col, max_row, max_col);
+  min_row = 0;
+  min_col = 0;
+
+  //std::cout << "Grid ranges from row " << min_row << " to max row " << max_row << std::endl;
+  //std::cout << "Grid ranges from col " << min_col << " to max col " << max_col << std::endl;
+
+  while (1)
+  {
+    Position next;
+    switch (ray.direction)
+    {
+    case NORTH:
+      next = current.north();
+      break;
+    case WEST:
+      next = current.west();
+      break;
+    case EAST:
+      next = current.east();
+      break;
+    case SOUTH:
+      next = current.south();
+      break;
+    }
+
+    //std::cout << "Checking next position " << next << std::endl;
+    if (!in_bounds(next, min_row, min_col, max_row, max_col))
+    {
+      //std::cout << "\tOut of bounds!" << std::endl;
+      went_out_of_bounds = true;
+      break;
+    }
+
+    //std::cout << "Next position is in bounds, checking grid" << std::endl;
+    current = next;
+    auto itr{ std::find(all_positions.begin(), all_positions.end(), current) };
+    if (all_positions.end() == itr)
+    {
+      continue;
+    }
+
+    GridType type{ grid.at(current) };
+    bool keep_going = false;
+    switch (type)
+    {
+    case HORIZONTAL_SPLITTER:
+      if (ray.direction == EAST || ray.direction == WEST)
+      {
+        keep_going = true;
+      }
+      break;
+    case VERTICAL_SPLITTER:
+      if (ray.direction == NORTH || ray.direction == SOUTH)
+      {
+        keep_going = true;
+      }
+      break;
+    default:
+      break;
+    }
+
+    if (!keep_going)
+    {
+      break;
+    }
+  }
+
+  return current;
 }
 
 std::set<Position> evaluate_rays(const Grid& grid, const Ray& initial_ray = Ray{ advent_of_code::ORIGIN, EAST })
@@ -174,42 +258,25 @@ std::set<Position> evaluate_rays(const Grid& grid, const Ray& initial_ray = Ray{
 
     //std::cout << "Evaluating ray at " << ray.origin << ", direction " << convert(ray.direction) << std::endl;
     evaluated.insert(ray);
-    Position current{ ray.origin };
-    //auto itr{ std::find(all_positions.begin(), all_positions.end(), current) };
-    auto itr{ std::find_if(grid.begin(), grid.end(), [&current](const auto& kvp){ return kvp.first == current; }) };
-    //while (in_bounds(current, min_row, min_col, max_row, max_col) && itr == all_positions.end() && grid.at(current) == SPACE)
-    while (in_bounds(current, min_row, min_col, max_row, max_col) && itr->second == SPACE)
+
+    if (!in_bounds(ray.origin, min_row, min_col, max_row, max_col))
     {
-      visited.insert(current);
-      switch (ray.direction)
-      {
-      case NORTH:
-        current = current.north();
-        break;
-      case WEST:
-        current = current.west();
-        break;
-      case EAST:
-        current = current.east();
-        break;
-      case SOUTH:
-        current = current.south();
-        break;
-      }
+      //std::cout << "\tRay starts out of bounds" << std::endl;
+      continue;
+    }
+    bool went_out_of_bounds;
+    Position terminal{ find_terminating_position(grid, ray, went_out_of_bounds) };
+    std::vector<Position> positions{ advent_of_code::Position::getPositionsInLine(ray.origin, terminal) };
+    visited.insert(positions.begin(), positions.end());
 
-      //itr = std::find(all_positions.begin(), all_positions.end(), current);
-      itr = std::find_if(grid.begin(), grid.end(), [&current](const auto& kvp){ return kvp.first == current; });
-    };
-
-    if (!in_bounds(current, min_row, min_col, max_row, max_col))
+    if (went_out_of_bounds)
     {
       //std::cout << "\tRay has exited the grid" << std::endl;
       continue;
     }
 
-    visited.insert(current);
-    GridType type{ grid.at(current) };
-    //std::cout << "\tRay has terminated at " << current << ", which is a " << convert(type) << std::endl;
+    GridType type{ grid.at(terminal) };
+    //std::cout << "\tRay has terminated at " << terminal << ", which is a " << convert(type) << std::endl;
 
     switch (type)
     {
@@ -217,16 +284,16 @@ std::set<Position> evaluate_rays(const Grid& grid, const Ray& initial_ray = Ray{
       switch (ray.direction)
       {
       case NORTH:
-        rays.push(Ray{ current.east(), EAST });
+        rays.push(Ray{ terminal.east(), EAST });
         break;
       case EAST:
-        rays.push(Ray{ current.north(), NORTH });
+        rays.push(Ray{ terminal.north(), NORTH });
         break;
       case WEST:
-        rays.push(Ray{ current.south(), SOUTH });
+        rays.push(Ray{ terminal.south(), SOUTH });
         break;
       case SOUTH:
-        rays.push(Ray{ current.west(), WEST });
+        rays.push(Ray{ terminal.west(), WEST });
         break;
       }
       break;
@@ -234,16 +301,16 @@ std::set<Position> evaluate_rays(const Grid& grid, const Ray& initial_ray = Ray{
       switch (ray.direction)
       {
       case NORTH:
-        rays.push(Ray{ current.west(), WEST });
+        rays.push(Ray{ terminal.west(), WEST });
         break;
       case EAST:
-        rays.push(Ray{ current.south(), SOUTH });
+        rays.push(Ray{ terminal.south(), SOUTH });
         break;
       case WEST:
-        rays.push(Ray{ current.north(), NORTH });
+        rays.push(Ray{ terminal.north(), NORTH });
         break;
       case SOUTH:
-        rays.push(Ray{ current.east(), EAST });
+        rays.push(Ray{ terminal.east(), EAST });
         break;
       }
       break;
@@ -252,14 +319,14 @@ std::set<Position> evaluate_rays(const Grid& grid, const Ray& initial_ray = Ray{
       {
       case EAST:
       case WEST:
-        rays.push(Ray{ current.south(), SOUTH });
-        rays.push(Ray{ current.north(), NORTH });
+        rays.push(Ray{ terminal.south(), SOUTH });
+        rays.push(Ray{ terminal.north(), NORTH });
         break;
       case SOUTH:
-        rays.push(Ray{ current.south(), SOUTH });
+        rays.push(Ray{ terminal.south(), SOUTH });
         break;
       case NORTH:
-        rays.push(Ray{ current.north(), NORTH });
+        rays.push(Ray{ terminal.north(), NORTH });
         break;
       }
       break;
@@ -267,15 +334,15 @@ std::set<Position> evaluate_rays(const Grid& grid, const Ray& initial_ray = Ray{
       switch (ray.direction)
       {
       case EAST:
-        rays.push(Ray{ current.east(), ray.direction });
+        rays.push(Ray{ terminal.east(), ray.direction });
         break;
       case WEST:
-        rays.push(Ray{ current.west(), ray.direction });
+        rays.push(Ray{ terminal.west(), ray.direction });
         break;
       case SOUTH:
       case NORTH:
-        rays.push(Ray{ current.east(), EAST });
-        rays.push(Ray{ current.west(), WEST });
+        rays.push(Ray{ terminal.east(), EAST });
+        rays.push(Ray{ terminal.west(), WEST });
         break;
       }
       break;
