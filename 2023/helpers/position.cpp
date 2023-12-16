@@ -427,4 +427,12 @@ std::vector<Position> Position::getPositionsInLine(const Position& p1, const Pos
 
   return positions;
 }
+
+void Position::get_boundaries(const std::set<Position>& positions, long long& min_row, long long& min_col, long long& max_row, long long& max_col)
+{
+  min_row = std::min_element(positions.begin(), positions.end())->y();
+  min_col = std::min_element(positions.begin(), positions.end())->x();
+  max_row = std::max_element(positions.begin(), positions.end())->y();
+  max_col = std::max_element(positions.begin(), positions.end())->x();
+}
 } // namespace advent_of_code
