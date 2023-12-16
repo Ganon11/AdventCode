@@ -440,4 +440,26 @@ void Position::get_boundaries(const std::set<Position>& positions, long long& mi
   min_col = *std::min_element(cols.begin(), cols.end());
   max_col = *std::max_element(cols.begin(), cols.end());
 }
+
+bool Position::in_bounds(const long long min_row, const long long min_col, const long long max_row, const long long max_col, const Position& p)
+{
+  if (p.x() < min_col || p.x() > max_col)
+  {
+    return false;
+  }
+
+  if (p.y() < min_row || p.y() > max_row)
+  {
+    return false;
+  }
+
+  return true;
+}
+
+bool Position::in_bounds(const std::set<Position>& positions, const Position& p)
+{
+  long long min_row, min_col, max_row, max_col;
+  get_boundaries(positions, min_row, min_col, max_row, max_col);
+  return Position::in_bounds(min_row, min_col, max_row, max_col, p);
+}
 } // namespace advent_of_code
