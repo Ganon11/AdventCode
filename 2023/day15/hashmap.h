@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-unsigned int hash(const std::string& text);
+unsigned char hash(const std::string& text);
 
 class HASHMAP
 {
@@ -22,12 +22,14 @@ public:
 private:
   struct Lens
   {
+    Lens(const std::string& label, const unsigned focal_length);
+
     std::string label;
-    unsigned int focal_length;
+    unsigned focal_length;
   };
 
-  void insert(const unsigned int index, const Lens& lens);
-  void remove(const unsigned int index, const std::string& label);
+  void insert(const unsigned char index, const Lens& lens);
+  void remove(const unsigned char index, const std::string& label);
 
   typedef std::vector<Lens> Box;
   typedef std::map<unsigned char, Box> Boxes;
