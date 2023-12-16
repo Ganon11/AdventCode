@@ -26,7 +26,12 @@ void HASHMAP::process_command(const std::string& command)
   }
 }
 
-void HASHMAP::insert(const unsigned int index, const Lens& lens)
+HASHMAP::Lens::Lens(const std::string& label, const unsigned focal_length)
+  : label{ label },
+    focal_length{ focal_length }
+{ }
+
+void HASHMAP::insert(const unsigned char index, const Lens& lens)
 {
   if (m_boxes.end() == m_boxes.find(index))
   {
@@ -41,11 +46,11 @@ void HASHMAP::insert(const unsigned int index, const Lens& lens)
   }
   else
   {
-    *position = lens;
+    position->focal_length = lens.focal_length;
   }
 }
 
-void HASHMAP::remove(const unsigned int index, const std::string& label)
+void HASHMAP::remove(const unsigned char index, const std::string& label)
 {
   if (m_boxes.end() == m_boxes.find(index))
   {
@@ -79,7 +84,7 @@ unsigned long long HASHMAP::focusing_power() const
   return sum;
 }
 
-unsigned int hash(const std::string& text)
+unsigned char hash(const std::string& text)
 {
   unsigned int current{0};
   for (const char ch : text)
@@ -89,5 +94,5 @@ unsigned int hash(const std::string& text)
     current %= 256;
   }
 
-  return current;
+  return static_cast<unsigned char>(current);
 }
