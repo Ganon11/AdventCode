@@ -232,7 +232,86 @@ Position find_terminating_position(const Grid& grid, const Ray& ray, bool& went_
   return current;
 }
 
-std::set<Position> evaluate_rays(const Grid& grid, const Ray& initial_ray = Ray{ advent_of_code::ORIGIN, EAST })
+std::vector<Ray> get_resultant_rays(const auto& ray, const Position& position, const GridType type)
+{
+  std::vector<Ray> next_rays;
+  switch (type)
+  {
+  case FORWARD_MIRROR:
+    switch (ray.direction)
+    {
+    case NORTH:
+      next_rays.push_back(Ray{ position.east(), EAST });
+      break;
+    case EAST:
+      next_rays.push_back(Ray{ position.north(), NORTH });
+      break;
+    case WEST:
+      next_rays.push_back(Ray{ position.south(), SOUTH });
+      break;
+    case SOUTH:
+      next_rays.push_back(Ray{ position.west(), WEST });
+      break;
+    }
+    break;
+  case BACKWARD_MIRROR:
+    switch (ray.direction)
+    {
+    case NORTH:
+      next_rays.push_back(Ray{ position.west(), WEST });
+      break;
+    case EAST:
+      next_rays.push_back(Ray{ position.south(), SOUTH });
+      break;
+    case WEST:
+      next_rays.push_back(Ray{ position.north(), NORTH });
+      break;
+    case SOUTH:
+      next_rays.push_back(Ray{ position.east(), EAST });
+      break;
+    }
+    break;
+  case VERTICAL_SPLITTER:
+    switch (ray.direction)
+    {
+    case EAST:
+    case WEST:
+      next_rays.push_back(Ray{ position.south(), SOUTH });
+      next_rays.push_back(Ray{ position.north(), NORTH });
+      break;
+    case SOUTH:
+      next_rays.push_back(Ray{ position.south(), SOUTH });
+      break;
+    case NORTH:
+      next_rays.push_back(Ray{ position.north(), NORTH });
+      break;
+    }
+    break;
+  case HORIZONTAL_SPLITTER:
+    switch (ray.direction)
+    {
+    case EAST:
+      next_rays.push_back(Ray{ position.east(), ray.direction });
+      break;
+    case WEST:
+      next_rays.push_back(Ray{ position.west(), ray.direction });
+      break;
+    case SOUTH:
+    case NORTH:
+      next_rays.push_back(Ray{ position.east(), EAST });
+      next_rays.push_back(Ray{ position.west(), WEST });
+      break;
+    }
+    break;
+  case SPACE:
+  default:
+    break;
+  }
+
+  return next_rays;
+}
+
+size_t evaluate_rays(const Grid& grid, const Ray& initial_ray = Ray{ advent_of_code::ORIGIN, EAST })
 {
   std::set<Position> all_positions;
   std::transform(grid.begin(), grid.end(), std::inserter(all_positions, all_positions.begin()), [](const auto& kvp){ return kvp.first; });
@@ -241,33 +320,22 @@ std::set<Position> evaluate_rays(const Grid& grid, const Ray& initial_ray = Ray{
   min_row = 0;
   min_col = 0;
 
-  std::set<Position> visited;
-  std::unordered_set<Ray, Ray::HashFunction> evaluated;
+  std::map<Position, std::set<Direction>> visited;
   std::queue<Ray> rays;
   rays.push(initial_ray);
+  visited[initial_ray.origin].insert(initial_ray.direction);
 
   while (!rays.empty())
   {
     Ray ray{ rays.front() };
     rays.pop();
-    if (evaluated.end() != std::find(evaluated.begin(), evaluated.end(), ray))
-    {
-      //std::cout << "Already evaluated ray at " << ray.origin << ", direction " << convert(ray.direction) << std::endl;
-      continue;
-    }
-
-    //std::cout << "Evaluating ray at " << ray.origin << ", direction " << convert(ray.direction) << std::endl;
-    evaluated.insert(ray);
-
-    if (!in_bounds(ray.origin, min_row, min_col, max_row, max_col))
-    {
-      //std::cout << "\tRay starts out of bounds" << std::endl;
-      continue;
-    }
     bool went_out_of_bounds;
     Position terminal{ find_terminating_position(grid, ray, went_out_of_bounds) };
     std::vector<Position> positions{ advent_of_code::Position::getPositionsInLine(ray.origin, terminal) };
-    visited.insert(positions.begin(), positions.end());
+    for (const auto& p : positions)
+    {
+      visited[p].insert(ray.direction);
+    }
 
     if (went_out_of_bounds)
     {
@@ -275,84 +343,27 @@ std::set<Position> evaluate_rays(const Grid& grid, const Ray& initial_ray = Ray{
       continue;
     }
 
-    GridType type{ grid.at(terminal) };
-    //std::cout << "\tRay has terminated at " << terminal << ", which is a " << convert(type) << std::endl;
-
-    switch (type)
+    for (const auto& neighbor : get_resultant_rays(ray, terminal, grid.at(terminal)))
     {
-    case FORWARD_MIRROR:
-      switch (ray.direction)
+      if (!in_bounds(neighbor.origin, min_row, min_col, max_row, max_col))
       {
-      case NORTH:
-        rays.push(Ray{ terminal.east(), EAST });
-        break;
-      case EAST:
-        rays.push(Ray{ terminal.north(), NORTH });
-        break;
-      case WEST:
-        rays.push(Ray{ terminal.south(), SOUTH });
-        break;
-      case SOUTH:
-        rays.push(Ray{ terminal.west(), WEST });
-        break;
+        continue;
       }
-      break;
-    case BACKWARD_MIRROR:
-      switch (ray.direction)
+
+      if (visited.contains(neighbor.origin) && visited.at(neighbor.origin).contains(neighbor.direction))
       {
-      case NORTH:
-        rays.push(Ray{ terminal.west(), WEST });
-        break;
-      case EAST:
-        rays.push(Ray{ terminal.south(), SOUTH });
-        break;
-      case WEST:
-        rays.push(Ray{ terminal.north(), NORTH });
-        break;
-      case SOUTH:
-        rays.push(Ray{ terminal.east(), EAST });
-        break;
+        continue;
       }
-      break;
-    case VERTICAL_SPLITTER:
-      switch (ray.direction)
-      {
-      case EAST:
-      case WEST:
-        rays.push(Ray{ terminal.south(), SOUTH });
-        rays.push(Ray{ terminal.north(), NORTH });
-        break;
-      case SOUTH:
-        rays.push(Ray{ terminal.south(), SOUTH });
-        break;
-      case NORTH:
-        rays.push(Ray{ terminal.north(), NORTH });
-        break;
-      }
-      break;
-    case HORIZONTAL_SPLITTER:
-      switch (ray.direction)
-      {
-      case EAST:
-        rays.push(Ray{ terminal.east(), ray.direction });
-        break;
-      case WEST:
-        rays.push(Ray{ terminal.west(), ray.direction });
-        break;
-      case SOUTH:
-      case NORTH:
-        rays.push(Ray{ terminal.east(), EAST });
-        rays.push(Ray{ terminal.west(), WEST });
-        break;
-      }
-      break;
-    case SPACE:
-    default:
-      break;
+
+      rays.push(neighbor);
     }
   }
 
-  return visited;
+  // for (const auto& kvp : visited)
+  // {
+  //   std::cout << kvp.first << std::endl;
+  // }
+  return visited.size();
 }
 }
 
@@ -381,9 +392,9 @@ int main(int argc, char* argv[])
   advent_of_code::InputHandler input{ result["filename"].as<std::string>() };
   std::vector<std::string> lines{ input.read_all_lines() };
   Grid grid{ parse_grid(lines) };
-  std::set<Position> visited{ evaluate_rays(grid) };
+  size_t visited{ evaluate_rays(grid) };
 
-  std::cout << "Energized " << visited.size() << " tiles." << std::endl;
+  std::cout << "Energized " << visited << " tiles." << std::endl;
 
   std::set<Position> all_positions;
   std::transform(grid.begin(), grid.end(), std::inserter(all_positions, all_positions.begin()), [](const auto& kvp){ return kvp.first; });
@@ -392,21 +403,21 @@ int main(int argc, char* argv[])
   min_row = 0;
   min_col = 0;
 
-  unsigned long long max{0};
+  size_t max{0};
   for (long long row = min_row; row <= max_row; ++row)
   {
     Ray from_left{ Position{ min_col, row }, EAST };
     visited = evaluate_rays(grid, from_left);
-    if (visited.size() > max)
+    if (visited > max)
     {
-      max = visited.size();
+      max = visited;
     }
 
     Ray from_right{ Position{ max_col, row}, WEST };
     visited = evaluate_rays(grid, from_right);
-    if (visited.size() > max)
+    if (visited > max)
     {
-      max = visited.size();
+      max = visited;
     }
   }
 
@@ -414,16 +425,16 @@ int main(int argc, char* argv[])
   {
     Ray from_top{ Position{ col, min_row }, SOUTH };
     visited = evaluate_rays(grid, from_top);
-    if (visited.size() > max)
+    if (visited > max)
     {
-      max = visited.size();
+      max = visited;
     }
 
-    Ray from_bottom{ Position{ col, max_row}, NORTH };
-    visited = evaluate_rays(grid, from_top);
-    if (visited.size() > max)
+    Ray from_bottom{ Position{ col, max_row }, NORTH };
+    visited = evaluate_rays(grid, from_bottom);
+    if (visited > max)
     {
-      max = visited.size();
+      max = visited;
     }
   }
 
