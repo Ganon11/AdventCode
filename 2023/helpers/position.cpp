@@ -273,7 +273,7 @@ std::ostream& operator<<(std::ostream& out, const Position& p)
   return out;
 }
 
-std::vector<Position> Position::getPositionsInLine(const Position& p1, const Position& p2)
+std::vector<Position> Position::get_positions_in_line(const Position& p1, const Position& p2)
 {
   std::vector<Position> positions;
   bool good = false;
