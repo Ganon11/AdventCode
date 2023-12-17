@@ -10,6 +10,21 @@ Ray::Ray(const advent_of_code::Position& p, const Direction d)
   m_direction{ d }
 { }
 
+bool Ray::operator<(const Ray& other) const
+{
+  if (m_origin < other.m_origin)
+  {
+    return true;
+  }
+
+  if (m_origin > other.m_origin)
+  {
+    return false;
+  }
+
+  return m_direction < other.m_direction;
+}
+
 bool Ray::operator==(const Ray& other) const
 {
   return m_origin == other.m_origin && m_direction == other.m_direction;
