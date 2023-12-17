@@ -37,7 +37,7 @@ size_t evaluate_rays(const Grid& grid, const Ray& initial_ray = Ray{ advent_of_c
     rays.pop();
     bool went_out_of_bounds;
     Position terminal{ find_terminating_position(grid, ray, went_out_of_bounds) };
-    std::vector<Position> positions{ advent_of_code::Position::getPositionsInLine(ray.origin(), terminal) };
+    std::vector<Position> positions{ advent_of_code::Position::get_positions_in_line(ray.origin(), terminal) };
     for (const auto& p : positions)
     {
       visited[p].insert(ray.direction());
