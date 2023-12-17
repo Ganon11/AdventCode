@@ -74,7 +74,6 @@ const Position NONE_POSITION{
 const Position ORIGIN{ 0ll, 0ll, 0ll, 0ll };
 }
 
-
 namespace std {
 template <> struct hash<advent_of_code::Position>
 {
