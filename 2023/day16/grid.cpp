@@ -6,8 +6,6 @@ char convert(const GridType type)
 {
   switch (type)
   {
-  case SPACE:
-    return '.';
   case FORWARD_MIRROR:
     return '/';
   case BACKWARD_MIRROR:
@@ -16,6 +14,9 @@ char convert(const GridType type)
     return '|';
   case HORIZONTAL_SPLITTER:
     return '-';
+  case SPACE:
+  default:
+    return '.';
   }
 }
 
