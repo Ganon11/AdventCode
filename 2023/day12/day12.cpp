@@ -1,127 +1,17 @@
 #include <algorithm>
 #include <iostream>
 #include <iterator>
+#include <map>
 #include <sstream>
+#include <string>
 #include <vector>
 
+#include "counter.h"
 #include "cxxopts.hpp"
 #include "input_handler.h"
 
 namespace
 {
-bool is_valid_arrangement(const std::string& springs, const::std::vector<unsigned long long> groups, const bool verbose = false)
-{
-  if (verbose)
-  {
-    std::cout << "Checking if \"" << springs << " is a valid arrangement." << std::endl;
-    std::cout << "\tGroups are: ";
-    for (const unsigned long long group : groups)
-    {
-      std::cout << group << ", ";
-    }
-    std::cout << std::endl;
-  }
-
-  size_t group_index{0};
-  char previous_spring = '.';
-  unsigned long long current_group_size{0};
-  for (size_t spring_index = 0; spring_index < springs.size(); ++spring_index)
-  {
-    char spring{ springs[spring_index] };
-
-    switch (spring)
-    {
-      case '.':
-        if (previous_spring == '#')
-        {
-          if (current_group_size != groups[group_index])
-          {
-            if (verbose) std::cout << "\tInvalid group found at springs[" << spring_index << "], group " << group_index << std::endl;
-            return false;
-          }
-
-          current_group_size = 0;
-          ++group_index;
-        }
-        break;
-      case '#':
-        ++current_group_size;
-        break;
-      case '?':
-      default:
-        if (verbose) std::cout << "\tInvalid character found at springs[" << spring_index << "]" << std::endl;
-        return false;
-    }
-
-    if (groups.size() < group_index)
-    {
-      if (verbose) std::cout << "\tToo many groups!" << std::endl;
-      return false;
-    }
-
-    previous_spring = spring;
-  }
-
-  // If the last character was part of a spring, the group is now closed, so increment the index.
-  if (previous_spring == '#')
-  {
-    if (current_group_size != groups[group_index])
-    {
-      if (verbose) std::cout << "\tLast group is too big!" << std::endl;
-      return false;
-    }
-
-    ++group_index;
-  }
-
-  if (groups.size() != group_index)
-  {
-    if (verbose) std::cout << "\tNot all groups used! Group index = " << group_index << std::endl;
-    return false;
-  }
-
-  if (verbose)
-  {
-    std::cout << "Checking if \"" << springs << " is a valid arrangement." << std::endl;
-    std::cout << "\tGroups are: ";
-    for (const unsigned long long group : groups)
-    {
-      std::cout << group << ", ";
-    }
-    std::cout << std::endl;
-    std::cout << "\tValid!" << std::endl;
-  }
-  return true;
-}
-
-unsigned long long count_arrangements(std::string& springs, size_t index, const std::vector<unsigned long long>& groups)
-{
-  while (index < springs.size() && springs[index] != '?')
-  {
-    ++index;
-  }
-
-  if (index == springs.size())
-  {
-    return is_valid_arrangement(springs, groups) ? 1 : 0;
-  }
-
-  unsigned long long sum{0};
-  springs[index] = '.';
-  sum += count_arrangements(springs, index + 1, groups);
-  springs[index] = '#';
-  sum += count_arrangements(springs, index + 1, groups);
-  springs[index] = '?';
-
-  return sum;
-}
-
-unsigned long long count_arrangements(const std::string& springs, const std::vector<unsigned long long>& groups)
-{
-  std::string copy{ springs };
-  return count_arrangements(copy, 0, groups);
-}
-
 unsigned long long count_arrangements(const std::string& line, const bool folded = false)
 {
   std::vector<std::string> tokens{ advent_of_code::tokenize(line, ' ') };
@@ -139,11 +29,15 @@ unsigned long long count_arrangements(const std::string& line, const bool folded
     groups_string = os.str();
   }
 
-  std::vector<std::string> group_strings{ advent_of_code::tokenize(groups_string, ',') };
-  std::vector<unsigned long long> groups;
-  std::transform(group_strings.begin(), group_strings.end(), std::back_inserter(groups), [](const std::string& t){ return std::stoll(t); });
+  std::vector<Condition> conditions;
+  std::transform(springs.begin(), springs.end(), std::back_inserter(conditions), convert);
 
-  return count_arrangements(springs, groups);
+  std::vector<std::string> group_strings{ advent_of_code::tokenize(groups_string, ',') };
+  std::vector<int> groups;
+  std::transform(group_strings.begin(), group_strings.end(), std::back_inserter(groups), [](const std::string& t){ return std::stoi(t); });
+
+  Counter c{ conditions, groups };
+  return c.count();
 }
 }
 
