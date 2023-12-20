@@ -1,5 +1,6 @@
 #include "valley.h"
 
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -29,6 +30,8 @@ bool different_by_one_bit(const unsigned int a, const unsigned int b)
 }
 
 Valley::Valley(const std::vector<std::string>& lines)
+  : m_row_score{ -1 },
+    m_col_score{ -1 }
 {
   m_rows.reserve(lines.size());
   m_columns.reserve(lines.size());
@@ -50,24 +53,45 @@ Valley::Valley(const std::vector<std::string>& lines)
     unsigned int number{ to_number(temp) };
     m_columns.push_back(to_number(temp));
   }
+
+  m_row_score = rows(false);
+  m_col_score = columns(false);
+
+  //std::cout << "Precomputed row score " << m_row_score << ", col score " << m_col_score << std::endl;
 }
 
 int Valley::rows(const bool smudge) const
 {
-  return find_reflection(m_rows, smudge);
+  if (!smudge && m_row_score != -1)
+  {
+    return m_row_score;
+  }
+
+  return find_reflection(m_rows, smudge, m_row_score);
 }
 
 int Valley::columns(const bool smudge) const
 {
-  return find_reflection(m_columns, smudge);
+  if (!smudge && m_col_score != -1)
+  {
+    return m_col_score;
+  }
+
+  return find_reflection(m_columns, smudge, m_col_score);
 }
 
-int Valley::find_reflection(const std::vector<unsigned int>& nums, const bool smudge)
+int Valley::find_reflection(const std::vector<unsigned int>& nums, const bool smudge, const int previous_score)
 {
   for (int index = 0; index < nums.size() - 1; ++index)
   {
     if (reflection_at(nums, index, smudge))
     {
+      int reflection{ index + 1 };
+      if (smudge && reflection == previous_score)
+      {
+        continue;
+      }
+
       return index + 1;
     }
   }
