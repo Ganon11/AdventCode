@@ -16,10 +16,13 @@ public:
   int columns(const bool smudge = false) const;
 
 private:
-  static int find_reflection(const std::vector<unsigned int>& nums, const bool smudge);
+  static int find_reflection(const std::vector<unsigned int>& nums, const bool smudge, const int previous_score = -1);
   static bool reflection_at(const std::vector<unsigned int>& nums, const int index, const bool smudge);
 
 private:
   std::vector<unsigned int> m_rows;
   std::vector<unsigned int> m_columns;
+
+  int m_row_score;
+  int m_col_score;
 };
