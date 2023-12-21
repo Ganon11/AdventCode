@@ -38,6 +38,23 @@ enum Direction
   SOUTH
 };
 
+char convert(const Direction d)
+{
+  switch (d)
+  {
+  case NORTH:
+    return '^';
+  case WEST:
+    return '<';
+  case EAST:
+    return '>';
+  case SOUTH:
+    return 'v';
+  default:
+    return '\0';
+  }
+}
+
 struct LavaState
 {
   Position position;
@@ -66,24 +83,42 @@ bool operator>(const LavaState& a, const LavaState& b)
   return a.priority > b.priority;
 }
 
+void print_grid(const Grid& grid, const std::vector<Position>& path)
+{
+  long long min_row, min_col, max_row, max_col;
+
+  {
+    std::set<Position> all_positions;
+    std::transform(grid.begin(), grid.end(), std::inserter(all_positions, all_positions.begin()), [](const auto& kvp){ return kvp.first; });
+    Position::get_boundaries(all_positions, min_row, min_col, max_row, max_col);
+  }
+
+  for (long long row = min_row; row <= max_row; ++row)
+  {
+    for (long long col = min_col; col <= max_col; ++col)
+    {
+      Position p{ col, row };
+      if (path.end() != std::find(path.begin(), path.end(), p))
+      {
+        std::cout << "*";
+      }
+      else
+      {
+        std::cout << grid.at(p);
+      }
+    }
+
+    std::cout << std::endl;
+  }
+
+  std::cout << std::endl;
+}
+
 std::vector<LavaState> get_neighbors(const Grid& grid, const LavaState& state,
   const long long min_row, const long long min_col,
   const long long max_row, const long long max_col)
 {
   std::vector<LavaState> neighbors;
-  // go north
-  if (state.direction != SOUTH)
-  {
-    if (state.direction != NORTH || state.straight_count < 3)
-    {
-      Position new_position{ state.position.north() };
-      if (Position::in_bounds(min_row, min_col, max_row, max_col, new_position))
-      {
-        unsigned new_straight_count = state.direction == NORTH ? state.straight_count + 1 : 1;
-        neighbors.push_back(LavaState{ new_position, new_straight_count, NORTH });
-      }
-    }
-  }
 
   // go west
   if (state.direction != EAST)
@@ -109,6 +144,20 @@ std::vector<LavaState> get_neighbors(const Grid& grid, const LavaState& state,
       {
         unsigned new_straight_count = state.direction == EAST ? state.straight_count + 1 : 1;
         neighbors.push_back(LavaState{ new_position, new_straight_count, EAST });
+      }
+    }
+  }
+
+  // go north
+  if (state.direction != SOUTH)
+  {
+    if (state.direction != NORTH || state.straight_count < 3)
+    {
+      Position new_position{ state.position.north() };
+      if (Position::in_bounds(min_row, min_col, max_row, max_col, new_position))
+      {
+        unsigned new_straight_count = state.direction == NORTH ? state.straight_count + 1 : 1;
+        neighbors.push_back(LavaState{ new_position, new_straight_count, NORTH });
       }
     }
   }
@@ -156,10 +205,10 @@ unsigned long long find_shortest_path(const Grid& grid, const Position& destinat
 
     //std::cout << "Currently at (" << current.position << "), facing " << current.direction << ", have been going straight for " << current.straight_count << " steps." << std::endl;
 
-    if (destination == current.position)
-    {
-      break;
-    }
+    // if (destination == current.position)
+    // {
+    //   break;
+    // }
 
     for (LavaState neighbor : get_neighbors(grid, current, min_row, min_col, max_row, max_col))
     {
@@ -172,6 +221,7 @@ unsigned long long find_shortest_path(const Grid& grid, const Position& destinat
         //std::cout << "\t\tNeighbor is new: new cost " << new_cost << std::endl;
         cost_so_far[neighbor.position] = new_cost;
         neighbor.priority = new_cost + heuristic(neighbor.position);
+        //neighbor.priority = new_cost;
         frontier.push(neighbor);
         came_from[neighbor.position] = current.position;
       }
@@ -187,13 +237,7 @@ unsigned long long find_shortest_path(const Grid& grid, const Position& destinat
       p = came_from.at(p);
     }
   }
-
-  std::reverse(path.begin(), path.end());
-  for (const auto& p : path)
-  {
-    std::cout << "(" << p << "), ";
-  }
-  std::cout << std::endl;
+  print_grid(grid, path);
 
   return cost_so_far[destination];
 }
