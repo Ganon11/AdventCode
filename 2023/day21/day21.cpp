@@ -11,20 +11,17 @@ using advent_of_code::Position;
 
 namespace
 {
-enum GardenSpace
-{
-  PLOT,
-  ROCK
-};
+typedef std::set<Position> Garden;
 
-typedef std::map<Position, GardenSpace> Garden;
-
-Garden parse_garden(const std::vector<std::string>& lines, Position& start)
+Garden parse_garden(const std::vector<std::string>& lines, Position& start, unsigned int& rows,
+  unsigned int& columns)
 {
   Garden g;
-  for (size_t row = 0; row < lines.size(); ++row)
+  rows = lines.size();
+  columns = lines[0].size();
+  for (size_t row = 0; row < rows; ++row)
   {
-    for (size_t col = 0; col < lines[row].size(); ++col)
+    for (size_t col = 0; col < columns; ++col)
     {
       Position p{ col, row };
       switch (lines[row][col])
@@ -32,10 +29,7 @@ Garden parse_garden(const std::vector<std::string>& lines, Position& start)
       case 'S':
         start = p;
       case '.':
-        g[p] = PLOT;
-        break;
-      case '#':
-        g[p] = ROCK;
+        g.insert(p);
         break;
       default:
         break;
@@ -46,7 +40,8 @@ Garden parse_garden(const std::vector<std::string>& lines, Position& start)
   return g;
 }
 
-std::set<Position> take_step(const Garden& g, const std::set<Position>& positions)
+std::set<Position> take_step(const Garden& g, const std::set<Position>& positions,
+  const unsigned int rows, const unsigned int columns)
 {
   std::set<Position> reachable;
 
@@ -54,8 +49,9 @@ std::set<Position> take_step(const Garden& g, const std::set<Position>& position
   {
     for (const Position& neighbor : p.get_adjacent_positions())
     {
-      auto itr{ g.find(neighbor) };
-      if (g.end() == itr || itr->second == PLOT)
+      Position actual{ neighbor.x() % columns, neighbor.y() % rows };
+      auto itr{ g.find(actual) };
+      if (g.end() != itr)
       {
         reachable.insert(neighbor);
       }
@@ -97,7 +93,8 @@ int main(int argc, char* argv[])
 
   advent_of_code::InputHandler input{ result["filename"].as<std::string>() };
   Position start;
-  Garden garden{ parse_garden(input.read_all_lines(), start) };
+  unsigned int rows, columns;
+  Garden garden{ parse_garden(input.read_all_lines(), start, rows, columns) };
 
   std::cout << "Start found at " << start << std::endl;
 
@@ -105,7 +102,7 @@ int main(int argc, char* argv[])
   reachable.insert(start);
   for (unsigned int step = 0; step < steps; ++step)
   {
-    reachable = take_step(garden, reachable);
+    reachable = take_step(garden, reachable, rows, columns);
   }
 
   std::cout << "After " << steps << " step(s), there are " << reachable.size() << " possible locations." << std::endl;
