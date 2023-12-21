@@ -52,5 +52,7 @@ char convert(const Direction direction)
     return 'E';
   case SOUTH:
     return 'S';
+  default:
+    return '?';
   }
 }
