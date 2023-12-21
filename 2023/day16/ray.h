@@ -16,6 +16,7 @@ public:
   Ray();
   Ray(const advent_of_code::Position& p, const Direction d);
 
+  bool operator<(const Ray& other) const;
   bool operator==(const Ray& other) const;
   advent_of_code::Position origin() const;
   Direction direction() const;
