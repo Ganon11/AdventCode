@@ -1,3 +1,8 @@
+PATH
+  remote: point
+  specs:
+    point (0.0.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -40,6 +45,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  point!
   sorbet
   tapioca
 
