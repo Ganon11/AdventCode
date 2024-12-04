@@ -134,7 +134,6 @@ def find_x_mas(puzzle)
 end
 
 options = {
-  :part => 1,
   :filename => 'input.txt'
 }
 
