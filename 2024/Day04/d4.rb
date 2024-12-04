@@ -29,18 +29,6 @@ def find_max_col(puzzle)
   puzzle.keys.max_by{ |key, value| key.x }.x
 end
 
-def print_puzzle(puzzle)
-  max_row = find_max_row(puzzle)
-  max_col = find_max_col(puzzle)
-
-  (0..max_col).each do |row|
-    (0..max_row).each do |col|
-      print puzzle[Point.new(col, row)]
-    end
-    print "\n"
-  end
-end
-
 def search(puzzle, x, m, a, s)
   if [x, m, a, s].any? { |point| !puzzle.key?(point) }
     false
@@ -79,28 +67,6 @@ end
 
 def search_ul(puzzle, p)
   search(puzzle, p, Point.new(p.x - 1, p.y - 1), Point.new(p.x - 2, p.y - 2), Point.new(p.x - 3, p.y - 3))
-end
-
-def find_xmas(puzzle)
-  max_row = find_max_row(puzzle)
-  max_col = find_max_col(puzzle)
-
-  sum = 0
-  (0..max_col).each do |row|
-    (0..max_row).each do |col|
-      p = Point.new(col, row)
-      sum += 1 if search_right(puzzle, p)
-      sum += 1 if search_left(puzzle, p)
-      sum += 1 if search_up(puzzle, p)
-      sum += 1 if search_down(puzzle, p)
-      sum += 1 if search_dr(puzzle, p)
-      sum += 1 if search_dl(puzzle, p)
-      sum += 1 if search_ur(puzzle, p)
-      sum += 1 if search_ul(puzzle, p)
-    end
-  end
-
-  sum
 end
 
 def search_x_mas(puzzle, m_1, m_2, a, s_1, s_2)
@@ -147,6 +113,28 @@ def search_x_mas_ssamm(puzzle, p)
   search_x_mas(puzzle, m_1, m_2, a, s_1, s_2)
 end
 
+def find_xmas(puzzle)
+  max_row = find_max_row(puzzle)
+  max_col = find_max_col(puzzle)
+
+  sum = 0
+  (0..max_col).each do |row|
+    (0..max_row).each do |col|
+      p = Point.new(col, row)
+      sum += 1 if search_right(puzzle, p)
+      sum += 1 if search_left(puzzle, p)
+      sum += 1 if search_up(puzzle, p)
+      sum += 1 if search_down(puzzle, p)
+      sum += 1 if search_dr(puzzle, p)
+      sum += 1 if search_dl(puzzle, p)
+      sum += 1 if search_ur(puzzle, p)
+      sum += 1 if search_ul(puzzle, p)
+    end
+  end
+
+  sum
+end
+
 def find_x_mas(puzzle)
   max_row = find_max_row(puzzle)
   max_col = find_max_col(puzzle)
@@ -171,8 +159,7 @@ options = {
 }
 
 OptionParser.new do |opts|
-  opts.banner = 'Usage: d2.rb [options]'
-  opts.on('-p PART', '--part=PART', Integer, 'Part 1 or 2?')
+  opts.banner = 'Usage: d4.rb [options]'
   opts.on('-f FILENAME', '--filename=FILENAME', String, 'Which file to use?')
 end.parse!(into: options)
 
