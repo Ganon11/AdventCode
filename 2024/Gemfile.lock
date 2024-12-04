@@ -1,7 +1,8 @@
 PATH
   remote: point
   specs:
-    point (0.0.0)
+    point (0.1.0)
+      sorbet-static-and-runtime
 
 GEM
   remote: https://rubygems.org/
@@ -47,6 +48,7 @@ PLATFORMS
 DEPENDENCIES
   point!
   sorbet
+  sorbet-runtime
   tapioca
 
 BUNDLED WITH
