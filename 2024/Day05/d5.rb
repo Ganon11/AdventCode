@@ -65,13 +65,11 @@ class SafetyManual
 end
 
 options = {
-  :part => 1,
   :filename => 'input.txt'
 }
 
 OptionParser.new do |opts|
   opts.banner = 'Usage: d5.rb [options]'
-  opts.on('-p PART', '--part=PART', Integer, 'Part 1 or 2?')
   opts.on('-f FILENAME', '--filename=FILENAME', String, 'Which file to use?')
 end.parse!(into: options)
 
@@ -99,7 +97,6 @@ manuals.select{ |manual| !manual.valid?(rules) }.each do |manual|
   while invalid_rule = rules.detect{ |rule| !rule.manual_is_valid?(manual) } do
     index1 = manual.pages.index(invalid_rule.first)
     index2 = manual.pages.index(invalid_rule.second)
-    #puts "Manual: #{manual}, swapping #{invalid_rule.first} and #{invalid_rule.second}"
     manual.pages[T.must(index1)] = invalid_rule.second
     manual.pages[T.must(index2)] = invalid_rule.first
   end
