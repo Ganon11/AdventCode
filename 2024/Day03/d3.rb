@@ -6,7 +6,7 @@ options = {
 }
 
 OptionParser.new do |opts|
-  opts.banner = 'Usage: d2.rb [options]'
+  opts.banner = 'Usage: d3.rb [options]'
   opts.on('-p PART', '--part=PART', Integer, 'Part 1 or 2?')
   opts.on('-f FILENAME', '--filename=FILENAME', String, 'Which file to use?')
 end.parse!(into: options)
