@@ -96,7 +96,7 @@ class Memory
   sig {void}
   def collapse_free
     while index = index_of_contiguous_free_space
-      @memory[index].size += T.must(@memory[index + 1]).size
+      T.must(@memory[index]).size += T.must(@memory[index + 1]).size
       @memory.delete_at(index + 1)
     end
   end
