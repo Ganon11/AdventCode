@@ -6,9 +6,11 @@ require 'sorbet-runtime'
 # typed: true
 extend T::Sig
 
-class Tile
-  OBSTACLE = '#'
-  VISITED = 'X'
+class Tile < T::Enum
+  enums do
+    OBSTACLE = new
+    VISITED = new
+  end
 end
 
 class Path
@@ -79,7 +81,7 @@ class Guard
     OUT_OF_BOUNDS = 4
   end
 
-  sig {params(map: T::Hash[Point::Point, String], max_row: Integer, max_col: Integer).returns(Integer)}
+  sig {params(map: T::Hash[Point::Point, Tile], max_row: Integer, max_col: Integer).returns(Integer)}
   def step(map, max_row, max_col)
     p = T.let(nil, T.nilable(Point::Point))
     if @current.direction == :north
@@ -129,22 +131,22 @@ class Guard
   end
 end
 
-sig {params(map: T::Hash[Point::Point, String]).returns(Integer)}
+sig {params(map: T::Hash[Point::Point, Tile]).returns(Integer)}
 def find_max_row(map)
   T.must(map.keys.map{ |p| p.y }.max)
 end
 
-sig {params(map: T::Hash[Point::Point, String]).returns(Integer)}
+sig {params(map: T::Hash[Point::Point, Tile]).returns(Integer)}
 def find_max_col(map)
   T.must(map.keys.map{ |p| p.x }.max)
 end
 
-sig {params(map: T::Hash[Point::Point, String], position: Point::Point, max_row: Integer, max_col: Integer).returns(T::Boolean)}
+sig {params(map: T::Hash[Point::Point, Tile], position: Point::Point, max_row: Integer, max_col: Integer).returns(T::Boolean)}
 def in_bounds?(map, position, max_row, max_col)
   0 <= position.x && position.x <= max_col && 0 <= position.y && position.y <= max_row
 end
 
-sig {params(map: T::Hash[Point::Point, String], guard: Guard).returns(T::Boolean)}
+sig {params(map: T::Hash[Point::Point, Tile], guard: Guard).returns(T::Boolean)}
 def do_walk(map, guard)
   max_row = find_max_row(map)
   max_col = find_max_col(map)
@@ -159,7 +161,7 @@ def do_walk(map, guard)
   end
 end
 
-sig {params(map: T::Hash[Point::Point, String], path: T::Set[Path], initial: Path).returns(Integer)}
+sig {params(map: T::Hash[Point::Point, Tile], path: T::Set[Path], initial: Path).returns(Integer)}
 def count_cycles(map, path, initial)
   sum = 0
   path.map{ |p| p.position }.uniq.each do |p|
@@ -181,11 +183,11 @@ OptionParser.new do |opts|
 end.parse!(into: options)
 
 guard = T.let(nil, T.nilable(Guard))
-map = T.let({}, T::Hash[Point::Point, String])
+map = T.let({}, T::Hash[Point::Point, Tile])
 IO.readlines(options[:filename]).map(&:strip).each_with_index do |line, row|
   line.each_char.with_index do |character, col|
     p = Point::Point.new(col, row)
-    if character == Tile::OBSTACLE
+    if character == '#'
       map[p] = Tile::OBSTACLE
     elsif character == '^'
       guard = Guard.new(Path.new(p, :north))
