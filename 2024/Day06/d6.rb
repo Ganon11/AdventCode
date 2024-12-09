@@ -74,14 +74,16 @@ class Guard
     @path << @current
   end
 
-  class StepResult
-    WALK = 1
-    ROTATE = 2
-    CYCLE_DETECTED = 3
-    OUT_OF_BOUNDS = 4
+  class StepResult < T::Enum
+    enums do
+      WALK = new
+      ROTATE = new
+      CYCLE_DETECTED = new
+      OUT_OF_BOUNDS = new
+    end
   end
 
-  sig {params(map: T::Hash[Point::Point, Tile], max_row: Integer, max_col: Integer).returns(Integer)}
+  sig {params(map: T::Hash[Point::Point, Tile], max_row: Integer, max_col: Integer).returns(StepResult)}
   def step(map, max_row, max_col)
     p = T.let(nil, T.nilable(Point::Point))
     if @current.direction == :north
