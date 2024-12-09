@@ -1,21 +1,18 @@
 require 'optparse'
 require 'point'
+require 'sorbet-runtime'
 
 # typed: true
 extend T::Sig
 
 sig {params(puzzle: T::Hash[Point::Point, String]).returns(Integer)}
 def find_max_row(puzzle)
-  max_row_point = puzzle.keys.max_by{ |key, value| key.y }
-  max_row_point.y if max_row_point
-  -1
+  T.must(puzzle.keys.map{ |p| p.y }.max)
 end
 
 sig {params(puzzle: T::Hash[Point::Point, String]).returns(Integer)}
 def find_max_col(puzzle)
-  max_col_point = puzzle.keys.max_by{ |key, value| key.x }
-  max_col_point.x if max_col_point
-  -1
+  T.must(puzzle.keys.map{ |p| p.x }.max)
 end
 
 sig {params(puzzle: T::Hash[Point::Point, String], x: Point::Point, m: Point::Point, a: Point::Point, s: Point::Point).returns(T::Boolean)}
@@ -124,7 +121,7 @@ def find_xmas(puzzle)
   sum = 0
   (0..max_col).each do |row|
     (0..max_row).each do |col|
-      p = Point::Point.new(col, row)
+      p = T.let(Point::Point.new(col, row), Point::Point)
       sum += 1 if search_right(puzzle, p)
       sum += 1 if search_left(puzzle, p)
       sum += 1 if search_up(puzzle, p)
@@ -167,11 +164,10 @@ OptionParser.new do |opts|
   opts.on('-f FILENAME', '--filename=FILENAME', String, 'Which file to use?')
 end.parse!(into: options)
 
-puzzle = {}
+puzzle = T.let({}, T::Hash[Point::Point, String])
 IO.readlines(options[:filename]).map(&:strip).each_with_index do |line, row|
   line.each_char.with_index do |letter, col|
-    p = Point::Point.new(col, row)
-    puzzle[p] = letter
+    puzzle[Point::Point.new(col, row)] = letter
   end
 end
 

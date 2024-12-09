@@ -131,16 +131,12 @@ end
 
 sig {params(map: T::Hash[Point::Point, String]).returns(Integer)}
 def find_max_row(map)
-  max_row_point = map.keys.max_by{ |p| p.y }
-  return max_row_point.y if !max_row_point.nil?
-  -1
+  T.must(map.keys.map{ |p| p.y }.max)
 end
 
 sig {params(map: T::Hash[Point::Point, String]).returns(Integer)}
 def find_max_col(map)
-  max_col_point = map.keys.max_by{ |p| p.x }
-  return max_col_point.x if !max_col_point.nil?
-  -1
+  T.must(map.keys.map{ |p| p.x }.max)
 end
 
 sig {params(map: T::Hash[Point::Point, String], position: Point::Point, max_row: Integer, max_col: Integer).returns(T::Boolean)}
@@ -153,7 +149,7 @@ def do_walk(map, guard)
   max_row = find_max_row(map)
   max_col = find_max_col(map)
 
-  while in_bounds?(map, guard.current.position, max_row, max_col) do
+  while true do
     step_result = guard.step(map, max_row, max_col)
     if step_result == Guard::StepResult::CYCLE_DETECTED
       return true
@@ -161,8 +157,6 @@ def do_walk(map, guard)
       return false
     end
   end
-
-  return false
 end
 
 sig {params(map: T::Hash[Point::Point, String], path: T::Set[Path], initial: Path).returns(Integer)}

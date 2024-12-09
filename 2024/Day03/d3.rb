@@ -1,4 +1,8 @@
 require 'optparse'
+require 'sorbet-runtime'
+
+# typed: true
+extend T::Sig
 
 options = {
   :part => 1,
@@ -14,7 +18,7 @@ end.parse!(into: options)
 memory_lines = IO.readlines(options[:filename]).map(&:strip)
 
 sum = 0
-enabled = true
+enabled = T.let(true, T::Boolean)
 DO_FORMAT    = /^do\(\)/
 DONT_FORMAT  = /^don't\(\)/
 MUL_FORMAT   = /^mul\((\d{1,3}),(\d{1,3})\)/
@@ -23,11 +27,11 @@ memory_lines.each do |memory|
   (0..memory.length - 1).each do |start|
     end_index = [start + 11, memory.length - 1].min
     substr = memory[start..end_index]
-    if substr.match(DO_FORMAT)
+    if T.must(substr).match(DO_FORMAT)
       enabled = true
-    elsif substr.match(DONT_FORMAT)
+    elsif T.must(substr).match(DONT_FORMAT)
       enabled = false
-    elsif m = substr.match(MUL_FORMAT)
+    elsif m = T.must(substr).match(MUL_FORMAT)
       if options[:part] == 2 && !enabled
         next
       end

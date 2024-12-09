@@ -1,11 +1,16 @@
 require 'optparse'
+require 'sorbet-runtime'
 
+# typed: true
+extend T::Sig
+
+sig {params(levels: T::Array[Integer]).returns(T::Boolean)}
 def levels_are_safe?(levels)
-  increasing = false
-  decreasing = false
+  increasing = T.let(false, T::Boolean)
+  decreasing = T.let(false, T::Boolean)
   levels.each_with_index do |_, index|
     next if index == 0
-    diff = levels[index] - levels[index - 1]
+    diff = T.must(levels[index]) - T.must(levels[index - 1])
     if diff > 0
       increasing = true
     elsif diff < 0
@@ -20,6 +25,7 @@ def levels_are_safe?(levels)
   return increasing ^ decreasing
 end
 
+sig {params(report: String, dampener: T::Boolean).returns(T::Boolean)}
 def report_is_safe?(report, dampener)
   levels = report.split.map(&:to_i)
   if dampener
@@ -35,6 +41,7 @@ def report_is_safe?(report, dampener)
   end
 end
 
+sig {params(reports: T::Array[String], dampener: T::Boolean).returns(Integer)}
 def count_safe_reports(reports, dampener)
   sum = 0
   reports.each do |report|
@@ -56,5 +63,5 @@ OptionParser.new do |opts|
   opts.on('-f FILENAME', '--filename=FILENAME', String, 'Which file to use?')
 end.parse!(into: options)
 
-reports = IO.readlines(options[:filename])
+reports = T.let(IO.readlines(options[:filename]).map(&:strip), T::Array[String])
 puts count_safe_reports(reports, options[:part] == 2)

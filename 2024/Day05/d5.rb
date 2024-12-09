@@ -93,21 +93,15 @@ correct_sum = manuals.select{ |manual| manual.valid?(rules) }.map{ |manual| manu
 puts "Correct Manual sum: #{correct_sum}"
 
 sorted_sum = T.let(0, Integer)
-swap_sum = T.let(0, Integer)
 manuals.select{ |manual| !manual.valid?(rules) }.each do |manual|
-  swap_count = T.let(0, Integer)
   while invalid_rule = rules.detect{ |rule| !rule.manual_is_valid?(manual) } do
     index1 = manual.pages.index(invalid_rule.first)
     index2 = manual.pages.index(invalid_rule.second)
     manual.pages[T.must(index1)] = invalid_rule.second
     manual.pages[T.must(index2)] = invalid_rule.first
-    swap_count += 1
   end
 
-  puts "I fixed Manual #{manual} but it took #{swap_count} swaps, gross."
-  swap_sum += swap_count
   sorted_sum += manual.middle
 end
 
-puts "I sorted all manuals, but it took #{swap_sum} swaps, gross."
 puts "Sorted Manual sum: #{sorted_sum}"
