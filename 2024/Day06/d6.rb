@@ -1,3 +1,4 @@
+require 'direction'
 require 'point'
 require 'optparse'
 require 'set'
@@ -19,10 +20,10 @@ class Path
   sig {returns(Point::Point)}
   attr_reader :position
 
-  sig {returns(Symbol)}
+  sig {returns(Point::Direction)}
   attr_reader :direction
 
-  sig {params(position: Point::Point, direction: Symbol).void}
+  sig {params(position: Point::Point, direction: Point::Direction).void}
   def initialize(position, direction)
     @position = position
     @direction = direction
@@ -57,21 +58,7 @@ class Guard
   def initialize(initial_position)
     @current = initial_position
     @path = T.let(Set.new([@current]), T::Set[Path])
-  end
-
-  sig {void}
-  def rotate
-    if @current.direction == :north
-      @current = Path.new(@current.position, :east)
-    elsif @current.direction == :east
-      @current = Path.new(@current.position, :south)
-    elsif @current.direction == :west
-      @current = Path.new(@current.position, :north)
-    elsif @current.direction == :south
-      @current = Path.new(@current.position, :west)
-    end
-
-    @path << @current
+    @cycle_detection = T.let(Set.new([]), T::Set[Path])
   end
 
   class StepResult < T::Enum
@@ -85,41 +72,36 @@ class Guard
 
   sig {params(map: T::Hash[Point::Point, Tile], max_row: Integer, max_col: Integer).returns(StepResult)}
   def step(map, max_row, max_col)
-    p = T.let(nil, T.nilable(Point::Point))
-    if @current.direction == :north
-      p = @current.position.north
-    elsif @current.direction == :east
-      p = @current.position.east
-    elsif @current.direction == :west
-      p = @current.position.west
-    elsif @current.direction == :south
-      p = @current.position.south
+    case @current.direction
+    when Point::Direction::North then p = @current.position.north
+    when Point::Direction::East then p = @current.position.east
+    when Point::Direction::West then p = @current.position.west
+    when Point::Direction::South then p = @current.position.south
+    else T.absurd(@current)
     end
 
     if !in_bounds?(map, T.must(p), max_row, max_col)
       return StepResult::OUT_OF_BOUNDS
     elsif map[T.must(p)] == Tile::OBSTACLE
-      if @current.direction == :north
-        path_entry = Path.new(@current.position, :east)
-      elsif @current.direction == :east
-        path_entry = Path.new(@current.position, :south)
-      elsif @current.direction == :west
-        path_entry = Path.new(@current.position, :north)
-      elsif @current.direction == :south
-        path_entry = Path.new(@current.position, :west)
+      case @current.direction
+      when Point::Direction::North then path_entry = Path.new(@current.position, Point::Direction::East)
+      when Point::Direction::East then path_entry = Path.new(@current.position, Point::Direction::South)
+      when Point::Direction::West then path_entry = Path.new(@current.position, Point::Direction::North)
+      when Point::Direction::South then path_entry = Path.new(@current.position, Point::Direction::West)
+      else T.absurd(@current)
       end
 
-      if @path.include?(T.must(path_entry))
+      path_entry = T.must(path_entry)
+
+      if @cycle_detection.include?(path_entry)
         return StepResult::CYCLE_DETECTED
       end
-      @path << T.must(path_entry)
-      @current = T.must(path_entry)
+      @cycle_detection << path_entry
+      @path << path_entry
+      @current = path_entry
       return StepResult::ROTATE
     else
       path_entry = Path.new(T.must(p), @current.direction)
-      if @path.include?(path_entry)
-        return StepResult::CYCLE_DETECTED
-      end
 
       path << path_entry
       @current = path_entry
@@ -192,7 +174,7 @@ IO.readlines(options[:filename]).map(&:strip).each_with_index do |line, row|
     if character == '#'
       map[p] = Tile::OBSTACLE
     elsif character == '^'
-      guard = Guard.new(Path.new(p, :north))
+      guard = Guard.new(Path.new(p, Point::Direction::North))
       map[p] = Tile::VISITED
     end
   end
