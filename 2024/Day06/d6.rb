@@ -80,7 +80,7 @@ class Guard
     else T.absurd(@current)
     end
 
-    if !in_bounds?(map, T.must(p), max_row, max_col)
+    if !T.must(p).in_bounds?(0, 0, max_col, max_row)
       return StepResult::OUT_OF_BOUNDS
     elsif map[T.must(p)] == Tile::OBSTACLE
       case @current.direction
@@ -115,25 +115,20 @@ class Guard
   end
 end
 
-sig {params(map: T::Hash[Point::Point, Tile]).returns(Integer)}
-def find_max_row(map)
-  T.must(map.keys.map{ |p| p.y }.max)
+sig {params(points: T::Enumerable[Point::Point]).returns(Integer)}
+def find_max_row(points)
+  T.must(points.map{ |p| p.y }.max)
 end
 
-sig {params(map: T::Hash[Point::Point, Tile]).returns(Integer)}
-def find_max_col(map)
-  T.must(map.keys.map{ |p| p.x }.max)
-end
-
-sig {params(map: T::Hash[Point::Point, Tile], position: Point::Point, max_row: Integer, max_col: Integer).returns(T::Boolean)}
-def in_bounds?(map, position, max_row, max_col)
-  0 <= position.x && position.x <= max_col && 0 <= position.y && position.y <= max_row
+sig {params(points: T::Enumerable[Point::Point]).returns(Integer)}
+def find_max_col(points)
+  T.must(points.map{ |p| p.x }.max)
 end
 
 sig {params(map: T::Hash[Point::Point, Tile], guard: Guard).returns(T::Boolean)}
 def do_walk(map, guard)
-  max_row = find_max_row(map)
-  max_col = find_max_col(map)
+  max_row = find_max_row(map.keys)
+  max_col = find_max_col(map.keys)
 
   while true do
     step_result = guard.step(map, max_row, max_col)

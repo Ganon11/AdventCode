@@ -5,31 +5,26 @@ require 'sorbet-runtime'
 # typed: true
 extend T::Sig
 
-sig {params(map: T::Enumerable[Point::Point]).returns(Integer)}
-def find_max_row(map)
-  T.must(map.map{ |p| p.y }.max)
+sig {params(points: T::Enumerable[Point::Point]).returns(Integer)}
+def find_max_row(points)
+  T.must(points.map{ |p| p.y }.max)
 end
 
-sig {params(map: T::Enumerable[Point::Point]).returns(Integer)}
-def find_max_col(map)
-  T.must(map.map{ |p| p.x }.max)
-end
-
-sig {params(p: Point::Point, max_row: Integer, max_col: Integer).returns(T::Boolean)}
-def in_bounds?(p, max_row, max_col)
-  return 0 <= p.x && p.x <= max_col && 0 <= p.y && p.y <= max_row
+sig {params(points: T::Enumerable[Point::Point]).returns(Integer)}
+def find_max_col(points)
+  T.must(points.map{ |p| p.x }.max)
 end
 
 sig {params(a: Point::Point, b: Point::Point, limit: T::Boolean, max_row: Integer, max_col: Integer).returns(T::Set[Point::Point])}
 def generate_line(a, b, limit, max_row, max_col)
   line = T.let(Set.new([]), T::Set[Point::Point])
-  xdiff = b.x - a.x
-  ydiff = b.y - a.y
-  m = Point::Point.new(b.x + xdiff, b.y + ydiff)
-  while in_bounds?(m, max_row, max_col) do
+  m = a + b
+  while m.in_bounds?(0, 0, max_col, max_row) do
     line << m
     break if limit
-    m = Point::Point.new(m.x + xdiff, m.y + ydiff)
+    a = b
+    b = m
+    m = a + b
   end
   return line
 end

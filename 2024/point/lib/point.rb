@@ -40,6 +40,11 @@ module Point
       Point.new(@x - 1, @y)
     end
 
+    sig {params(min_x: Integer, min_y: Integer, max_x: Integer, max_y: Integer).returns(T::Boolean)}
+    def in_bounds?(min_x, min_y, max_x, max_y)
+      return min_x <= @x && @x <= max_x && min_y <= @y && @y <= max_y
+    end
+
     sig {params(other: Point).returns(T::Boolean)}
     def eql?(other)
       self.x == other.x && self.y == other.y
@@ -53,6 +58,13 @@ module Point
     sig {returns(String)}
     def to_s
       "(#{x}, #{y})"
+    end
+
+    sig {params(other: Point).returns(Point)}
+    def +(other)
+      xdiff = other.x - @x
+      ydiff = other.y - @y
+      return Point.new(other.x + xdiff, other.y + ydiff)
     end
   end
 end
