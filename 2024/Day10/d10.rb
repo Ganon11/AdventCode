@@ -38,14 +38,6 @@ def bfs(map, trailhead)
 end
 
 sig {
-  params(map: T::Hash[Point::Point, Integer], trailhead: Point::Point)
-  .returns(Integer)
-}
-def score_trailhead(map, trailhead)
-  return bfs(map, trailhead).select { |p, _| map[p] == 9 }.count
-end
-
-sig {
   params(walked: T::Hash[Point::Point, T::Set[Point::Point]], peak: Point::Point)
   .returns(Integer)
 }
@@ -74,17 +66,18 @@ end
 
 sig {
   params(map: T::Hash[Point::Point, Integer], trailhead: Point::Point)
-  .returns(Integer)
+  .returns([Integer, Integer])
 }
-def rate_trailhead(map, trailhead)
+def score_and_rate_trailhead(map, trailhead)
   came_from = bfs(map, trailhead)
   peaks = came_from.select { |p, _| map[p] == 9 }
+  score = peaks.count
   rating = 0
   peaks.each do |peak, _|
     rating += count_paths_from(came_from, peak)
   end
 
-  return rating
+  return score, rating
 end
 
 options = {
@@ -106,7 +99,13 @@ IO.readlines(options[:filename]).map(&:strip).each_with_index do |line, row|
   end
 end
 
-score = trailmap.select { |point, height| height == 0 }.map { |point, _| point}.map{ |point| score_trailhead(trailmap, point) }.sum
+score = 0
+rating = 0
+trailmap.select{ |point, height| height == 0 }.map { |point, _| point}.each do |point|
+  t_score, t_rating = score_and_rate_trailhead(trailmap, point)
+  score += t_score
+  rating += t_rating
+end
+
 puts "Score: #{score}"
-rating = trailmap.select { |point, height| height == 0 }.map { |point, _| point}.map{ |point| rate_trailhead(trailmap, point) }.sum
 puts "Rating: #{rating}"
