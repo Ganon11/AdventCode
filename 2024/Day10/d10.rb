@@ -46,10 +46,10 @@ def score_trailhead(map, trailhead)
 end
 
 sig {
-  params(walked: T::Hash[Point::Point, T::Set[Point::Point]], peak: Point::Point, trailhead: Point::Point)
+  params(walked: T::Hash[Point::Point, T::Set[Point::Point]], peak: Point::Point)
   .returns(Integer)
 }
-def count_paths_from(walked, peak, trailhead)
+def count_paths_from(walked, peak)
   frontier = Queue.new
   frontier << peak
   came_from = T.let({}, T::Hash[Point::Point, T::Set[Point::Point]])
@@ -81,7 +81,7 @@ def rate_trailhead(map, trailhead)
   peaks = came_from.select { |p, _| map[p] == 9 }
   rating = 0
   peaks.each do |peak, _|
-    rating += count_paths_from(came_from, peak, trailhead)
+    rating += count_paths_from(came_from, peak)
   end
 
   return rating
