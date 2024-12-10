@@ -88,13 +88,11 @@ def rate_trailhead(map, trailhead)
 end
 
 options = {
-  :part => 1,
   :filename => 'input.txt'
 }
 
 OptionParser.new do |opts|
   opts.banner = 'Usage: d9.rb [options]'
-  opts.on('-p PART', '--part=PART', Integer, 'Which part?')
   opts.on('-f FILENAME', '--filename=FILENAME', String, 'Which file to use?')
 end.parse!(into: options)
 
