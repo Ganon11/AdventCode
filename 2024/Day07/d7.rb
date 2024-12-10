@@ -26,6 +26,11 @@ class Equation
       return current_value == @result
     end
 
+    # The number can only grow
+    if current_value > @result
+      return false
+    end
+
     valid_with_add = valid_from_index?(current_value + T.must(@values[index]), index + 1, use_concat)
     valid_with_multiply = valid_from_index?(current_value * T.must(@values[index]), index + 1, use_concat)
     if !use_concat
