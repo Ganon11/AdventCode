@@ -85,7 +85,7 @@ options = {
 }
 
 OptionParser.new do |opts|
-  opts.banner = 'Usage: d9.rb [options]'
+  opts.banner = 'Usage: d10.rb [options]'
   opts.on('-f FILENAME', '--filename=FILENAME', String, 'Which file to use?')
 end.parse!(into: options)
 
