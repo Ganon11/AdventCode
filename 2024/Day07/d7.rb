@@ -32,18 +32,16 @@ class Equation
       return valid_with_add || valid_with_multiply
     end
 
-    valid_with_concat = valid_from_index?("#{current_value}#{T.must(@values[index])}".to_i, index + 1, true)
+    rhs = T.must(@values[index])
+    rhs_digits = Math.log10(rhs).to_i + 1
+    concat_value = (current_value * (10 ** rhs_digits)) + rhs
+    valid_with_concat = valid_from_index?(concat_value.to_i, index + 1, true)
     return valid_with_add || valid_with_multiply || valid_with_concat
   end
 
   sig {params(use_concat: T::Boolean).returns(T::Boolean)}
   def could_be_valid?(use_concat)
     return valid_from_index?(@values[0], 1, use_concat)
-  end
-
-  sig {returns(String)}
-  def to_s
-    "#{@result}: #{@values.join(' ')}"
   end
 
   private :valid_from_index?
