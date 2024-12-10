@@ -5,16 +5,6 @@ require 'sorbet-runtime'
 # typed: true
 extend T::Sig
 
-sig {params(points: T::Enumerable[Point::Point]).returns(Integer)}
-def find_max_row(points)
-  T.must(points.map{ |p| p.y }.max)
-end
-
-sig {params(points: T::Enumerable[Point::Point]).returns(Integer)}
-def find_max_col(points)
-  T.must(points.map{ |p| p.x }.max)
-end
-
 sig {params(a: Point::Point, b: Point::Point, limit: T::Boolean, max_row: Integer, max_col: Integer).returns(T::Set[Point::Point])}
 def generate_line(a, b, limit, max_row, max_col)
   line = T.let(Set.new([]), T::Set[Point::Point])

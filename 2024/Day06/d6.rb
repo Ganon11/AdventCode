@@ -115,20 +115,10 @@ class Guard
   end
 end
 
-sig {params(points: T::Enumerable[Point::Point]).returns(Integer)}
-def find_max_row(points)
-  T.must(points.map{ |p| p.y }.max)
-end
-
-sig {params(points: T::Enumerable[Point::Point]).returns(Integer)}
-def find_max_col(points)
-  T.must(points.map{ |p| p.x }.max)
-end
-
 sig {params(map: T::Hash[Point::Point, Tile], guard: Guard).returns(T::Boolean)}
 def do_walk(map, guard)
-  max_row = find_max_row(map.keys)
-  max_col = find_max_col(map.keys)
+  max_row = Point::Point.max_y(map.keys)
+  max_col = Point::Point.max_x(map.keys)
 
   while true do
     step_result = guard.step(map, max_row, max_col)
