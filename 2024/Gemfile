@@ -2,7 +2,9 @@
 
 source "https://rubygems.org"
 
+gem 'ruby-prof'
 gem 'sorbet', :group => :development
 gem 'sorbet-runtime'
 gem "tapioca", require: false, :group => [:development, :test]
+gem "linked_list", path: "linked_list"
 gem "point", path: "point"

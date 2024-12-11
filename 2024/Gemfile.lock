@@ -1,4 +1,10 @@
 PATH
+  remote: linked_list
+  specs:
+    linked_list (0.1.0)
+      sorbet-static-and-runtime
+
+PATH
   remote: point
   specs:
     point (0.3.0)
@@ -14,6 +20,7 @@ GEM
     rbi (0.2.1)
       prism (~> 1.0)
       sorbet-runtime (>= 0.5.9204)
+    ruby-prof (1.7.1)
     sorbet (0.5.11678)
       sorbet-static (= 0.5.11678)
     sorbet-runtime (0.5.11678)
@@ -46,7 +53,9 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  linked_list!
   point!
+  ruby-prof
   sorbet
   sorbet-runtime
   tapioca
