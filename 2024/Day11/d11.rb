@@ -22,33 +22,7 @@ def transform_stone(stone)
   end
 end
 
-class BlinkMemo
-  extend T::Sig
-
-  sig {returns(Integer)}
-  attr_reader :stone
-
-  sig {returns(Integer)}
-  attr_reader :depth
-
-  sig {params(stone: Integer, depth: Integer).void}
-  def initialize(stone, depth)
-    @stone = stone
-    @depth = depth
-  end
-
-  sig {params(other: BlinkMemo).returns(T::Boolean)}
-  def eql?(other)
-    self.stone == other.stone && self.depth == other.depth
-  end
-
-  sig {returns(Integer)}
-  def hash
-    [@stone, @depth].hash
-  end
-end
-
-RECURSIVE_BLINK_CACHE = T.let({}, T::Hash[BlinkMemo, Integer])
+RECURSIVE_BLINK_CACHE = T.let({}, T::Hash[T::Array[Integer], Integer])
 
 sig {params(stone: Integer, depth: Integer).returns(Integer)}
 def recursive_blink(stone, depth)
@@ -56,7 +30,7 @@ def recursive_blink(stone, depth)
     return 1
   end
 
-  memo = BlinkMemo.new(stone, depth)
+  memo = [stone, depth]
   if RECURSIVE_BLINK_CACHE.include?(memo)
     return T.must(RECURSIVE_BLINK_CACHE[memo])
   end
@@ -78,7 +52,9 @@ OptionParser.new do |opts|
   opts.on('-f FILENAME', '--filename=FILENAME', String, 'Which file to use?')
 end.parse!(into: options)
 
-stones = File.new(options[:filename]).readline.strip.split(' ').map(&:to_i)
-
-total = stones.map{ |stone| recursive_blink(stone, options[:blinks]) }.sum
-puts total
+puts File.new(options[:filename])
+  .readline
+  .strip
+  .split(' ')
+  .map{ |stone| recursive_blink(stone.to_i, options[:blinks]) }
+  .sum
