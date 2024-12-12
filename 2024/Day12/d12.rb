@@ -65,7 +65,7 @@ class GardenPlot
         p = Point::Point.new(col, row)
         if !@plot.include?(p) and inside
           inside = false
-          was_inside = p.west
+          was_inside = p.north
           has_bottom_border << was_inside
           if !has_bottom_border.include?(was_inside.west)
             horizontal_sides += 1
