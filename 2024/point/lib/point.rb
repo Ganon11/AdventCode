@@ -66,7 +66,17 @@ module Point
       ydiff = other.y - @y
       return Point.new(other.x + xdiff, other.y + ydiff)
     end
-    
+
+    sig {params(points: T::Enumerable[Point]).returns(Integer)}
+    def self.min_x(points)
+      T.must(points.map{ |p| p.x }.min)
+    end
+
+    sig {params(points: T::Enumerable[Point]).returns(Integer)}
+    def self.min_y(points)
+      T.must(points.map{ |p| p.y }.min)
+    end
+
     sig {params(points: T::Enumerable[Point]).returns(Integer)}
     def self.max_x(points)
       T.must(points.map{ |p| p.x }.max)

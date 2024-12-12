@@ -22,13 +22,82 @@ class GardenPlot
   end
 
   sig {returns(Integer)}
+  def calculate_sides
+    min_x = Point::Point.min_x(@plot) - 1
+    min_y = Point::Point.min_y(@plot) - 1
+    max_x = Point::Point.max_x(@plot) + 1
+    max_y = Point::Point.max_y(@plot) + 1
+
+    vertical_sides = 0
+    has_left_border = T.let(Set.new, T::Set[Point::Point])
+    has_right_border = T.let(Set.new, T::Set[Point::Point])
+    # From top to bottom...
+    (min_y..max_y).each do |row|
+      # Scan from left-to-right
+      inside = T.let(false, T::Boolean)
+      (min_x..max_x).each do |col|
+        p = Point::Point.new(col, row)
+        if !@plot.include?(p) and inside
+          inside = false
+          was_inside = p.west
+          has_right_border << was_inside
+          if !has_right_border.include?(was_inside.north)
+            vertical_sides += 1
+          end
+        elsif @plot.include?(p) and !inside
+          inside = true
+          has_left_border << p
+          if !has_left_border.include?(p.north)
+            vertical_sides += 1
+          end
+        end
+      end
+    end
+
+    horizontal_sides = 0
+    has_top_border = T.let(Set.new, T::Set[Point::Point])
+    has_bottom_border = T.let(Set.new, T::Set[Point::Point])
+    # From left to right...
+    (min_x..max_x).each do |col|
+      # Scan from top-to-bottom
+      inside = T.let(false, T::Boolean)
+      (min_y..max_y).each do |row|
+        p = Point::Point.new(col, row)
+        if !@plot.include?(p) and inside
+          inside = false
+          was_inside = p.west
+          has_bottom_border << was_inside
+          if !has_bottom_border.include?(was_inside.west)
+            horizontal_sides += 1
+          end
+        elsif @plot.include?(p) and !inside
+          inside = true
+          has_top_border << p
+          if !has_top_border.include?(p.west)
+            horizontal_sides += 1
+          end
+        end
+      end
+    end
+
+    return vertical_sides + horizontal_sides
+  end
+
+  private :calculate_sides
+
+  sig {returns(Integer)}
+  def sides
+    @sides ||= calculate_sides
+  end
+
+  sig {returns(Integer)}
   def price
     return @plot.length * @perimeter
   end
 
   sig {returns(Integer)}
   def discount_price
-    return 0
+    return @plot.length * sides
   end
 end
 
@@ -97,9 +166,7 @@ IO.readlines(options[:filename]).map(&:strip).each_with_index do |line, row|
   end
 end
 
-#puts "Found #{garden.length} spaces."
 plots = find_plots(garden)
-#puts "Found #{plots.length} plots: #{plots}"
 total_price = plots.map(&:price).sum
 puts "Total price: #{total_price}"
 discount_price = plots.map(&:discount_price).sum
