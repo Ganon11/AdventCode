@@ -139,12 +139,20 @@ sig {params(garden: T::Hash[Point::Point, String]).returns(T::Array[GardenPlot])
 def find_plots(garden)
   seen = T.let(Set.new, T::Set[Point::Point])
   plots = T.let(Array.new, T::Array[GardenPlot])
-  unseen_point = T.let(garden.keys.find{ |p| !seen.include?(p) }, T.nilable(Point::Point))
-  while unseen_point
-    new_plot = find_plot(unseen_point, garden)
-    seen.merge(new_plot.plot)
-    plots << new_plot
-    unseen_point = garden.keys.find{ |p| !seen.include?(p) }
+
+  min_x = T.let(Point::Point.min_x(garden.keys), Integer)
+  min_y = T.let(Point::Point.min_y(garden.keys), Integer)
+  max_x = T.let(Point::Point.max_x(garden.keys), Integer)
+  max_y = T.let(Point::Point.max_y(garden.keys), Integer)
+  (min_x..max_x).each do |x|
+    (min_y..max_y).each do |y|
+      p = Point::Point.new(x, y)
+      next if seen.include?(p)
+      
+      new_plot = find_plot(p, garden)
+      seen.merge(new_plot.plot)
+      plots << new_plot
+    end
   end
 
   return plots
