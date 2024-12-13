@@ -62,6 +62,11 @@ module Point
 
     sig {params(other: Point).returns(Point)}
     def +(other)
+      return Point.new(@x + other.x, @y + other.y)
+    end
+
+    sig {params(other: Point).returns(Point)}
+    def next_in_line(other)
       xdiff = other.x - @x
       ydiff = other.y - @y
       return Point.new(other.x + xdiff, other.y + ydiff)

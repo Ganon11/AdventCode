@@ -8,13 +8,13 @@ extend T::Sig
 sig {params(a: Point::Point, b: Point::Point, limit: T::Boolean, max_row: Integer, max_col: Integer).returns(T::Set[Point::Point])}
 def generate_line(a, b, limit, max_row, max_col)
   line = T.let(Set.new([]), T::Set[Point::Point])
-  m = a + b
+  m = a.next_in_line(b)
   while m.in_bounds?(0, 0, max_col, max_row) do
     line << m
     break if limit
     a = b
     b = m
-    m = a + b
+    m = a.next_in_line(b)
   end
   return line
 end
