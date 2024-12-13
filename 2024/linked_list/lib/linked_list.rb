@@ -80,7 +80,7 @@ module LinkedList
       return false if first == second
       seen_first = T.let(false, T::Boolean)
       seen_second = T.let(false, T::Boolean)
-      node = @head
+      node = T.let(@head, T.nilable(Node[Elem]))
       while node
         if node == first
           seen_first = T.let(true, T::Boolean)
@@ -99,10 +99,11 @@ module LinkedList
     sig {returns(Integer)}
     def length
       return 0 if !@head
-      length = 1
-      node = @head
-      while (node = node.next)
+      length = 0
+      node = T.let(@head, T.nilable(Node[Elem]))
+      while node
         length += 1
+        node = node.next
       end
       return length
     end
@@ -110,7 +111,7 @@ module LinkedList
     sig {params(condition: T.proc.params(node: Node[Elem]).returns(T::Boolean)).returns(T.nilable(Node[Elem]))}
     def find_by(&condition)
       return nil if !@head
-      node = @head
+      node = T.let(@head, T.nilable(Node[Elem]))
       while node
         if yield(node)
           return node
@@ -125,7 +126,7 @@ module LinkedList
     sig {params(condition: T.proc.params(node: Node[Elem]).returns(T::Boolean)).returns(T.nilable(Node[Elem]))}
     def find_by_from_tail(&condition)
       return nil if !@tail
-      node = @tail
+      node = T.let(@tail, T.nilable(Node[Elem]))
       while node
         if yield(node)
           return node
@@ -141,7 +142,7 @@ module LinkedList
     def to_s
       return "Empty" if !@head
       strings = T.let([], T::Array[String])
-      node = @head
+      node = T.let(@head, T.nilable(Node[Elem]))
       while node
         strings << node.to_s
         node = node.next

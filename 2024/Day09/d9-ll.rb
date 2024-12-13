@@ -5,7 +5,7 @@ require 'sorbet-runtime'
 # typed: true
 extend T::Sig
 
-class Memory
+class MemoryLL
   extend T::Sig
 
   class Block
@@ -76,15 +76,14 @@ class Memory
 
   sig {void}
   def collapse_free
-    current = @memory.head
+    current = T.let(@memory.head, T.nilable(LinkedList::Node[MemoryLL::Block]))
     while current
-      #puts "Looking at #{current}"
       if current.value.type == Block::Type::Empty && !current.next.nil? && T.must(current.next).value.type == Block::Type::Empty
         neighbor = T.must(current.next)
         current.value.size += neighbor.value.size
         current.next = neighbor.next
         if neighbor.next
-          neighbor.next.prev = current
+          T.must(neighbor.next).prev = current
         end
       else
         current = current.next
@@ -95,7 +94,7 @@ class Memory
   sig {returns(T::Array[Integer])}
   def flatten
     return Array.new if @memory.length == 0
-    node = T.let(T.must(@memory.head), T.nilable(LinkedList::Node[Memory::Block]))
+    node = T.let(T.must(@memory.head), T.nilable(LinkedList::Node[MemoryLL::Block]))
     flattened = T.let(Array.new, T::Array[Integer])
     while node
       (1..node.value.size).each do |_|
@@ -140,7 +139,7 @@ def defrag(memory)
   return memory
 end
 
-sig {params(memory: Memory).returns(T::Array[Integer])}
+sig {params(memory: MemoryLL).returns(T::Array[Integer])}
 def defrag_2(memory)
   max_file_id = memory.flatten.max
   range = (max_file_id..0)
@@ -149,7 +148,7 @@ def defrag_2(memory)
     next if file_block_node.nil?
     file_block = file_block_node.value
     free_block_node = memory.memory.find_by do |node|
-      T.must(node.value).type == Memory::Block::Type::Empty && T.must(node.value).size >= file_block.size
+      T.must(node.value).type == MemoryLL::Block::Type::Empty && T.must(node.value).size >= file_block.size
     end
     next if free_block_node.nil?
     free_block = free_block_node.value
@@ -158,18 +157,18 @@ def defrag_2(memory)
 
     if file_block.size == free_block.size
       # File block is replaced by free_block
-      file_block_node.value = Memory::Block.new(Memory::Block::Type::Empty, free_block.size)
+      file_block_node.value = MemoryLL::Block.new(MemoryLL::Block::Type::Empty, free_block.size)
 
       # Free block is replaced by file_block
-      free_block_node.value = Memory::Block.new(Memory::Block::Type::File, file_block.size, file_block.file_id)
+      free_block_node.value = MemoryLL::Block.new(MemoryLL::Block::Type::File, file_block.size, file_block.file_id)
     else
       # File block is replaced by free_block of file_block.size
       tmp = file_block_node.value
-      file_block_node.value = Memory::Block.new(Memory::Block::Type::Empty, file_block.size)
+      file_block_node.value = MemoryLL::Block.new(MemoryLL::Block::Type::Empty, file_block.size)
 
       # Free block is replaced by file_block and free block of size (previous - file.size)
       free_block_node.value = tmp
-      new_free_block = Memory::Block.new(Memory::Block::Type::Empty, free_block.size - file_block.size)
+      new_free_block = MemoryLL::Block.new(MemoryLL::Block::Type::Empty, free_block.size - file_block.size)
       memory.memory.append_after(free_block_node, new_free_block)
     end
 
@@ -203,7 +202,7 @@ end.parse!(into: options)
 
 disk_map = File.new(options[:filename]).readline.strip
 #puts disk_map
-memory = Memory.new(disk_map)
+memory = MemoryLL.new(disk_map)
 
 if options[:part] == 1
   defragged = defrag(memory.flatten)
