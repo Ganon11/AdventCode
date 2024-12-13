@@ -1,0 +1,48 @@
+Ca * Ax + Cb * Bx = Px
+Ca * Ay + Cb * By = Py
+
+a = Ax
+b = Ay
+c = Bx
+d = By
+e = Px
+f = Py
+
+g = Ca
+h = Cb
+
+
+
+
+ga + hc = e
+gb + hd = f
+
+Solve for g, h
+
+ga + hc = e
+ga = e - ch
+g = (e - ch) / a
+
+
+gb + hd = f
+subs. in g
+b((e - ch) / a) + hd = f
+(b(e - ch) / a) + hd = f
+((be - bch) / a) + hd = f
+(be - bch) / a = f - hd
+be - bch = af - adh
+be - bch + adh = af
+adh - bch = af - be
+ad - bc = (af - be) / h
+1 / (ad - bc) = h / (af - be)
+
+h = (af - be) / (ad - bc)
+
+Put back into g
+g = (e - ch) / a
+g = (e - c((af - be) / (ad - bc))) / a
+
+g = (e - ((caf - cbe) / (ad - bc))) / a
+
+a_count = (Px - ((BxAxPy - BxAyPx) / (AxBy - AyBx))) / Ax
+b_count = (AxPy - AyPx) / (AxBy - AyBx)
