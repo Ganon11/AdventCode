@@ -38,8 +38,8 @@ class ClawMachine
   def solve
     return @solve if @solve
 
-    b_count = ((@a.y * @prize.x) - (@a.x * @prize.y)) / ((@a.y * @b.x) - (@a.x * @b.y))
-    a_count = (@prize.x - (@b.x * b_count)) / @a.x
+    a_count = (@prize.x - ((@b.x * @a.x * @prize.y - @b.x * @a.y * @prize.x) / (@a.x * @b.y - @a.y * @b.x))) / @a.x
+    b_count = (@a.x * @prize.y - @a.y * @prize.x) / (@a.x * @b.y - @a.y * @b.x)
 
     if a_count * @a.x + b_count * @b.x == @prize.x && a_count * @a.y + b_count * @b.y == @prize.y
       @solve = (a_count * 3) + b_count
