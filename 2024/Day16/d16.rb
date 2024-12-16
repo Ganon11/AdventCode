@@ -31,11 +31,6 @@ class Reindeer
   def hash
     [@position, @direction].hash
   end
-
-  sig {returns(String)}
-  def to_s
-    "#{@position}, #{@direction}"
-  end
 end
 
 sig {params(start: Point::Point, destination: Point::Point, maze: T::Set[Point::Point]).returns(T::Array[Integer])}
@@ -50,12 +45,6 @@ def find_path(start, destination, maze)
 
   while !frontier.empty?
     current = T.cast(frontier.pop, Reindeer)
-
-    # if current.position.eql?(destination)
-    #   break
-    # end
-    # 
-    #puts "Considering #{current}"
 
     neighbors = T.let(Array.new, T::Array[Reindeer])
     case current.direction
@@ -79,8 +68,6 @@ def find_path(start, destination, maze)
       T.absurd(current)
     end
 
-    #puts "  #{neighbors.length} possible neighbors"
-
     for neighbor in neighbors
       new_cost = T.cast(cost_so_far[current], Integer)
       if neighbor.direction.eql?(current.direction)
@@ -89,23 +76,22 @@ def find_path(start, destination, maze)
         new_cost += 1000
       end
 
-      #puts "  Cost to get to #{neighbor}: #{new_cost}"
       if cost_so_far.include?(neighbor)
         old_cost = T.must(cost_so_far[neighbor])
         next if new_cost > old_cost
 
         if new_cost == old_cost
-          #puts "  Equal cost: adding new came_from"
+          # Equal cost: adding new came_from
           T.must(came_from[neighbor]) << current
         else
-          #puts "  Lower cost: recalculate..."
+          # Lower cost: recalculate...
           cost_so_far[neighbor] = new_cost
           priority = new_cost + neighbor.position.distance(destination)
           frontier.push(neighbor, priority)
           came_from[neighbor] = Set.new([current])
         end
       else
-        #puts "  New location: calculate..."
+        # New location: calculate...
         cost_so_far[neighbor] = new_cost
         priority = new_cost + neighbor.position.distance(destination)
         frontier.push(neighbor, priority)
@@ -157,4 +143,3 @@ destination = T.must(destination)
 
 cost = find_path(starting_position, destination, maze)
 puts "Shortest path data: #{cost}"
-#puts "Total positions on shortest paths: #{get_shortest_path_count(starting_position, destination, maze, cost)}"
