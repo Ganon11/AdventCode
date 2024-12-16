@@ -8,3 +8,4 @@ gem 'sorbet-runtime'
 gem "tapioca", require: false, :group => [:development, :test]
 gem "linked_list", path: "linked_list"
 gem "point", path: "point"
+gem 'priority_queue_cxx', '~> 0.3.7'

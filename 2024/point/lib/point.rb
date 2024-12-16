@@ -47,22 +47,27 @@ module Point
 
     sig {params(other: Point).returns(T::Boolean)}
     def eql?(other)
-      self.x == other.x && self.y == other.y
+      @x == other.x && @y == other.y
     end
 
     sig {returns(Integer)}
     def hash
-      [x, y].hash
+      [@x, @y].hash
     end
 
     sig {returns(String)}
     def to_s
-      "(#{x}, #{y})"
+      "(#{@x}, #{@y})"
     end
 
     sig {params(other: Point).returns(Point)}
     def +(other)
       return Point.new(@x + other.x, @y + other.y)
+    end
+
+    sig {params(other: Point).returns(Integer)}
+    def distance(other)
+      return (@x - other.x).abs + (@y - other.y).abs
     end
 
     sig {params(other: Point).returns(Point)}
