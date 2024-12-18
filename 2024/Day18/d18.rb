@@ -47,10 +47,10 @@ def a_star(start, destination, memory)
   # Reverse through came_from to build path
   result = T.let(Set.new, T::Set[Point::Point])
   return result if !came_from.include?(destination)
-  current = destination
-  while !current.nil?
-    result << current
-    current = came_from[current]
+  walkback = destination
+  while !walkback.nil?
+    result << walkback
+    walkback = came_from[walkback]
   end
   return result
 end
@@ -87,7 +87,7 @@ puts "Shortest path: #{fastest_path.length - 1}"
 
 next_pixel = options[:steps]
 while !fastest_path.empty?
-  while !fastest_path.include?(pixels[next_pixel])
+  while !fastest_path.include?(T.must(pixels[next_pixel]))
     memory_space << T.must(pixels[next_pixel])
     next_pixel += 1
   end
@@ -96,4 +96,4 @@ while !fastest_path.empty?
   fastest_path = a_star(start, destination, memory_space)
 end
 
-puts "Pixel that broke us: #{pixels[next_pixel]}"
+puts "Pixel that broke us: #{pixels[next_pixel].x},#{pixels[next_pixel].y}"
