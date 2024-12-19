@@ -4,7 +4,6 @@ require 'sorbet-runtime'
 # typed: true
 extend T::Sig
 
-#$cache_hits = 0
 TOWEL_CACHE = T.let(Hash.new, T::Hash[String, Integer])
 
 sig {params(pattern: String, towels: T::Array[String]).returns(Integer)}
@@ -12,9 +11,7 @@ def valid_arrangements(pattern, towels)
   return T.must(TOWEL_CACHE[pattern]) if TOWEL_CACHE.include?(pattern)
 
   result = towels.sum(0) do |towel|
-    if pattern.length < towel.length
-      0
-    elsif !pattern.start_with?(towel)
+    if pattern.length < towel.length || !pattern.start_with?(towel)
       0
     elsif pattern.eql?(towel)
       1
@@ -45,6 +42,5 @@ towels = T.let(T.must(lines[0]).split(', '), T::Array[String])
 desired = lines[2..]
 result = T.must(desired).map { |d| valid_arrangements(d, towels) }
 
-#puts "Cache hits: #{$cache_hits}"
 puts "Valid patterns: #{result.select{ |r| r > 0 }.length }"
 puts "Valid arrangements: #{result.sum}"
