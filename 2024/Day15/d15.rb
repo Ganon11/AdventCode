@@ -12,8 +12,6 @@ class TileType < T::Enum
     Wall = new
     Box = new
     Robot = new
-    BoxL = new
-    BoxR = new
   end
 end
 
@@ -21,9 +19,7 @@ STRING_TO_TILE_MAP = {
   '.' => TileType::Empty,
   '#' => TileType::Wall,
   'O' => TileType::Box,
-  '@' => TileType::Robot,
-  '[' => TileType::BoxL,
-  ']' => TileType::BoxR
+  '@' => TileType::Robot
 }
 
 STRING_TO_DIRECTION_MAP = {
@@ -116,42 +112,35 @@ class BigBox
 end
 
 options = {
-  :part => 1,
   :filename => 'input.txt'
 }
 
 OptionParser.new do |opts|
   opts.banner = 'Usage: d15.rb [options]'
-  opts.on('-p PART', '--part=PART', Integer, 'Which part?')
   opts.on('-f FILENAME', '--filename=FILENAME', String, 'Which file to use?')
 end.parse!(into: options)
 
 parsing_maze = T.let(true, T::Boolean)
-if options[:part] == 1
-  maze = T.let(Hash.new, T::Hash[Point::Point, TileType])
-  directions = T.let(Array.new, T::Array[Point::Direction])
-  IO.readlines(options[:filename]).each_with_index do |line, row|
-    line.strip!
-    if line.empty?
-      parsing_maze = false
-      next
-    end
-
-    if parsing_maze
-      line.chars.each_with_index do |char, col|
-        p = Point::Point.new(col, row)
-        maze[p] = STRING_TO_TILE_MAP[char]
-      end
-    else
-      line.chars.each do |char|
-        directions << STRING_TO_DIRECTION_MAP[char]
-      end
-    end
+maze = T.let(Hash.new, T::Hash[Point::Point, TileType])
+directions = T.let(Array.new, T::Array[Point::Direction])
+IO.readlines(options[:filename]).each_with_index do |line, row|
+  line.strip!
+  if line.empty?
+    parsing_maze = false
+    next
   end
 
-  operate(maze, directions)
-  puts "Current GPS: #{calc_gps(maze)}"
-elsif options[:part] == 2
-else
-  raise Exception.new "Stop mucking around! #{options[:part]}"
+  if parsing_maze
+    line.chars.each_with_index do |char, col|
+      p = Point::Point.new(col, row)
+      maze[p] = STRING_TO_TILE_MAP[char]
+    end
+  else
+    line.chars.each do |char|
+      directions << STRING_TO_DIRECTION_MAP[char]
+    end
+  end
 end
+
+operate(maze, directions)
+puts "Current GPS: #{calc_gps(maze)}"
