@@ -30,41 +30,20 @@ class ThreeBitComputer
   sig {returns(T::Array[Integer])}
   attr_reader :output
 
-  sig {params(args: String).void}
-  def initialize(*args)
-    puts args.length
-    if args.length == 2
-      @A = T.let(args[0].to_i, Integer)
-      @B = 0
-      @C = 0
-      @program = T.let(T.must(args[1]).split(',').map(&:to_i), T::Array[Integer])
-    elsif args.length == 1
-      if m = REGISTER_A_PATTERN.match(args[0])
-        @A = T.let(m[1].to_i, Integer)
-      end
-      if m = REGISTER_B_PATTERN.match(args[1])
-        @B = T.let(m[1].to_i, Integer)
-      end
-      if m = REGISTER_C_PATTERN.match(args[2])
-        @C = T.let(m[1].to_i, Integer)
-      end
-      if m = PROGRAM_PATTERN.match(args[4])
-        @program = T.let(T.must(m[1]).split(',').map(&:to_i), T::Array[Integer])
-      end
-    else
-      raise Exception.new "Invalid input #{args}"
-    end
+  sig {params(a: Integer, program: T::Array[Integer]).void}
+  def initialize(a, program)
+    @A = a
+    @B = 0
+    @C = 0
+    @program = program.dup
 
     @ip = T.let(0, Integer)
     @output = T.let(Array.new, T::Array[Integer])
-    @orig_a = @A
-    @orig_b = @B
-    @orig_c = @C
   end
 
   sig {void}
   def execute
-    puts to_s
+    #puts to_s
     while @ip < @program.length
       opcode = T.must(@program[@ip])
       operand = T.must(@program[@ip + 1])
@@ -85,7 +64,7 @@ class ThreeBitComputer
         @B = @B ^ @C
       when 5 # out
         @output << _combo_operand(operand) % 8
-        puts "  Outputting #{_combo_operand(operand) % 8}"
+        #puts "  Outputting #{_combo_operand(operand) % 8}"
       when 6 # bdv
         numerator = @A
         denominator = 2 ** _combo_operand(operand)
@@ -96,17 +75,8 @@ class ThreeBitComputer
         @C = (numerator / denominator).to_i
       end
 
-      puts to_s
+      #puts to_s
     end
-  end
-
-  sig {params(new_a: Integer).void}
-  def reset(new_a)
-    @ip = 0
-    @A = new_a
-    @B = @orig_b
-    @C = @orig_c
-    @output.clear
   end
 
   sig {params(operand: Integer).returns(Integer)}
@@ -133,6 +103,38 @@ class ThreeBitComputer
   end
 end
 
+sig {params(program: T::Array[Integer], index: Integer).returns(Integer)}
+def calculate_digit(program, index)
+  puts "Target digit: #{program[index]}"
+  (1..7).each do |a|
+    computer = ThreeBitComputer.new(a, program)
+    computer.execute
+    puts "Output if a = #{a}: #{computer.output}"
+    return a if computer.output[0] == program[index]
+  end
+
+  return -1
+end
+
+def one_iteration(a)
+  b = (a % 8) ^ 5
+  c = (a / (2**a)).to_i
+  d = b ^ c ^ c
+  return d % 8
+end
+
+def figure_it_out(program, index = program.length - 1, a = 0)
+  puts "Index: #{index}, a: #{a}"
+  if index < 0
+    return a
+  end
+
+  next_reg_a_mod_8 = a * 8
+  (next_reg_a_mod_8..next_reg_a_mod_8 + 7).each do |next_a|
+    return figure_it_out(program, index - 1, next_a) if one_iteration(a) == program[index]
+  end
+end
+
 options = {
   :filename => 'input.txt',
   :a => nil,
@@ -141,32 +143,16 @@ options = {
 
 OptionParser.new do |opts|
   opts.banner = 'Usage: d17.rb [options]'
-  opts.on('-f FILENAME', '--filename=FILENAME', String, 'Which file to use?')
-  opts.on('-a A', String, 'A register value?')
+  opts.on('-a A', Integer, 'A register value?')
   opts.on('-p PROGRAM', '--program=PROGRAM', String, 'Program to run?')
 end.parse!(into: options)
 
-if !options[:a].nil? && !options[:program].nil?
-  computer = ThreeBitComputer.new(options[:a], options[:program])
-else
-  computer = ThreeBitComputer.new(IO.readlines(options[:filename]).map(&:strip))
-end
-
-a = computer.A
-# puts "Computer initialized:"
-# puts "  A: #{computer.A}"
-# puts "  B: #{computer.B}"
-# puts "  C: #{computer.C}"
-# puts "  Program: #{computer.program}"
-
+program = options[:program].split(',').map(&:to_i)
+computer = ThreeBitComputer.new(options[:a], program)
 computer.execute
-
 puts "First Output: #{computer.output.join(',')}"
 
-# while computer.output != computer.program
-#   a += 1
-#   computer.reset(a)
-#   computer.execute
-# end
-
-# puts "Computer outputs itself at A = #{a}"
+puts "Program: #{program}"
+puts "Answer: #{figure_it_out(program)}"
+# digit = calculate_digit(program, 2)
+# puts "First digit: #{digit}"
