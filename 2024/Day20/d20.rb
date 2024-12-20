@@ -14,15 +14,11 @@ class Cheat
   attr_reader :start
 
   sig {returns(Point::Point)}
-  attr_reader :intermediate
-
-  sig {returns(Point::Point)}
   attr_reader :destination
 
-  sig {params(start: Point::Point, intermediate: Point::Point, destination: Point::Point).void}
-  def initialize(start, intermediate, destination)
+  sig {params(start: Point::Point, destination: Point::Point).void}
+  def initialize(start, destination)
     @start = start
-    @intermediate = intermediate
     @destination = destination
   end
 
@@ -48,8 +44,8 @@ class ShortestPathResult
   end
 end
 
-sig {params(maze: T::Set[Point::Point], start: Point::Point, destination: Point::Point).returns(ShortestPathResult)}
-def shortest_path(maze, start, destination)
+sig {params(maze: T::Set[Point::Point], start: Point::Point, destination: Point::Point, cheat_length: Integer).returns(ShortestPathResult)}
+def shortest_path(maze, start, destination, cheat_length)
   frontier = Queue.new
   frontier << start
   came_from = T.let(Hash.new, T::Hash[Point::Point, T.nilable(Point::Point)])
@@ -63,17 +59,10 @@ def shortest_path(maze, start, destination)
     break if current.eql?(destination)
 
     # Check for possible cheats north, south, east, and west
-    if maze.include?(current.north) && !maze.include?(current.north.north) && !came_from.include?(current.north.north) && bounds.in_bounds?(current.north.north)
-      result.possible_cheats << Cheat.new(current, current.north, current.north.north)
-    end
-    if maze.include?(current.south) && !maze.include?(current.south.south) && !came_from.include?(current.south.south) && bounds.in_bounds?(current.south.south)
-      result.possible_cheats << Cheat.new(current, current.south, current.south.south)
-    end
-    if maze.include?(current.east) && !maze.include?(current.east.east) && !came_from.include?(current.east.east) && bounds.in_bounds?(current.east.east)
-      result.possible_cheats << Cheat.new(current, current.east, current.east.east)
-    end
-    if maze.include?(current.west) && !maze.include?(current.west.west) && !came_from.include?(current.west.west) && bounds.in_bounds?(current.west.west)
-      result.possible_cheats << Cheat.new(current, current.west, current.west.west)
+    (2..cheat_length).each do |j_dist|
+      for possible_cheat_destination in current.neighbors_at_distance(j_dist)
+        result.possible_cheats << Cheat.new(current, possible_cheat_destination) if !maze.include?(possible_cheat_destination) && !came_from.include?(possible_cheat_destination) && bounds.in_bounds?(possible_cheat_destination)
+      end
     end
 
     for neighbor in current.neighbors
@@ -97,20 +86,20 @@ end
 
 sig {params(path: T::Hash[Point::Point, Integer], cheat: Cheat).returns(Integer)}
 def shortest_path_with_cheat(path, cheat)
-  #puts "Using cheat #{cheat}"
-  #puts "  Path: #{path.join(', ')}"
   start_index = T.must(path[cheat.start])
   destination_index = T.must(path[cheat.destination])
 
-  return start_index + (path.length - destination_index) + 2
+  return start_index + (path.length - destination_index) + cheat.start.distance(cheat.destination)
 end
 
 options = {
-  :filename => 'input.txt'
+  :filename => 'input.txt',
+  :cheat => 2
 }
 
 OptionParser.new do |opts|
   opts.banner = 'Usage: d20.rb [options]'
+  opts.on('-c CHEAT', '--cheat=CHEAT', Integer, 'How many nanoseconds of cheating?')
   opts.on('-f FILENAME', '--filename=FILENAME', String, 'Which file to read as input?')
 end.parse!(into: options)
 
@@ -131,7 +120,7 @@ IO.readlines(options[:filename]).each_with_index do |line, row|
   end
 end
 
-result = shortest_path(maze, T.must(start), T.must(destination))
+result = shortest_path(maze, T.must(start), T.must(destination), options[:cheat])
 puts "Normal shortest: #{result.path.length - 1}"
 puts "Possible cheats: #{result.possible_cheats.length}"
 path_to_index = T.let(Hash.new, T::Hash[Point::Point, Integer])
