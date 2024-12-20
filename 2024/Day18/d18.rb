@@ -30,7 +30,7 @@ def a_star(start, destination, memory)
     current = T.cast(frontier.pop, Point::Point)
     break if current == destination
 
-    for neighbor in [current.north, current.east, current.south, current.west]
+    for neighbor in current.neighbors
       next if neighbor.x < start.x || neighbor.y < start.y
       next if neighbor.x > destination.x || neighbor.y > destination.y
       next if memory.include?(neighbor)

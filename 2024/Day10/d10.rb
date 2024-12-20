@@ -18,7 +18,7 @@ def bfs(map, trailhead)
 
   while !frontier.empty?
     current = T.cast(frontier.pop, Point::Point)
-    for neighbor in [current.north, current.south, current.east, current.west]
+    for neighbor in current.neighbors
       next if !map.has_key?(neighbor)
       next if came_from.include?(neighbor) && T.must(came_from[neighbor]).include?(current)
 

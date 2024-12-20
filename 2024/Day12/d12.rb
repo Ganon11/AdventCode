@@ -108,7 +108,7 @@ def find_plot(point, garden)
 
   while !frontier.empty?
     current = T.cast(frontier.pop, Point::Point)
-    for neighbor in [current.north, current.south, current.east, current.west]
+    for neighbor in current.neighbors
       if !garden.has_key?(neighbor)
         # Going out-of-bounds is an edge, adding to the perimeter
         perimeter += 1

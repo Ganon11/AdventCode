@@ -76,7 +76,7 @@ def shortest_path(maze, start, destination)
       result.possible_cheats << Cheat.new(current, current.west, current.west.west)
     end
 
-    for neighbor in [current.north, current.south, current.east, current.west]
+    for neighbor in current.neighbors
       next if maze.include?(neighbor)
       next if came_from.include?(neighbor)
       frontier << neighbor
@@ -139,4 +139,5 @@ result.path.each_with_index do |p, i|
   path_to_index[p] = i
 end
 lengths = result.possible_cheats.map { |c| result.path.length - shortest_path_with_cheat(path_to_index, c) }
-puts lengths.filter{ |l| l >= 100 }.length
+puts "Under 50: #{lengths.filter{ |l| l >= 50 }.length}"
+puts "Under 100: #{lengths.filter{ |l| l >= 100 }.length}"

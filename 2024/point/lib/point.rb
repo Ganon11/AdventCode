@@ -40,6 +40,23 @@ module Point
       Point.new(@x - 1, @y)
     end
 
+    sig {returns(T::Array[Point])}
+    def neighbors
+      return neighbors_at_distance(1)
+    end
+
+    sig {params(distance: Integer).returns(T::Array[Point])}
+    def neighbors_at_distance(distance)
+      neighbors = T.let(Array.new, T::Array[Point])
+      (-distance..distance).each do |dist|
+        y_dist = distance - dist.abs
+        neighbors << Point.new(@x + dist, @y + y_dist)
+        neighbors << Point.new(@x + dist, @y - y_dist) if !y_dist.zero?
+      end
+
+      return neighbors
+    end
+
     sig {params(min_x: Integer, min_y: Integer, max_x: Integer, max_y: Integer).returns(T::Boolean)}
     def in_bounds?(min_x, min_y, max_x, max_y)
       return min_x <= @x && @x <= max_x && min_y <= @y && @y <= max_y
