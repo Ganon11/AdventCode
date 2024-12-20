@@ -37,5 +37,12 @@ module Point
     def yrange
       @min_y..@max_y
     end
+
+    sig {params(p: Point).returns(T::Boolean)}
+    def in_bounds?(p)
+      return T.must(@min_x <= p.x && p.x <= @max_x &&
+        @min_y <= p.y &&
+        p.y <= @max_y)
+    end
   end
 end
