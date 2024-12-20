@@ -1,4 +1,3 @@
-require 'bounds'
 require 'direction'
 require 'optparse'
 require 'point'
@@ -65,8 +64,8 @@ class BigBox
     end
   end
 
-  sig {params(bounds: Point::Bounds).returns(Integer)}
-  def gps(bounds)
+  sig {returns(Integer)}
+  def gps
     100 * @left.y + @left.x
   end
 
@@ -86,9 +85,9 @@ class BigBox
   end
 end
 
-sig {params(boxes: T::Array[BigBox], bounds: Point::Bounds).returns(Integer)}
-def calc_gps(boxes, bounds)
-  boxes.sum(0) { |b| b.gps(bounds) }
+sig {params(boxes: T::Array[BigBox]).returns(Integer)}
+def calc_gps(boxes)
+  boxes.sum(0) { |b| b.gps }
 end
 
 class CanMoveResult
@@ -293,4 +292,4 @@ IO.readlines(options[:filename]).each_with_index do |line, row|
 end
 
 operate(maze, directions, boxes)
-puts "Current GPS: #{calc_gps(boxes, Point::Bounds.new(maze.keys))}"
+puts "Current GPS: #{calc_gps(boxes)}"

@@ -27,5 +27,15 @@ module Point
       @min_y = Point.min_y(points)
       @max_y = Point.max_y(points)
     end
+
+    sig {returns(T::Range[Integer])}
+    def xrange
+      @min_x..@max_x
+    end
+
+    sig {returns(T::Range[Integer])}
+    def yrange
+      @min_y..@max_y
+    end
   end
 end

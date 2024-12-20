@@ -30,10 +30,10 @@ class GardenPlot
     has_left_border = T.let(Set.new, T::Set[Point::Point])
     has_right_border = T.let(Set.new, T::Set[Point::Point])
     # From top to bottom...
-    (bounds.min_y..bounds.max_y).each do |row|
+    bounds.yrange.each do |row|
       # Scan from left-to-right
       inside = T.let(false, T::Boolean)
-      (bounds.min_x..bounds.max_x).each do |col|
+      bounds.xrange.each do |col|
         p = Point::Point.new(col, row)
         if !@plot.include?(p) and inside
           inside = false
@@ -56,10 +56,10 @@ class GardenPlot
     has_top_border = T.let(Set.new, T::Set[Point::Point])
     has_bottom_border = T.let(Set.new, T::Set[Point::Point])
     # From left to right...
-    (bounds.min_x..bounds.max_x).each do |col|
+    bounds.xrange.each do |col|
       # Scan from top-to-bottom
       inside = T.let(false, T::Boolean)
-      (bounds.min_y..bounds.max_y).each do |row|
+      bounds.yrange.each do |row|
         p = Point::Point.new(col, row)
         if !@plot.include?(p) and inside
           inside = false
