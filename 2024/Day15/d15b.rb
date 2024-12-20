@@ -67,11 +67,7 @@ class BigBox
 
   sig {params(bounds: Point::Bounds).returns(Integer)}
   def gps(bounds)
-    x = @left.x
-    y = @left.y
-    result = 100 * y + x
-
-    return result
+    100 * @left.y + @left.x
   end
 
   sig {params(other: BigBox).returns(T::Boolean)}

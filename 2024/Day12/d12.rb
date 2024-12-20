@@ -1,3 +1,4 @@
+require 'bounds'
 require 'direction'
 require 'point'
 require 'optparse'
@@ -23,19 +24,16 @@ class GardenPlot
 
   sig {returns(Integer)}
   def calculate_sides
-    min_x = Point::Point.min_x(@plot) - 1
-    min_y = Point::Point.min_y(@plot) - 1
-    max_x = Point::Point.max_x(@plot) + 1
-    max_y = Point::Point.max_y(@plot) + 1
+    bounds = Point::Bounds.new(@plot)
 
     vertical_sides = 0
     has_left_border = T.let(Set.new, T::Set[Point::Point])
     has_right_border = T.let(Set.new, T::Set[Point::Point])
     # From top to bottom...
-    (min_y..max_y).each do |row|
+    (bounds.min_y..bounds.max_y).each do |row|
       # Scan from left-to-right
       inside = T.let(false, T::Boolean)
-      (min_x..max_x).each do |col|
+      (bounds.min_x..bounds.max_x).each do |col|
         p = Point::Point.new(col, row)
         if !@plot.include?(p) and inside
           inside = false
@@ -58,10 +56,10 @@ class GardenPlot
     has_top_border = T.let(Set.new, T::Set[Point::Point])
     has_bottom_border = T.let(Set.new, T::Set[Point::Point])
     # From left to right...
-    (min_x..max_x).each do |col|
+    (bounds.min_x..bounds.max_x).each do |col|
       # Scan from top-to-bottom
       inside = T.let(false, T::Boolean)
-      (min_y..max_y).each do |row|
+      (bounds.min_y..bounds.max_y).each do |row|
         p = Point::Point.new(col, row)
         if !@plot.include?(p) and inside
           inside = false
@@ -140,12 +138,9 @@ def find_plots(garden)
   seen = T.let(Set.new, T::Set[Point::Point])
   plots = T.let(Array.new, T::Array[GardenPlot])
 
-  min_x = T.let(Point::Point.min_x(garden.keys), Integer)
-  min_y = T.let(Point::Point.min_y(garden.keys), Integer)
-  max_x = T.let(Point::Point.max_x(garden.keys), Integer)
-  max_y = T.let(Point::Point.max_y(garden.keys), Integer)
-  (min_x..max_x).each do |x|
-    (min_y..max_y).each do |y|
+  bounds = Point::Bounds.new(garden.keys)
+  (bounds.min_x..bounds.max_x).each do |x|
+    (bounds.min_y..bounds.max_y).each do |y|
       p = Point::Point.new(x, y)
       next if seen.include?(p)
       

@@ -1,3 +1,4 @@
+require 'bounds'
 require 'direction'
 require 'point'
 require 'optparse'
@@ -117,11 +118,10 @@ end
 
 sig {params(map: T::Hash[Point::Point, Tile], guard: Guard).returns(T::Boolean)}
 def do_walk(map, guard)
-  max_row = Point::Point.max_y(map.keys)
-  max_col = Point::Point.max_x(map.keys)
+  bounds = Point::Bounds.new(map.keys)
 
   while true do
-    step_result = guard.step(map, max_row, max_col)
+    step_result = guard.step(map, bounds.max_y, bounds.max_x)
     if step_result == Guard::StepResult::CYCLE_DETECTED
       return true
     elsif step_result == Guard::StepResult::OUT_OF_BOUNDS
