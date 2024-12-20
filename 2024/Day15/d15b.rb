@@ -32,25 +32,6 @@ STRING_TO_DIRECTION_MAP = {
   '^' => Point::Direction::North
 }
 
-sig {params(maze: T::Hash[Point::Point, TileType]).void}
-def print(maze)
-  min_x = Point::Point.min_x(maze.keys)
-  max_x = Point::Point.max_x(maze.keys)
-  min_y = Point::Point.min_y(maze.keys)
-  max_y = Point::Point.max_y(maze.keys)
-
-  str = ""
-  (min_y..max_y).each do |y|
-    (min_x..max_x).each do |x|
-      p = Point::Point.new(x, y)
-      str += TILE_TO_STRING_MAP[maze[p]]
-    end
-    str += "\n"
-  end
-
-  puts str
-end
-
 class BigBox
   extend T::Sig
 
@@ -86,9 +67,11 @@ class BigBox
 
   sig {params(bounds: Point::Bounds).returns(Integer)}
   def gps(bounds)
-    x = [bounds.max_x - @right.x, @left.x - bounds.min_x].min
-    y = [bounds.max_y - @right.y, @left.y - bounds.min_y].min
-    100 * y + x
+    x = @left.x
+    y = @left.y
+    result = 100 * y + x
+
+    return result
   end
 
   sig {params(other: BigBox).returns(T::Boolean)}
@@ -100,6 +83,11 @@ class BigBox
   def hash
     [@left, @right].hash
   end
+
+  sig {returns(String)}
+  def to_s
+    "#{@left}-#{@right}"
+  end
 end
 
 sig {params(boxes: T::Array[BigBox], bounds: Point::Bounds).returns(Integer)}
@@ -107,7 +95,28 @@ def calc_gps(boxes, bounds)
   boxes.sum(0) { |b| b.gps(bounds) }
 end
 
-sig {params(maze: T::Hash[Point::Point, TileType], robot: Point::Point, boxes: T::Array[BigBox], direction: Point::Direction).returns(T::Boolean)}
+class CanMoveResult
+  extend T::Sig
+
+  sig {returns(T::Boolean)}
+  attr_reader :result
+
+  sig {returns(T::Set[BigBox])}
+  attr_reader :boxes
+
+  sig {params(result: T::Boolean, boxes: T::Set[BigBox]).void}
+  def initialize(result, boxes)
+    @result = result
+    @boxes = boxes
+  end
+
+  sig {returns(String)}
+  def to_s
+    "<#{result}, #{boxes.join(',')}>"
+  end
+end
+
+sig {params(maze: T::Hash[Point::Point, TileType], robot: Point::Point, boxes: T::Array[BigBox], direction: Point::Direction).returns(CanMoveResult)}
 def can_move_north_or_south(maze, robot, boxes, direction)
   raise Exception.new "Bad direction: #{direction}" if direction != Point::Direction::North && direction != Point::Direction::South
   points_to_check = Queue.new
@@ -117,54 +126,19 @@ def can_move_north_or_south(maze, robot, boxes, direction)
     points_to_check << robot.south
   end
   points_checked = Set.new
+  moving_boxes = Set.new
   while !points_to_check.empty?
     point_to_check = points_to_check.pop
     next if points_checked.include?(point_to_check)
 
     points_checked << point_to_check
-    return false if maze[point_to_check] == TileType::Wall
+    return CanMoveResult.new(false, Set.new) if maze[point_to_check] == TileType::Wall
     next if maze[point_to_check] == TileType::Empty
 
-    box = T.must(boxes.select { |b| b.left.eql?(point_to_check) || b.right.eql?(point_to_check) }[0])
-
-    if direction == Point::Direction::North
-      points_to_check << box.left.north
-      points_to_check << box.right.north
-    else
-      points_to_check << box.left.south
-      points_to_check << box.right.south
-    end
-  end
-
-  return true
-end
-
-sig {params(maze: T::Hash[Point::Point, TileType], robot: Point::Point, boxes: T::Array[BigBox], direction: Point::Direction).returns(T::Enumerable[BigBox])}
-def boxes_to_move(maze, robot, boxes, direction)
-  raise Exception.new "Bad direction: #{direction}" if direction != Point::Direction::North && direction != Point::Direction::South
-  boxes = Set.new
-  points_to_check = Queue.new
-  if direction == Point::Direction::North
-    points_to_check << robot.north
-  else
-    points_to_check << robot.south
-  end
-  points_checked = Set.new
-  while !points_to_check.empty?
-    point_to_check = points_to_check.pop
-    next if points_checked.include?(point_to_check)
-    puts "Checking #{point_to_check}"
-
-    points_checked << point_to_check
-    next if maze[point_to_check] == TileType::Empty
-    if maze[point_to_check] == TileType::BoxL
-      box = boxes.select { |b| b.left.eql?(point_to_check) }[0]
-    elsif maze[point_to_check] == TileType::BoxR
-      box = boxes.select { |b| b.right.eql?(point_to_check) }[0]
-    end
-
+    box = boxes.detect { |b| b.left.eql?(point_to_check) || b.right.eql?(point_to_check) }
     next if box.nil?
-    boxes << box
+    next if moving_boxes.include?(box)
+    moving_boxes << box
 
     if direction == Point::Direction::North
       points_to_check << box.left.north
@@ -175,26 +149,25 @@ def boxes_to_move(maze, robot, boxes, direction)
     end
   end
 
-  return boxes
+  return CanMoveResult.new(true, moving_boxes)
 end
 
 sig {params(maze: T::Hash[Point::Point, TileType], directions: T::Array[Point::Direction], boxes: T::Array[BigBox]).void}
 def operate(maze, directions, boxes)
   robot = T.must(maze.select { |_, t| t == TileType::Robot }.keys[0])
-  puts "Robot at #{robot}"
   directions.each do |d|
     case d
     when Point::Direction::North
-      next if !can_move_north_or_south(maze, robot, boxes, Point::Direction::North)
-      moving_boxes = boxes_to_move(maze, robot, boxes, Point::Direction::North)
-      moving_boxes.each do |b|
+      moving_boxes = can_move_north_or_south(maze, robot, boxes, Point::Direction::North)
+      next if !moving_boxes.result
+      moving_boxes.boxes.each do |b|
         maze[b.left] = TileType::Empty
         maze[b.right] = TileType::Empty
       end
-      moving_boxes.each do |b|
+      moving_boxes.boxes.each do |b|
         b.move(Point::Direction::North)
       end
-      moving_boxes.each do |b|
+      moving_boxes.boxes.each do |b|
         maze[b.left] = TileType::BoxL
         maze[b.right] = TileType::BoxR
       end
@@ -203,16 +176,16 @@ def operate(maze, directions, boxes)
       maze[robot] = TileType::Robot
 
     when Point::Direction::South
-      next if !can_move_north_or_south(maze, robot, boxes, Point::Direction::South)
-      moving_boxes = boxes_to_move(maze, robot, boxes, Point::Direction::South)
-      moving_boxes.each do |b|
+      moving_boxes = can_move_north_or_south(maze, robot, boxes, Point::Direction::South)
+      next if !moving_boxes.result
+      moving_boxes.boxes.each do |b|
         maze[b.left] = TileType::Empty
         maze[b.right] = TileType::Empty
       end
-      moving_boxes.each do |b|
+      moving_boxes.boxes.each do |b|
         b.move(Point::Direction::South)
       end
-      moving_boxes.each do |b|
+      moving_boxes.boxes.each do |b|
         maze[b.left] = TileType::BoxL
         maze[b.right] = TileType::BoxR
       end
@@ -323,7 +296,5 @@ IO.readlines(options[:filename]).each_with_index do |line, row|
   end
 end
 
-print(maze)
 operate(maze, directions, boxes)
-print(maze)
 puts "Current GPS: #{calc_gps(boxes, Point::Bounds.new(maze.keys))}"

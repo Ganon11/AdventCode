@@ -32,7 +32,6 @@ STRING_TO_DIRECTION_MAP = {
 sig {params(maze: T::Hash[Point::Point, TileType], directions: T::Array[Point::Direction]).void}
 def operate(maze, directions)
   robot = T.must(maze.select { |_, t| t == TileType::Robot }.keys[0])
-  puts "Robot at #{robot}"
   directions.each do |d|
     case d
     when Point::Direction::North
