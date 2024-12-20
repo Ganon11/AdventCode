@@ -120,13 +120,15 @@ IO.readlines(options[:filename]).each_with_index do |line, row|
   end
 end
 
-result = shortest_path(maze, T.must(start), T.must(destination), options[:cheat])
-puts "Normal shortest: #{result.path.length - 1}"
-puts "Possible cheats: #{result.possible_cheats.length}"
+start = T.must(start)
+destination = T.must(destination)
+
+result = shortest_path(maze, start, destination, options[:cheat])
 path_to_index = T.let(Hash.new, T::Hash[Point::Point, Integer])
 result.path.each_with_index do |p, i|
   path_to_index[p] = i
 end
 lengths = result.possible_cheats.map { |c| result.path.length - shortest_path_with_cheat(path_to_index, c) }
-puts "Under 50: #{lengths.filter{ |l| l >= 50 }.length}"
-puts "Under 100: #{lengths.filter{ |l| l >= 100 }.length}"
+
+threshhold = options[:filename].eql?("input.txt") ? 100 : 50
+puts "Under #{threshhold}: #{lengths.filter{ |l| l >= threshhold }.length}"
